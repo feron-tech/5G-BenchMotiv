@@ -37,8 +37,6 @@ Docker images
 ```python
 cd server/server_opencv
 docker build -t server_opencv .
-cd server/server_mqtt
-docker build -t server_mqtt .
 ```
 
 ## Execution
