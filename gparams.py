@@ -1,9 +1,9 @@
 import os
 
 if os.name == 'nt':
-    _ROOT_DIR='C:\\Pycharm\\Projects\\sniffer'
+    _ROOT_DIR='C:\\Pycharm\\Projects\\golden_unit'
 else:
-    _ROOT_DIR='/home/simu5g/git/sniffer'
+    _ROOT_DIR='/home/simu5g/git/golden_unit'
 
 _DELIMITER=';'
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
