@@ -16,8 +16,8 @@ $ sudo reboot
 ```
 Python/Anaconda
 ```python
-conda create --name sniffer python=3.8
-conda activate sniffer 
+conda create --name golden_unit python=3.8
+conda activate golden_unit 
 pip install iperf3 pyshark pandas docker icmplib pyserial paho-mqtt dash dash-bootstrap-components
 ```
 
