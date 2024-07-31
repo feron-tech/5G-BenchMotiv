@@ -93,9 +93,9 @@ def send_to_influxdb(config, results):
     print("Results written to InfluxDB")
 
 
-def main():
+def main(host,count):
     #config = load_config(config_file)
-    output = run_twping()
+    output = run_twping(host,count)
     if output:
         data = parse_twping_output(output)
         if data:
@@ -108,4 +108,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    host='192.168.200.117'
+    count=100
+    main(host,count)
