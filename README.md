@@ -4,6 +4,10 @@
 ### Client-side
 System (Unix)
 ```python
+$ sudo snap install curl
+$ sudo su
+$ curl -s https://downloads.perfsonar.net/install | sh -s - tools
+$ exit
 $ sudo apt-get install iperf3
 $ sudo apt install tshark
 $ sudo apt-get install wireshark
@@ -37,6 +41,17 @@ Docker images
 ```python
 cd server/server_opencv
 docker build -t server_opencv .
+```
+```python
+$ sudo snap install curl
+$ sudo su
+$ curl -s https://downloads.perfsonar.net/install | sh -s - tools
+$ exit
+$ sudo apt-get install iperf3
+$ sudo apt-get install docker(.io)
+$ sudo groupadd docker
+$ sudo gpasswd -a $USER docker
+$ sudo reboot
 ```
 
 ## Execution
