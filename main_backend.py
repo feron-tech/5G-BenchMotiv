@@ -213,7 +213,7 @@ class Backend:
 			base_dict['timestamp']=[self.helper.get_str_timestamp()]
 
 			_camp_name = self.df_in_user['in_meas_campaign_name'].iloc[0]
-
+			print(str(base_dict))
 			mystr=str(_camp_name)+gparams._DELIMITER+\
 				str(self.counter_camp)+gparams._DELIMITER+\
 				  str(self.counter_exp)+gparams._DELIMITER+\
