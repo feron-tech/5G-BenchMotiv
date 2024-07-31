@@ -212,6 +212,8 @@ class Monitor:
 			cmd.append('--set-mss')
 			cmd.append(str(mss))
 
+		cmd.append('--json')
+
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		output= result.stdout
 		print(str(output))
