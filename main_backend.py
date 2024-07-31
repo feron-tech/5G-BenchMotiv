@@ -220,7 +220,7 @@ class Backend:
 			mystr=''
 			mylist=gparams._DB_FILE_FIELDS_OUTPUT_BASE.split(gparams._DELIMITER)
 			for el in mylist:
-				mystr=mystr+str(base_dict['timestamp'][0])+gparams._DELIMITER
+				mystr=mystr+str(base_dict[el][0])+gparams._DELIMITER
 			mystr = mystr[:-1]
 
 			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_BASE,mystr=mystr)
