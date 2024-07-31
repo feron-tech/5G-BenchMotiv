@@ -315,7 +315,7 @@ class Monitor:
 		mypath = os.path.join(mypath, 'udp-ping')
 
 		cmd=['cd']
-		cmd.append(mypath)
+		cmd.append(str(mypath))
 		cmd.append('&&')
 		cmd.append(['./udpClient'])
 
