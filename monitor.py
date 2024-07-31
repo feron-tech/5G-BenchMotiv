@@ -317,7 +317,7 @@ class Monitor:
 		cmd=['cd']
 		cmd.append(str(mypath))
 		cmd.append('&&')
-		cmd.append(['./udpClient'])
+		cmd.append('./udpClient')
 
 		# add server IP
 		cmd.append('-a')
