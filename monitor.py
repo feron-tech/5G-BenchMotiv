@@ -1,3 +1,4 @@
+import os.path
 import re
 import subprocess
 import pyshark
@@ -306,6 +307,37 @@ class Monitor:
 					mydict['iperf_udp_ul_lost_percent'] = [None]
 		return mydict
 
+
+	def get_udpping_stats(self,server_ip,port=1234,packet_size=1250,num_packets=5000,interval_ms=20):
+
+		# get loc
+		myfile=os.path.join(gparams._ROOT_DIR,'client')
+		myfile = os.path.join(myfile, 'udp-ping')
+		myfile = os.path.join(myfile, 'udpClient')
+		cmd=['./'+str(myfile)]
+
+		# add server IP
+		cmd.append('-a')
+		cmd.append(str(server_ip))
+
+		# add packet size
+		cmd.append('-s')
+		cmd.append(str(packet_size))
+
+		# num_packets
+		cmd.append('-n')
+		cmd.append(str(num_packets))
+
+		# interval_ms
+		cmd.append('-i')
+		cmd.append(str(interval_ms))
+
+		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+		output= result.stdout
+		print(str(output))
+
+
+		return mydict
 
 	def get_owamp_stats(self,host,packs):
 		try:
