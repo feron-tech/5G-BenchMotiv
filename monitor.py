@@ -308,7 +308,7 @@ class Monitor:
 		return mydict
 
 
-	def get_udpping_stats(self,server_ip,port=1234,packet_size=1250,num_packets=5000,interval_ms=20):
+	def get_udpping_stats(self,server_ip,packet_size=1250,num_packets=5000,interval_ms=20,port=1234):
 
 		# get loc
 		mypath=os.path.join(gparams._ROOT_DIR,'client')
