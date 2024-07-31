@@ -336,8 +336,8 @@ class Monitor:
 		cmd.append(str(interval_ms))
 
 		result = subprocess.call(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,shell=True,cwd=mypath)
-		output= result.stdout
-		print(str(output))
+
+		print(str(result))
 
 
 		return None
