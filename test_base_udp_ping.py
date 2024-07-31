@@ -1,7 +1,8 @@
 from monitor import Monitor
 import gparams
 server_ip='192.168.200.117'
-
+import sys
+from io import StringIO
 
 mon = Monitor()
 
@@ -13,6 +14,7 @@ geo=my_strs[1].split('out of')
 print('geo========='+str(geo))
 final=geo[0]
 print('FINAL========='+str(final))
+ola=StringIO(final)
 import pandas as pd
-df = pd.read_table(final, sep=";",escapechar='\n')
+df = pd.read_table(ola, sep=";",escapechar='\n')
 print(str(df))
