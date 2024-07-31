@@ -18,9 +18,7 @@ def load_config(config_file):
 
 
 # Execute the twping command and get the results
-def run_twping(config):
-    host = config['twamp']['host']
-    count = config['twamp']['count']
+def run_twping(host,count):
 
     cmd = ["twping", "-c", str(count), host]
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -96,8 +94,8 @@ def send_to_influxdb(config, results):
 
 
 def main():
-    config = load_config(config_file)
-    output = run_twping(config)
+    #config = load_config(config_file)
+    output = run_twping()
     if output:
         data = parse_twping_output(output)
         if data:
