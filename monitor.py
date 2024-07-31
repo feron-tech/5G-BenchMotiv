@@ -324,16 +324,16 @@ class Monitor:
 		cmd.append(str(server_ip))
 
 		# add packet size
-		cmd.append('-s')
-		cmd.append(str(packet_size))
+		#cmd.append('-s')
+		#cmd.append(str(packet_size))
 
 		# num_packets
-		cmd.append('-n')
-		cmd.append(str(num_packets))
+		#cmd.append('-n')
+		#cmd.append(str(num_packets))
 
 		# interval_ms
-		cmd.append('-i')
-		cmd.append(str(interval_ms))
+		#cmd.append('-i')
+		#cmd.append(str(interval_ms))
 
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,shell=True)
 		output= result.stdout
