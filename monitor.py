@@ -335,12 +335,12 @@ class Monitor:
 		cmd.append('-i')
 		cmd.append(str(interval_ms))
 
-		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,shell=True)
 		output= result.stdout
 		print(str(output))
 
 
-		return mydict
+		return None
 
 	def get_owamp_stats(self,host,packs):
 		try:
