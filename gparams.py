@@ -8,6 +8,8 @@ else:
 _DELIMITER=';'
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
 
+_DB_FILE_FIELDS_INPUT_UDP_PING=('starting_to_send;seq_nr;send_time;server_time;receive_time;client2server_ns;server2client_ns;rtt_ns')
+
 _DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.csv')
 _DB_FILE_FIELDS_INPUT_USER='in_set_client_ip;in_set_server_ip;in_set_num_packets;in_set_exp_duration;in_stats_thru;' \
                            'in_stats_rtt;in_stats_e2e_delay;in_app_base;in_app_mqtt;' \
