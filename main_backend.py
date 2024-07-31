@@ -193,10 +193,14 @@ class Backend:
 			except:
 				df_ping = mon.get_ping_stats(server_ip=_server_ip)
 
-			df_iperf_tcp_dl = mon.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,protocol='tcp',direction_dl=True,duration=duration)
-			df_iperf_tcp_ul = mon.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,protocol='tcp',direction_dl=False,duration=duration)
-			df_iperf_udp_dl = mon.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,protocol='udp',direction_dl=True,duration=duration)
-			df_iperf_udp_ul = mon.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,protocol='udp',direction_dl=False,duration=duration)
+			df_iperf_tcp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
+												flag_downlink=True,duration=10,bitrate=None,mss=1200)
+			df_iperf_tcp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
+												flag_downlink=False,duration=10,bitrate=None,mss=1200)
+			df_iperf_udp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
+												flag_downlink=True,duration=10,bitrate=None,mss=1200)
+			df_iperf_udp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
+												flag_downlink=False,duration=10,bitrate=None,mss=1200)
 
 			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100)
 			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100)

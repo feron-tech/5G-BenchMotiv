@@ -76,7 +76,7 @@ class Monitor:
 			ping_avg_packet_loss_perc=mydf['ping_packet_loss_perc'].mean()
 			print('ping_avg_packet_loss_perc='+str(ping_avg_packet_loss_perc))
 
-	def get_iperf_stats(self,server_ip,port=5201,duration=10,protocol='tcp',direction_dl=False):
+	def get_iperf_stats_py(self,server_ip,port=5201,duration=10,protocol='tcp',direction_dl=False):
 		print('(Monitor) DBG: Get iperf with protocol='+str(protocol)+',DL='+str(direction_dl)+',ip='+str(server_ip),'port='+str(port))
 		try:
 			client = iperf3.Client()
@@ -177,6 +177,44 @@ class Monitor:
 		except Exception as ex:
 			print('(Monitor) ERROR: Iperf failed=' + str(ex))
 			return None
+
+	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,mss=None):
+
+		# init iperf3
+		cmd=['iperf3']
+
+		# add server IP
+		cmd.append('--client')
+		cmd.append(str(server_ip))
+
+		# add server port
+		cmd.append('--cport')
+		cmd.append(port)
+
+		# duration in sec
+		cmd.append('--time')
+		cmd.append(duration)
+
+		# bitrate in bps
+		if bitrate is not None:
+			cmd.append('--bitrate')
+			cmd.append(bitrate)
+
+		# check if reverse (uplink if the default in iperf, from client to server)
+		if flag_downlink:
+			cmd.append('--reverse')
+
+		# check if udp, default is tcp
+		if flag_udp:
+			cmd.append('--udp')
+
+		if mss is not None:
+			cmd.append('--set-mss')
+			cmd.append(mss)
+
+		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+		output= result.stdout
+		print(str(output))
 
 	def get_owamp_stats(self,host,packs):
 		try:
