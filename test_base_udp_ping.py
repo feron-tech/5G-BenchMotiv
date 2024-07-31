@@ -17,9 +17,9 @@ final=final.replace('\\n','$')
 final=final.replace('\n','$')
 final=final.replace('$','\n')
 print('FINAL========='+str(final))
-ola=gparams._DB_FILE_FIELDS_INPUT_UDP_PING+'\n'
 ola=ola+StringIO(final)
 
 import pandas as pd
-df = pd.read_table(ola, sep=";")
+df = pd.read_table(ola, sep=";",header=None)
+df.columns=gparams._DB_FILE_FIELDS_INPUT_UDP_PING.split(gparams._DELIMITER)
 print(str(df))
