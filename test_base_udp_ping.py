@@ -13,9 +13,10 @@ print('all========='+str(my_strs))
 geo=my_strs[1].split('out of')
 print('geo========='+str(geo))
 final=geo[0]
-final=final.replace('\\n','\n')
+final=final.replace('\\n','$')
+final=final.replace('\n','$')
 print('FINAL========='+str(final))
 ola=StringIO(final)
 import pandas as pd
-df = pd.read_table(ola, sep=";")
+df = pd.read_table(ola, sep=";",escapechar='$')
 print(str(df))
