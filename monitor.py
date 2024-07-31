@@ -311,10 +311,13 @@ class Monitor:
 	def get_udpping_stats(self,server_ip,port=1234,packet_size=1250,num_packets=5000,interval_ms=20):
 
 		# get loc
-		myfile=os.path.join(gparams._ROOT_DIR,'client')
-		myfile = os.path.join(myfile, 'udp-ping')
-		myfile = os.path.join(myfile, 'udpClient')
-		cmd=['./'+str(myfile)]
+		mypath=os.path.join(gparams._ROOT_DIR,'client')
+		mypath = os.path.join(mypath, 'udp-ping')
+
+		cmd=['cd']
+		cmd.append(mypath)
+		cmd.append('&&')
+		cmd.append(['./udpClient'])
 
 		# add server IP
 		cmd.append('-a')
