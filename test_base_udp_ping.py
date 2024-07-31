@@ -17,7 +17,7 @@ final=final.replace('\\n','$')
 final=final.replace('\n','$')
 final=final.replace('$','\n')
 print('FINAL========='+str(final))
-ola=ola+StringIO(final)
+ola=StringIO(final)
 
 import pandas as pd
 df = pd.read_table(ola, sep=";",header=None)
