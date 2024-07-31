@@ -315,7 +315,7 @@ class Monitor:
 		mypath = os.path.join(mypath, 'udp-ping')
 		print(str(mypath))
 		cmd=['cd']
-		cmd.append(str(mypath))
+		#cmd.append(str(mypath))
 		cmd.append('&&')
 		cmd.append('./udpClient')
 
@@ -324,18 +324,18 @@ class Monitor:
 		cmd.append(str(server_ip))
 
 		# add packet size
-		#cmd.append('-s')
-		#cmd.append(str(packet_size))
+		cmd.append('-s')
+		cmd.append(str(packet_size))
 
 		# num_packets
-		#cmd.append('-n')
-		#cmd.append(str(num_packets))
+		cmd.append('-n')
+		cmd.append(str(num_packets))
 
 		# interval_ms
-		#cmd.append('-i')
-		#cmd.append(str(interval_ms))
+		cmd.append('-i')
+		cmd.append(str(interval_ms))
 
-		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,shell=True)
+		result = subprocess.call(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,shell=True,cwd=mypath)
 		output= result.stdout
 		print(str(output))
 
