@@ -313,7 +313,6 @@ class Monitor:
 		# get loc
 		mypath=os.path.join(gparams._ROOT_DIR,'client')
 		mypath = os.path.join(mypath, 'udp-ping')
-		print(str(mypath))
 		cmd=[]
 		#cmd.append(str(mypath))
 		#cmd.append('&&')
