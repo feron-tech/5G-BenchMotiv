@@ -178,13 +178,18 @@ class Backend:
 			print('(Backend) ERROR: Get measurements for app=' + str(app_name) + ' failed!')
 
 	def get_baseline_measurements(self):
+		mon = Monitor()
 		try:
 			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
+			_duration=int(self.df_in_user['in_set_exp_duration'].iloc[0])
+			_camp_name = self.df_in_user['in_meas_campaign_name'].iloc[0]
 			print('(Backend) DBG: Get baseline measurements for ip='+str(_server_ip)+'...')
 
-			duration=int(self.df_in_user['in_set_exp_duration'].iloc[0])
-
-			mon=Monitor()
+			base_dict={}
+			base_dict['camp_name'] = [str(_camp_name)]
+			base_dict['camp_id'] = [str(self.counter_camp)]
+			base_dict['exp_id'] = [str(self.counter_exp)]
+			base_dict['timestamp'] = [self.helper.get_str_timestamp()]
 
 			try:
 				ping_interval = float(self.df_in_user['in_set_ping_interval'].iloc[0])
@@ -192,97 +197,31 @@ class Backend:
 				df_ping=mon.get_ping_stats(server_ip=_server_ip,packs=ping_packs,interval=ping_interval)
 			except:
 				df_ping = mon.get_ping_stats(server_ip=_server_ip)
+			base_dict.update(df_ping)
 
 			df_iperf_tcp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=True,duration=10,bitrate=None,mss=1200)
+												flag_downlink=True,duration=_duration,bitrate=None,mss=1200)
 			df_iperf_tcp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=False,duration=10,bitrate=None,mss=1200)
+												flag_downlink=False,duration=_duration,bitrate=None,mss=1200)
 			df_iperf_udp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=True,duration=10,bitrate=None,mss=1200)
+												flag_downlink=True,duration=_duration,bitrate=None,mss=1200)
 			df_iperf_udp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=False,duration=10,bitrate=None,mss=1200)
-
-			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100)
-			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100)
-
-			base_dict={}
-			base_dict.update(df_ping)
+												flag_downlink=False,duration=_duration,bitrate=None,mss=1200)
 			base_dict.update(df_iperf_tcp_dl)
 			base_dict.update(df_iperf_tcp_ul)
 			base_dict.update(df_iperf_udp_dl)
 			base_dict.update(df_iperf_udp_ul)
+
+			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100)
+			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100)
 			base_dict.update(dict_owamp)
 			base_dict.update(dict_twamp)
 
-			base_dict['timestamp']=[self.helper.get_str_timestamp()]
-
-			_camp_name = self.df_in_user['in_meas_campaign_name'].iloc[0]
-			print(str(base_dict))
-			mystr=str(_camp_name)+gparams._DELIMITER+\
-				str(self.counter_camp)+gparams._DELIMITER+\
-				  str(self.counter_exp)+gparams._DELIMITER+\
-				  str(base_dict['timestamp'][0])+gparams._DELIMITER+\
-				  str(base_dict['ping_rtt_avg'][0])+gparams._DELIMITER+\
-			      str(base_dict['ping_rtt_max'][0])+gparams._DELIMITER+\
-			      str(base_dict['ping_rtt_min'][0])+gparams._DELIMITER+\
-			      str(base_dict['ping_packet_loss_perc'][0])+gparams._DELIMITER+\
-			      str(base_dict['ping_packets_lost'][0])+gparams._DELIMITER+\
-			      str(base_dict['ping_jitter'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_dl_retransmits'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_dl_sent_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_dl_sent_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_dl_received_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_dl_received_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_ul_retransmits'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_ul_sent_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_ul_sent_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_ul_received_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_tcp_ul_received_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_dl_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_dl_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_dl_jitter_ms'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_dl_lost_percent'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_ul_bytes'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_ul_bps'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_ul_jitter_ms'][0])+gparams._DELIMITER+\
-			      str(base_dict['iperf_udp_ul_lost_percent'][0])+gparams._DELIMITER+\
-					str(base_dict['owamp_ul_packets_sent'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_packets_lost'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_loss_percentage'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_duplicates'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_delay_min'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_delay_median'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_delay_max'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_jitter'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_hops'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_ul_reordering'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_packets_sent'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_packets_lost'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_loss_percentage'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_duplicates'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_delay_min'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_delay_median'][0])  + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_delay_max'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_jitter'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_hops'][0]) + gparams._DELIMITER + \
-					str(base_dict['owamp_dl_reordering'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_sent'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_lost'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_loss_percentage'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_rtt_min'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_rtt_median'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_rtt_max'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_send_min'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_send_median'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_send_max'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflect_min'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflect_median'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflect_max'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflector_min'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflector_max'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_two_way_jitter'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_send_jitter'][0]) + gparams._DELIMITER + \
-				str(base_dict['twamp_reflect_jitter'][0])
+			mystr=''
+			mylist=gparams._DB_FILE_FIELDS_OUTPUT_BASE.split(gparams._DELIMITER)
+			for el in mylist:
+				mystr=mystr+str(base_dict['timestamp'][0])+gparams._DELIMITER
+			mystr = mystr[:-1]
 
 			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_BASE,mystr=mystr)
 
