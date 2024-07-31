@@ -217,6 +217,9 @@ class Backend:
 			base_dict.update(dict_owamp)
 			base_dict.update(dict_twamp)
 
+			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=1200,num_packets=500,interval_ms=200)
+			base_dict.update(dict_udp_ping)
+			
 			mystr=''
 			mylist=gparams._DB_FILE_FIELDS_OUTPUT_BASE.split(gparams._DELIMITER)
 			for el in mylist:

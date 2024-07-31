@@ -1,3 +1,4 @@
+from io import StringIO
 import os.path
 import re
 import subprocess
@@ -311,35 +312,66 @@ class Monitor:
 	def get_udpping_stats(self,server_ip,packet_size=1250,num_packets=5000,interval_ms=20,port=1234):
 
 		# get loc
-		mypath=os.path.join(gparams._ROOT_DIR,'client')
-		mypath = os.path.join(mypath, 'udp-ping')
-		cmd=[]
-		#cmd.append(str(mypath))
-		#cmd.append('&&')
-		cmd.append('./udpClient')
+		try:
+			mypath=os.path.join(gparams._ROOT_DIR,'client')
+			mypath = os.path.join(mypath, 'udp-ping')
+			cmd=[]
+			#cmd.append(str(mypath))
+			#cmd.append('&&')
+			cmd.append('./udpClient')
 
-		# add server IP
-		cmd.append('-a')
-		cmd.append(str(server_ip))
+			# add server IP
+			cmd.append('-a')
+			cmd.append(str(server_ip))
 
-		# add packet size
-		cmd.append('-s')
-		cmd.append(str(packet_size))
+			# add packet size
+			cmd.append('-s')
+			cmd.append(str(packet_size))
 
-		# num_packets
-		cmd.append('-n')
-		cmd.append(str(num_packets))
+			# num_packets
+			cmd.append('-n')
+			cmd.append(str(num_packets))
 
-		# interval_ms
-		cmd.append('-i')
-		cmd.append(str(interval_ms))
+			# interval_ms
+			cmd.append('-i')
+			cmd.append(str(interval_ms))
 
-		result = subprocess.check_output(cmd,cwd=mypath)
+			out = subprocess.check_output(cmd,cwd=mypath)
 
+			my_strs = (str(out)).split('(all times in ns)')
+			temp_str = my_strs[1].split('out of')
+			final_str = temp_str[0]
+			final_str = final_str.replace('\\n', '$')
+			final_str = final_str.replace('\n', '$')
+			final_str = final_str.replace('$', '\n')
+			df_str = StringIO(final_str)
 
+			df = pd.read_table(df_str, sep=gparams._DELIMITER, header=None)
+			df.columns = gparams._DB_FILE_FIELDS_INPUT_UDP_PING.split(gparams._DELIMITER)
+			udpping_cl2server_ns = df['client2server_ns'].mean()
+			udpping_server2cl_ns = df['server2client_ns'].mean()
+			udpping_rtt_ns = df['rtt_ns'].mean()
+		except Exception as ex:
+			print('(Monitor) ERROR cannot process udpPing='+str(ex))
 
+		mydict={}
 
-		return result
+		try:
+			mydict['udpping_cl2server_ns']=[udpping_cl2server_ns]
+		except:
+			mydict['udpping_cl2server_ns']=[None]
+
+		try:
+			mydict['udpping_server2cl_ns']=[udpping_server2cl_ns]
+		except:
+			mydict['udpping_server2cl_ns']=[None]
+
+		try:
+			mydict['udpping_rtt_ns']=[udpping_rtt_ns]
+		except:
+			mydict['udpping_rtt_ns']=[None]
+
+		return mydict
 
 	def get_owamp_stats(self,host,packs):
 		try:

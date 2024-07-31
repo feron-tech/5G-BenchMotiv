@@ -48,7 +48,8 @@ _DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
                              'twamp_sent;twamp_lost;twamp_loss_percentage;twamp_rtt_min;'
                              'twamp_rtt_median;twamp_rtt_max;twamp_send_min;twamp_send_median;twamp_send_max;'
                              'twamp_reflect_min;twamp_reflect_median;twamp_reflect_max;twamp_reflector_min;'
-                             'twamp_reflector_max;twamp_two_way_jitter;twamp_send_jitter;twamp_reflect_jitter'
+                             'twamp_reflector_max;twamp_two_way_jitter;twamp_send_jitter;twamp_reflect_jitter;'
+                             'udpping_cl2server_ns;udpping_server2cl_ns;udpping_rtt_ns'
                              )
 
 _DB_FILE_LOC_OUTPUT_APP=os.path.join(_DB_DIR,'db_output_app.csv')
@@ -83,4 +84,5 @@ _PHY_PORT='/dev/ttyUSB3'
 _PHY_BAUD_RATE=115200
 _PHY_CMD='AT'
 _PHY_APN='internet.vodafone.gr'
+
 

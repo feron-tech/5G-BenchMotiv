@@ -22,4 +22,6 @@ ola=StringIO(final)
 import pandas as pd
 df = pd.read_table(ola, sep=";",header=None)
 df.columns=gparams._DB_FILE_FIELDS_INPUT_UDP_PING.split(gparams._DELIMITER)
-print(str(df))
+udpping_cl2server_ns=df['client2server_ns'].mean()
+udpping_server2cl_ns=df['server2client_ns'].mean()
+udpping_rtt_ns=df['rtt_ns'].mean()
