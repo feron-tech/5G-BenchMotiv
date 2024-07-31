@@ -336,10 +336,10 @@ class Monitor:
 
 		result = subprocess.check_output(cmd,cwd=mypath)
 
-		print(str(result))
 
 
-		return None
+
+		return result
 
 	def get_owamp_stats(self,host,packs):
 		try:
