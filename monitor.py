@@ -189,16 +189,16 @@ class Monitor:
 
 		# add server port
 		cmd.append('--cport')
-		cmd.append(port)
+		cmd.append(str(port))
 
 		# duration in sec
 		cmd.append('--time')
-		cmd.append(duration)
+		cmd.append(str(duration))
 
 		# bitrate in bps
 		if bitrate is not None:
 			cmd.append('--bitrate')
-			cmd.append(bitrate)
+			cmd.append(str(bitrate))
 
 		# check if reverse (uplink if the default in iperf, from client to server)
 		if flag_downlink:
@@ -210,7 +210,7 @@ class Monitor:
 
 		if mss is not None:
 			cmd.append('--set-mss')
-			cmd.append(mss)
+			cmd.append(str(mss))
 
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		output= result.stdout
