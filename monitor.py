@@ -4,6 +4,7 @@ import pyshark
 import pandas as pd
 import math
 import docker
+import json
 import gparams
 from helper import Helper
 import iperf3
@@ -216,7 +217,95 @@ class Monitor:
 
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		output= result.stdout
-		print(str(output))
+
+		try:
+			data = json.loads(output)
+		except Exception as ex:
+			print('(Monitor) ERROR: Cannot read json='+str(ex))
+
+		mydict = {}
+		if not flag_udp:
+			if flag_downlink:
+				try:
+					mydict['iperf_tcp_dl_retransmits'] = [data['end']['sum_sent']['retransmits']]
+				except:
+					mydict['iperf_tcp_dl_retransmits'] = [None]
+				try:
+					mydict['iperf_tcp_dl_sent_bps'] = [data['end']['sum_sent']['bits_per_second']]
+				except:
+					mydict['iperf_tcp_dl_sent_bps'] = [None]
+				try:
+					mydict['iperf_tcp_dl_sent_bytes'] = [data['end']['sum_sent']['bytes']]
+				except:
+					mydict['iperf_tcp_dl_sent_bytes'] = [None]
+				try:
+					mydict['iperf_tcp_dl_received_bps'] = [data['end']['sum_received']['bits_per_second']]
+					print('(Monitor) DBG: Iperf received_bps=' + str(mydict['iperf_tcp_dl_received_bps']))
+				except Exception as ex:
+					mydict['iperf_tcp_dl_received_bps'] = [None]
+					print('(Monitor) ERROR: No Iperf received_bps=' + str(ex))
+				try:
+					mydict['iperf_tcp_dl_received_bytes'] = [data['end']['sum_received']['bytes']]
+				except:
+					mydict['iperf_tcp_dl_received_bytes'] = [None]
+			else:
+				try:
+					mydict['iperf_tcp_ul_retransmits'] = [data['end']['sum_sent']['retransmits']]
+				except:
+					mydict['iperf_tcp_ul_retransmits'] = [None]
+				try:
+					mydict['iperf_tcp_ul_sent_bps'] = [data['end']['sum_sent']['bits_per_second']]
+				except:
+					mydict['iperf_tcp_ul_sent_bps'] = [None]
+				try:
+					mydict['iperf_tcp_ul_sent_bytes'] = [data['end']['sum_sent']['bytes']]
+				except:
+					mydict['iperf_tcp_ul_sent_bytes'] = [None]
+				try:
+					mydict['iperf_tcp_ul_received_bps'] = [data['end']['sum_received']['bits_per_second']]
+				except:
+					mydict['iperf_tcp_ul_received_bps'] = [None]
+				try:
+					mydict['iperf_tcp_ul_received_bytes'] = [data['end']['sum_received']['bytes']]
+				except:
+					mydict['iperf_tcp_ul_received_bytes'] = [None]
+		else:
+			if flag_downlink:
+				try:
+					mydict['iperf_udp_dl_bytes'] = [data['end']['sum']['bytes']]
+				except:
+					mydict['iperf_udp_dl_bytes'] = [None]
+				try:
+					mydict['iperf_udp_dl_bps'] = [data['end']['sum']['bits_per_second']]
+				except:
+					mydict['iperf_udp_dl_bps'] = [None]
+				try:
+					mydict['iperf_udp_dl_jitter_ms'] = [data['end']['sum']['jitter_ms']]
+				except:
+					mydict['iperf_udp_dl_jitter_ms'] = [None]
+				try:
+					mydict['iperf_udp_dl_lost_percent'] = [data['end']['sum']['lost_percent']]
+				except:
+					mydict['iperf_udp_dl_lost_percent'] = [None]
+			else:
+				try:
+					mydict['iperf_udp_ul_bytes'] = [data['end']['sum']['bytes']]
+				except:
+					mydict['iperf_udp_ul_bytes'] = [None]
+				try:
+					mydict['iperf_udp_ul_bps'] = [data['end']['sum']['bits_per_second']]
+				except:
+					mydict['iperf_udp_ul_bps'] = [None]
+				try:
+					mydict['iperf_udp_ul_jitter_ms'] = [data['end']['sum']['jitter_ms']]
+				except:
+					mydict['iperf_udp_ul_jitter_ms'] = [None]
+				try:
+					mydict['iperf_udp_ul_lost_percent'] = [data['end']['sum']['lost_percent']]
+				except:
+					mydict['iperf_udp_ul_lost_percent'] = [None]
+		return mydict
+
 
 	def get_owamp_stats(self,host,packs):
 		try:
