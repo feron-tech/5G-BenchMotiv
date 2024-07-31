@@ -382,89 +382,89 @@ class Monitor:
 					data["reflect_jitter"] = float(match.group(1))
 		mydict={}
 		try:
-			mydict['twamp_sent']=data['sent']
+			mydict['twamp_sent']=[data['sent']]
 		except:
-			mydict['twamp_sent']=None
+			mydict['twamp_sent']=[None]
 
 		try:
-			mydict['twamp_lost']=data['lost']
+			mydict['twamp_lost']=[data['lost']]
 		except:
-			mydict['twamp_lost']=None
+			mydict['twamp_lost']=[None]
 
 		try:
-			mydict['twamp_loss_percentage']=data['loss_percentage']
+			mydict['twamp_loss_percentage']=[data['loss_percentage']]
 		except:
-			mydict['twamp_loss_percentage']=None
+			mydict['twamp_loss_percentage']=[None]
 
 		try:
-			mydict['twamp_rtt_min']=data['rtt_min']
+			mydict['twamp_rtt_min']=[data['rtt_min']]
 		except:
-			mydict['twamp_rtt_min']=None
+			mydict['twamp_rtt_min']=[None]
 
 		try:
-			mydict['twamp_rtt_median']=data['rtt_median']
+			mydict['twamp_rtt_median']=[data['rtt_median']]
 		except:
-			mydict['twamp_rtt_median']=None
+			mydict['twamp_rtt_median']=[None]
 
 		try:
-			mydict['twamp_rtt_max']=data['rtt_max']
+			mydict['twamp_rtt_max']=[data['rtt_max']]
 		except:
-			mydict['twamp_rtt_max']=None
+			mydict['twamp_rtt_max']=[None]
 
 		try:
-			mydict['twamp_send_min']=data['send_min']
+			mydict['twamp_send_min']=[data['send_min']]
 		except:
-			mydict['twamp_send_min']=None
+			mydict['twamp_send_min']=[None]
 
 		try:
-			mydict['twamp_send_median']=data['send_median']
+			mydict['twamp_send_median']=[data['send_median']]
 		except:
-			mydict['twamp_send_median']=None
+			mydict['twamp_send_median']=[None]
 
 		try:
-			mydict['twamp_send_max']=data['send_max']
+			mydict['twamp_send_max']=[data['send_max']]
 		except:
-			mydict['twamp_send_max']=None
+			mydict['twamp_send_max']=[None]
 
 		try:
-			mydict['twamp_reflect_min']=data['reflect_min']
+			mydict['twamp_reflect_min']=[data['reflect_min']]
 		except:
-			mydict['twamp_reflect_min']=None
+			mydict['twamp_reflect_min']=[None]
 
 		try:
-			mydict['twamp_reflect_median']=data['reflect_median']
+			mydict['twamp_reflect_median']=[data['reflect_median']]
 		except:
-			mydict['twamp_reflect_median']=None
+			mydict['twamp_reflect_median']=[None]
 
 		try:
-			mydict['twamp_reflect_max']=data['reflect_max']
+			mydict['twamp_reflect_max']=[data['reflect_max']]
 		except:
-			mydict['twamp_reflect_max']=None
+			mydict['twamp_reflect_max']=[None]
 
 		try:
-			mydict['twamp_reflector_min'] = data['reflector_min']
+			mydict['twamp_reflector_min'] = [data['reflector_min']]
 		except:
-			mydict['twamp_reflector_min'] = None
+			mydict['twamp_reflector_min'] = [None]
 
 		try:
-			mydict['twamp_reflector_max'] = data['reflector_max']
+			mydict['twamp_reflector_max'] = [data['reflector_max']]
 		except:
-			mydict['twamp_reflector_max'] = None
+			mydict['twamp_reflector_max'] = [None]
 
 		try:
-			mydict['twamp_two_way_jitter'] = data['two_way_jitter']
+			mydict['twamp_two_way_jitter'] = [data['two_way_jitter']]
 		except:
-			mydict['twamp_two_way_jitter'] = None
+			mydict['twamp_two_way_jitter'] = [None]
 
 		try:
-			mydict['twamp_send_jitter'] = data['send_jitter']
+			mydict['twamp_send_jitter'] = [data['send_jitter']]
 		except:
-			mydict['twamp_send_jitter'] = None
+			mydict['twamp_send_jitter'] = [None]
 
 		try:
-			mydict['twamp_reflect_jitter'] = data['reflect_jitter']
+			mydict['twamp_reflect_jitter'] = [data['reflect_jitter']]
 		except:
-			mydict['twamp_reflect_jitter'] = None
+			mydict['twamp_reflect_jitter'] = [None]
 
 		return mydict
 
