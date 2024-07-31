@@ -1,3 +1,5 @@
+import re
+import subprocess
 import pyshark
 import pandas as pd
 import math
@@ -176,6 +178,295 @@ class Monitor:
 			print('(Monitor) ERROR: Iperf failed=' + str(ex))
 			return None
 
+	def get_owamp_stats(self,host,packs):
+		try:
+			command = ["owping", "-c", str(packs), host]
+			result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+			output= result.stdout
+
+			measurements = []
+			sections = output.strip().split('\n\n')
+			for section in sections:
+				lines = section.split('\n')
+				if len(lines) < 9:
+					continue
+				x = 0
+				if re.search(r'owping', lines[0]) is None:
+					x = 1
+				# src_dst = re.search(r'from \[(.*)\]:\d+ to \[(.*)\]:\d+', lines[0])
+				# sid = re.search(r'SID:\s+(\w+)', lines[1]).group(1)
+				# first = re.search(r'first:\s+([^\s]+)', lines[2]).group(1)
+				# last = re.search(r'last:\s+([^\s]+)', lines[3]).group(1)
+				packets = re.search(r'(\d+) sent, (\d+) lost \(([^)]+)\), (\d+) duplicates', lines[4 + x])
+				delay = re.search(r'one-way delay min/median/max = ([^/]+)/([^/]+)/([^ ]+) ms', lines[5 + x])
+				jitter = re.search(r'jitter = ([^ ]+) ms', lines[6 + x]).group(1)
+				hops = re.search(r'hops = (\d+)', lines[7 + x]).group(1)
+				reordering = re.search(r'no reordering', lines[8 + x]) is not None
+
+				measurement = {
+					"packets_sent": int(packets.group(1)),
+					"packets_lost": int(packets.group(2)),
+					"loss_percentage": float(packets.group(3).replace('%', '')),
+					"duplicates": int(packets.group(4)),
+					"delay_min": float(delay.group(1)),
+					"delay_median": float(delay.group(2)),
+					"delay_max": float(delay.group(3)),
+					"jitter": float(jitter),
+					"hops": int(hops),
+					"reordering": reordering
+				}
+				# write_to_influxdb(config, measurement, config['influxdb']['owamp_bucket'])
+				measurements.append(measurement)
+				print('(Monitor) DBG: OWAMP=' + str(measurements))
+		except Exception as ex:
+			print('(Monitor) ERROR: Error in owamp proc=' + str(ex))
+
+
+		mydict={}
+
+		try:
+			mydict['owamp_ul_packets_sent']=[measurements[0]['packets_sent']]
+		except:
+			mydict['owamp_ul_packets_sent']=[None]
+
+		try:
+			mydict['owamp_ul_packets_lost'] = [measurements[0]['packets_lost']]
+		except:
+			mydict['owamp_ul_packets_lost'] = [None]
+
+		try:
+			mydict['owamp_ul_loss_percentage'] = [measurements[0]['loss_percentage']]
+		except:
+			mydict['owamp_ul_loss_percentage'] = [None]
+
+		try:
+			mydict['owamp_ul_duplicates'] = [measurements[0]['duplicates']]
+		except:
+			mydict['owamp_ul_duplicates'] = [None]
+
+		try:
+			mydict['owamp_ul_delay_min'] = [measurements[0]['delay_min']]
+		except:
+			mydict['owamp_ul_delay_min'] = [None]
+
+		try:
+			mydict['owamp_ul_delay_median'] = [measurements[0]['delay_median']]
+		except:
+			mydict['owamp_ul_delay_median'] = [None]
+
+		try:
+			mydict['owamp_ul_delay_max'] = [measurements[0]['delay_max']]
+		except:
+			mydict['owamp_ul_delay_max'] = [None]
+
+		try:
+			mydict['owamp_ul_jitter'] = [measurements[0]['jitter']]
+		except:
+			mydict['owamp_ul_jitter'] = [None]
+
+		try:
+			mydict['owamp_ul_hops'] = [measurements[0]['hops']]
+		except:
+			mydict['owamp_ul_hops'] = [None]
+
+		try:
+			mydict['owamp_ul_reordering'] = [measurements[0]['reordering']]
+		except:
+			mydict['owamp_ul_reordering'] = [None]
+
+		try:
+			mydict['owamp_dl_packets_sent'] = [measurements[1]['packets_sent']]
+		except:
+			mydict['owamp_dl_packets_sent'] = [None]
+
+		try:
+			mydict['owamp_dl_packets_lost'] = [measurements[1]['packets_lost']]
+		except:
+			mydict['owamp_dl_packets_lost'] = [None]
+
+		try:
+			mydict['owamp_dl_loss_percentage'] = [measurements[1]['loss_percentage']]
+		except:
+			mydict['owamp_dl_loss_percentage'] = [None]
+
+		try:
+			mydict['owamp_dl_duplicates'] = [measurements[1]['duplicates']]
+		except:
+			mydict['owamp_dl_duplicates'] = [None]
+
+		try:
+			mydict['owamp_dl_delay_min'] = [measurements[1]['delay_min']]
+		except:
+			mydict['owamp_dl_delay_min'] = [None]
+
+		try:
+			mydict['owamp_dl_delay_median'] = [measurements[1]['delay_median']]
+		except:
+			mydict['owamp_dl_delay_median'] = [None]
+
+		try:
+			mydict['owamp_dl_delay_max'] = [measurements[1]['delay_max']]
+		except:
+			mydict['owamp_dl_delay_max'] = [None]
+
+		try:
+			mydict['owamp_dl_jitter'] = [measurements[1]['jitter']]
+		except:
+			mydict['owamp_dl_jitter'] = [None]
+
+		try:
+			mydict['owamp_dl_hops'] = [measurements[1]['hops']]
+		except:
+			mydict['owamp_dl_hops'] = [None]
+
+		try:
+			mydict['owamp_dl_reordering'] = [measurements[1]['reordering']]
+		except:
+			mydict['owamp_dl_reordering'] = [None]
+
+		return mydict
+
+	def get_twamp_stats(self,host,packs):
+		cmd = ["twping", "-c", str(packs), host]
+		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+		if result.returncode != 0:
+			print(f"Error running twping: {result.stderr}")
+			output=None
+		else:
+			output=result.stdout
+
+		data = {}
+		lines = output.split('\n')
+		print(output)
+		for line in lines:
+			if "sent, " in line:
+				match = re.search(r"(\d+) sent, (\d+) lost \(([\d\.]+)%\)", line)
+				if match:
+					data["sent"] = int(match.group(1))
+					data["lost"] = int(match.group(2))
+					data["loss_percentage"] = float(match.group(3))
+			elif "round-trip time min/median/max" in line:
+				match = re.search(r"([\d\.]+)/([\d\.]+)/([\d\.]+) ms", line)
+				if match:
+					data["rtt_min"] = float(match.group(1))
+					data["rtt_median"] = float(match.group(2))
+					data["rtt_max"] = float(match.group(3))
+			elif "send time min/median/max" in line:
+				match = re.search(r"([\d\.]+)/([\d\.]+)/([\d\.]+) ms", line)
+				if match:
+					data["send_min"] = float(match.group(1))
+					data["send_median"] = float(match.group(2))
+					data["send_max"] = float(match.group(3))
+			elif "reflect time min/median/max" in line:
+				match = re.search(r"([\d\.-]+)/([\d\.-]+)/([\d\.-]+) ms", line)
+				if match:
+					data["reflect_min"] = float(match.group(1))
+					data["reflect_median"] = float(match.group(2))
+					data["reflect_max"] = float(match.group(3))
+			elif "reflector processing time min/max" in line:
+				match = re.search(r"([\d\.]+)/([\d\.]+) ms", line)
+				if match:
+					data["reflector_min"] = float(match.group(1))
+					data["reflector_max"] = float(match.group(2))
+			elif "two-way jitter" in line:
+				match = re.search(r"([\d\.]+) ms", line)
+				if match:
+					data["two_way_jitter"] = float(match.group(1))
+			elif "send jitter" in line:
+				match = re.search(r"([\d\.]+) ms", line)
+				if match:
+					data["send_jitter"] = float(match.group(1))
+			elif "reflect jitter" in line:
+				match = re.search(r"([\d\.]+) ms", line)
+				if match:
+					data["reflect_jitter"] = float(match.group(1))
+		mydict={}
+		try:
+			mydict['twamp_sent']=data['sent']
+		except:
+			mydict['twamp_sent']=None
+
+		try:
+			mydict['twamp_lost']=data['lost']
+		except:
+			mydict['twamp_lost']=None
+
+		try:
+			mydict['twamp_loss_percentage']=data['loss_percentage']
+		except:
+			mydict['twamp_loss_percentage']=None
+
+		try:
+			mydict['twamp_rtt_min']=data['rtt_min']
+		except:
+			mydict['twamp_rtt_min']=None
+
+		try:
+			mydict['twamp_rtt_median']=data['rtt_median']
+		except:
+			mydict['twamp_rtt_median']=None
+
+		try:
+			mydict['twamp_rtt_max']=data['rtt_max']
+		except:
+			mydict['twamp_rtt_max']=None
+
+		try:
+			mydict['twamp_send_min']=data['send_min']
+		except:
+			mydict['twamp_send_min']=None
+
+		try:
+			mydict['twamp_send_median']=data['send_median']
+		except:
+			mydict['twamp_send_median']=None
+
+		try:
+			mydict['twamp_send_max']=data['send_max']
+		except:
+			mydict['twamp_send_max']=None
+
+		try:
+			mydict['twamp_reflect_min']=data['reflect_min']
+		except:
+			mydict['twamp_reflect_min']=None
+
+		try:
+			mydict['twamp_reflect_median']=data['reflect_median']
+		except:
+			mydict['twamp_reflect_median']=None
+
+		try:
+			mydict['twamp_reflect_max']=data['reflect_max']
+		except:
+			mydict['twamp_reflect_max']=None
+
+		try:
+			mydict['twamp_reflector_min'] = data['reflector_min']
+		except:
+			mydict['twamp_reflector_min'] = None
+
+		try:
+			mydict['twamp_reflector_max'] = data['reflector_max']
+		except:
+			mydict['twamp_reflector_max'] = None
+
+		try:
+			mydict['twamp_two_way_jitter'] = data['two_way_jitter']
+		except:
+			mydict['twamp_two_way_jitter'] = None
+
+		try:
+			mydict['twamp_send_jitter'] = data['send_jitter']
+		except:
+			mydict['twamp_send_jitter'] = None
+
+		try:
+			mydict['twamp_reflect_jitter'] = data['reflect_jitter']
+		except:
+			mydict['twamp_reflect_jitter'] = None
+
+		return mydict
 
 	def get_pyshark_kpis(self,my_iface='Ethernet',display_filter=None,max_packs=5000):
 		print('(Monitor) DBG: Initiate pyshark kpis ...')
