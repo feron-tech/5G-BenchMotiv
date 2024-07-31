@@ -314,9 +314,9 @@ class Monitor:
 		mypath=os.path.join(gparams._ROOT_DIR,'client')
 		mypath = os.path.join(mypath, 'udp-ping')
 		print(str(mypath))
-		cmd=['cd']
+		cmd=[]
 		#cmd.append(str(mypath))
-		cmd.append('&&')
+		#cmd.append('&&')
 		cmd.append('./udpClient')
 
 		# add server IP
