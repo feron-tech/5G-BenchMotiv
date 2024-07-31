@@ -2,6 +2,9 @@
 
 ## Installation
 ### Client-side
+
+https://github.com/geodranas/golden_unit.git
+
 System (Unix)
 ```python
 $ sudo snap install curl
@@ -18,6 +21,19 @@ $ sudo groupadd docker
 $ sudo gpasswd -a $USER docker
 $ sudo reboot
 ```
+
+Software
+```python
+$ cd /{ROOT}/golden_unit/client
+$ git clone https://github.com/EricssonResearch/udp-ping.git
+$ sudo apt-get install build-essential
+$ sudo apt-get install libboost-program-options-dev
+$ sudo apt-get install cmake
+$ cd /{ROOT}/golden_unit/client/udp-ping
+$ g++ -o udpServer udpServer.cpp -lboost_program_options
+$ g++ -o udpClient udpClient.cpp -lboost_program_options
+```
+
 Python/Anaconda
 ```python
 conda create --name golden_unit python=3.8
@@ -33,6 +49,18 @@ cd client/client_mqtt
 docker build -t client_mqtt .
 ```
 ### Server-side
+Software
+```python
+$ cd /{ROOT}/golden_unit/server
+$ git clone https://github.com/EricssonResearch/udp-ping.git
+$ sudo apt-get install build-essential
+$ sudo apt-get install libboost-program-options-dev
+$ sudo apt-get install cmake
+$ cd /{ROOT}/golden_unit/server/udp-ping
+$ g++ -o udpServer udpServer.cpp -lboost_program_options
+$ g++ -o udpClient udpClient.cpp -lboost_program_options
+```
+
 Network
 ```python
 sudo ufw disable
@@ -60,6 +88,9 @@ $ sudo reboot
 docker run -it --rm -p 8888:8888 server_opencv
 docker run -d --rm -p 1883:1883 -p 8883:8883 --name nanomq emqx/nanomq:latest
 iperf3 --server
+$ cd /{ROOT}/golden_unit/server/udp-ping
+$ ./udpServer
++ twampy/owampy activation
 ```
 
 ### Client-side
