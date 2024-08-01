@@ -373,9 +373,9 @@ class Monitor:
 
 		return mydict
 
-	def get_owamp_stats(self,host,packs):
+	def get_owamp_stats(self,host,packs,interval):
 		try:
-			command = ["owping", "-c", str(packs), host]
+			command = ["owping", "-c", str(packs), "-s", str(1200) , "-i",str(interval),host]
 			result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 			output= result.stdout
 
@@ -521,8 +521,8 @@ class Monitor:
 
 		return mydict
 
-	def get_twamp_stats(self,host,packs):
-		cmd = ["twping", "-c", str(packs), host]
+	def get_twamp_stats(self,host,packs,interval):
+		cmd = ["twping", "-c", str(packs), "-s", str(1200), "-i", str(interval), host]
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		if result.returncode != 0:
 			print(f"Error running twping: {result.stderr}")

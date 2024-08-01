@@ -204,20 +204,20 @@ class Backend:
 			df_iperf_tcp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
 												flag_downlink=False,duration=_duration,bitrate=None,mss=1200)
 			df_iperf_udp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=True,duration=_duration,bitrate=None,mss=1200)
+												flag_downlink=True,duration=_duration,bitrate='2000M',mss=1200)
 			df_iperf_udp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=False,duration=_duration,bitrate=None,mss=1200)
+												flag_downlink=False,duration=_duration,bitrate='2000M',mss=1200)
 			base_dict.update(df_iperf_tcp_dl)
 			base_dict.update(df_iperf_tcp_ul)
 			base_dict.update(df_iperf_udp_dl)
 			base_dict.update(df_iperf_udp_ul)
 
-			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100)
-			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100)
+			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100,interval=ping_interval)
+			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100,interval=ping_interval)
 			base_dict.update(dict_owamp)
 			base_dict.update(dict_twamp)
 
-			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=1200,num_packets=500,interval_ms=200)
+			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=1200,num_packets=500,interval_ms=20)
 			base_dict.update(dict_udp_ping)
 
 			mystr=''

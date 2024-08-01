@@ -330,8 +330,8 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
                     str(mode_pref) + gparams._DELIMITER +
                     str(oper) + gparams._DELIMITER +
                     str(act) + gparams._DELIMITER +
-                    str(apn) + gparams._DELIMITER +
-                    str(resp1) + gparams._DELIMITER +
+                    str(None) + gparams._DELIMITER +
+                    str(None) + gparams._DELIMITER +
                     str(rssi) + gparams._DELIMITER +
                     str(ber) + gparams._DELIMITER +
                     str(qrsrp_prx) + gparams._DELIMITER +
@@ -348,14 +348,13 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
                     str(sinr_drx) + gparams._DELIMITER  +
                     str(sinr_rx2) + gparams._DELIMITER +
                     str(sinr_rx3) + gparams._DELIMITER +
-                    str(sinr_sysmode) + gparams._DELIMITER  )
+                    str(sinr_sysmode) )
 
     helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
 
 if __name__ == "__main__":
     try:
-        main(port,baud_rate)
-        main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='internet.vodafone.gr', camp_name=None, camp_id=0,
+        main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt', camp_name=None, camp_id=0,
              exp_id=0)
     except Exception as ex:
         print('(Physical) ERROR: Failed='+str(ex))
