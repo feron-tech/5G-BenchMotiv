@@ -385,6 +385,7 @@ class Monitor:
 
 	def get_owamp_stats(self,host,packs,interval,packet_size=1200):
 		print('(Monitor) DBG: Entered OWAMP at:' + str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: packs=' + str(packs)+'packetSize='+str(packet_size)+'interval='+str(interval)+'...')
 		try:
 			command = ["owping", "-c", str(packs), "-s", str(packet_size) , "-i",str(interval),host]
 			result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -534,6 +535,8 @@ class Monitor:
 
 	def get_twamp_stats(self,host,packs,interval,packet_size=1200):
 		print('(Monitor) DBG: Entered TWAMP at:' + str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: packs=' + str(packs)+'packetSize='+str(packet_size)+'interval='+str(interval)+'...')
+
 		cmd = ["twping", "-c", str(packs), "-s", str(packet_size), "-i", str(interval), host]
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		if result.returncode != 0:
