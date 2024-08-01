@@ -35,7 +35,7 @@ while True:
     msg_info = mqttc.publish(topic='golden_unit/test', payload=payload, qos=1)
     unacked_publish.add(msg_info.mid)
 
-    time.sleep(_sleep_sec)
+    time.sleep(float(_sleep_sec))
 
 
 mqttc.disconnect()
