@@ -212,7 +212,7 @@ class Monitor:
 			cmd.append('--udp')
 
 		if mss is not None:
-			cmd.append('--set-mss')
+			cmd.append('--length')
 			cmd.append(str(mss))
 
 		cmd.append('--json')
