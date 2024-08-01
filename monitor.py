@@ -182,7 +182,8 @@ class Monitor:
 			return None
 
 	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,mss=None):
-
+		print('(Monitor) DBG: Entered iperf3 at:'+str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: UDP='+str(flag_udp)+',Downlink='+str(flag_downlink)+'...')
 		# init iperf3
 		cmd=['iperf3']
 
@@ -223,7 +224,7 @@ class Monitor:
 		try:
 			data = json.loads(output)
 		except Exception as ex:
-			print('(Monitor) ERROR: Cannot read json='+str(ex))
+			print('(Monitor) ERROR in iperf3 output json='+str(ex))
 
 		mydict = {}
 		if not flag_udp:
@@ -242,10 +243,10 @@ class Monitor:
 					mydict['iperf_tcp_dl_sent_bytes'] = [None]
 				try:
 					mydict['iperf_tcp_dl_received_bps'] = [data['end']['sum_received']['bits_per_second']]
-					print('(Monitor) DBG: Iperf received_bps=' + str(mydict['iperf_tcp_dl_received_bps']))
+					print('(Monitor) DBG: iperf_tcp_dl_received_bps=' + str(mydict['iperf_tcp_dl_received_bps']))
 				except Exception as ex:
 					mydict['iperf_tcp_dl_received_bps'] = [None]
-					print('(Monitor) ERROR: No Iperf received_bps=' + str(ex))
+					print('(Monitor) ERROR: iperf_tcp_dl_received_bps=' + str(ex))
 				try:
 					mydict['iperf_tcp_dl_received_bytes'] = [data['end']['sum_received']['bytes']]
 				except:
@@ -261,8 +262,10 @@ class Monitor:
 					mydict['iperf_tcp_ul_sent_bps'] = [None]
 				try:
 					mydict['iperf_tcp_ul_sent_bytes'] = [data['end']['sum_sent']['bytes']]
-				except:
+					print('(Monitor) DBG: iperf_tcp_ul_sent_bytes=' + str(mydict['iperf_tcp_ul_sent_bytes']))
+				except Exception as ex:
 					mydict['iperf_tcp_ul_sent_bytes'] = [None]
+					print('(Monitor) ERROR: iperf_tcp_ul_sent_bytes=' + str(ex))
 				try:
 					mydict['iperf_tcp_ul_received_bps'] = [data['end']['sum_received']['bits_per_second']]
 				except:
@@ -279,8 +282,10 @@ class Monitor:
 					mydict['iperf_udp_dl_bytes'] = [None]
 				try:
 					mydict['iperf_udp_dl_bps'] = [data['end']['sum']['bits_per_second']]
-				except:
+					print('(Monitor) DBG: iperf_udp_dl_bps=' + str(mydict['iperf_udp_dl_bps']))
+				except Exception as ex:
 					mydict['iperf_udp_dl_bps'] = [None]
+					print('(Monitor) ERROR: iperf_udp_dl_bps=' + str(ex))
 				try:
 					mydict['iperf_udp_dl_jitter_ms'] = [data['end']['sum']['jitter_ms']]
 				except:
@@ -296,8 +301,10 @@ class Monitor:
 					mydict['iperf_udp_ul_bytes'] = [None]
 				try:
 					mydict['iperf_udp_ul_bps'] = [data['end']['sum']['bits_per_second']]
+					print('(Monitor) DBG: iperf_udp_ul_bps=' + str(mydict['iperf_udp_ul_bps']))
 				except:
 					mydict['iperf_udp_ul_bps'] = [None]
+					print('(Monitor) ERROR: iperf_udp_ul_bps=' + str(ex))
 				try:
 					mydict['iperf_udp_ul_jitter_ms'] = [data['end']['sum']['jitter_ms']]
 				except:
@@ -310,7 +317,9 @@ class Monitor:
 
 
 	def get_udpping_stats(self,server_ip,packet_size=1250,num_packets=5000,interval_ms=20,port=1234):
-
+		print('(Monitor) DBG: Entered udpPing at:'+str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: packet_size='+str(packet_size)+',num_packets='+str(num_packets)+
+			  'interval_ms='+str(interval_ms)+'...')
 		# get loc
 		try:
 			mypath=os.path.join(gparams._ROOT_DIR,'client')
@@ -351,6 +360,7 @@ class Monitor:
 			udpping_cl2server_ns = df['client2server_ns'].mean()
 			udpping_server2cl_ns = df['server2client_ns'].mean()
 			udpping_rtt_ns = df['rtt_ns'].mean()
+			print('(Monitor) DBG UdpPing RTT='+str(udpping_rtt_ns))
 		except Exception as ex:
 			print('(Monitor) ERROR cannot process udpPing='+str(ex))
 
@@ -373,10 +383,10 @@ class Monitor:
 
 		return mydict
 
-	def get_owamp_stats(self,host,packs,interval):
-		print('Entered OWAMP stats...')
+	def get_owamp_stats(self,host,packs,interval,packet_size=1200):
+		print('(Monitor) DBG: Entered OWAMP at:' + str(self.helper.get_str_timestamp()))
 		try:
-			command = ["owping", "-c", str(packs), "-s", str(1200) , "-i",str(interval),host]
+			command = ["owping", "-c", str(packs), "-s", str(packet_size) , "-i",str(interval),host]
 			result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 			output= result.stdout
 
@@ -522,9 +532,9 @@ class Monitor:
 
 		return mydict
 
-	def get_twamp_stats(self,host,packs,interval):
-		print('Entered TWAMP stats...')
-		cmd = ["twping", "-c", str(packs), "-s", str(1200), "-i", str(interval), host]
+	def get_twamp_stats(self,host,packs,interval,packet_size=1200):
+		print('(Monitor) DBG: Entered TWAMP at:' + str(self.helper.get_str_timestamp()))
+		cmd = ["twping", "-c", str(packs), "-s", str(packet_size), "-i", str(interval), host]
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 		if result.returncode != 0:
 			print(f"Error running twping: {result.stderr}")

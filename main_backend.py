@@ -74,6 +74,7 @@ class Backend:
 				mycsv_line = self.helper.get_str_timestamp() + gparams._DELIMITER + myline
 				self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
 				print('(Backend) DBG: ' + myline)
+				print('--------------------------------')
 
 			self.counter_camp=self.counter_camp+1
 
@@ -213,12 +214,13 @@ class Backend:
 			base_dict.update(df_iperf_udp_dl)
 			base_dict.update(df_iperf_udp_ul)
 
-			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval)
-			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval)
+			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval,packet_size=_packet_size)
+			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval,packet_size=_packet_size)
 			base_dict.update(dict_owamp)
 			base_dict.update(dict_twamp)
 
-			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=_packet_size,num_packets=_ping_packs,interval_ms=_ping_interval)
+			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=_packet_size,num_packets=_ping_packs,
+												interval_ms=_ping_interval)
 			base_dict.update(dict_udp_ping)
 
 			mystr=''
