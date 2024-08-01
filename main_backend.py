@@ -15,10 +15,7 @@ class Backend:
 		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_BASE, header=gparams._DB_FILE_FIELDS_OUTPUT_BASE)
 		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, header=gparams._DB_FILE_FIELDS_OUTPUT_LOG)
 		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_PHY, header=gparams._DB_FILE_FIELDS_OUTPUT_PHY)
-		try:
-			self.helper.clean_db(loc=gparams._DB_FILE_LOC_INPUT_USER)
-		except:
-			pass
+
 		
 		self.counter_exp=0
 		self.counter_camp=0
