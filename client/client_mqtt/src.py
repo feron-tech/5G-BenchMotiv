@@ -10,7 +10,7 @@ def on_publish(client, userdata, mid, reason_code, properties):
         print("on_publish() is called with a mid not present in unacked_publish")
 _server_ip= os.environ['ENV_SERVER_IP']
 
-
+_sleep_sec=os.environ['SLEEP_SEC']
 _server_ip= os.environ['ENV_SERVER_IP']
 _server_port= int(os.environ['ENV_SERVER_PORT'])
 _max_size=int(os.environ['MAX_PAYLOAD_SIZE'])
@@ -34,6 +34,8 @@ while True:
 
     msg_info = mqttc.publish(topic='golden_unit/test', payload=payload, qos=1)
     unacked_publish.add(msg_info.mid)
+
+    time.sleep(_sleep_sec)
 
 
 mqttc.disconnect()

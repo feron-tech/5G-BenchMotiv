@@ -122,7 +122,8 @@ class Backend:
 			env = {
 				'ENV_SERVER_IP': _server_ip,
 				'ENV_SERVER_PORT': int(gparams._PORT_SERVER_MQTT1),
-				'MAX_PAYLOAD_SIZE':int(gparams._MQTT_MAX_PAYLOAD)
+				'MAX_PAYLOAD_SIZE':int(gparams._MQTT_MAX_PAYLOAD),
+				'SLEEP_SEC':int(gparams._MQTT_SLEEP_SEC)
 			}
 			self.get_app_measurements(app_name='mqtt', app_image='client_mqtt',
 			                          env=env, max_packs=max_packs)
