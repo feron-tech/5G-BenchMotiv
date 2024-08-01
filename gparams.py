@@ -3,7 +3,7 @@ import os
 if os.name == 'nt':
     _ROOT_DIR='C:\\Pycharm\\Projects\\golden_unit'
 else:
-    _ROOT_DIR='/home/simu5g/git/golden_unit'
+    _ROOT_DIR='/home/targetx/git/golden_unit'
 
 _DELIMITER=';'
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
@@ -79,8 +79,8 @@ _ATTEMPTS_BACKEND_READ_INPUT_SOURCES=1e6
 _WAIT_SEC_BACKEND_READ_INPUT_SOURCES=15
 
 ## app settings
-_MQTT_MAX_PAYLOAD=300
-_MQTT_SLEEP_SEC=0.020
+_MQTT_MAX_PAYLOAD=70000
+_MQTT_SLEEP_SEC=0.040
 _PHY_PORT='/dev/ttyUSB3'
 _PHY_BAUD_RATE=115200
 _PHY_CMD='AT'
