@@ -179,8 +179,11 @@ class Backend:
 		mon = Monitor()
 		try:
 			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
-			_duration=int(self.df_in_user['in_set_exp_duration'].iloc[0])
-			_camp_name = self.df_in_user['in_meas_campaign_name'].iloc[0]
+			_iperf_duration=10
+			_camp_name = 'test'
+			_ping_interval = 0.020
+			_ping_packs = 5000
+			_packet_size=1200
 			print('(Backend) DBG: Get baseline measurements for ip='+str(_server_ip)+'...')
 
 			base_dict={}
@@ -190,32 +193,31 @@ class Backend:
 			base_dict['timestamp'] = [self.helper.get_str_timestamp()]
 
 			try:
-				ping_interval = float(self.df_in_user['in_set_ping_interval'].iloc[0])
-				ping_packs = int(self.df_in_user['ping_packs'].iloc[0])
-				df_ping=mon.get_ping_stats(server_ip=_server_ip,packs=ping_packs,interval=ping_interval)
+
+				df_ping=mon.get_ping_stats(server_ip=_server_ip,packs=_ping_packs,interval=_ping_interval)
 			except:
 				df_ping = mon.get_ping_stats(server_ip=_server_ip)
 			base_dict.update(df_ping)
 
 			df_iperf_tcp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=True,duration=_duration,bitrate=None,mss=1200)
+												flag_downlink=True,duration=_iperf_duration,bitrate=None,mss=_packet_size)
 			df_iperf_tcp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=False,duration=_duration,bitrate=None,mss=1200)
+												flag_downlink=False,duration=_iperf_duration,bitrate=None,mss=_packet_size)
 			df_iperf_udp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=True,duration=_duration,bitrate='2000M',mss=1200)
+												flag_downlink=True,duration=_iperf_duration,bitrate='2000M',mss=_packet_size)
 			df_iperf_udp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=False,duration=_duration,bitrate='2000M',mss=1200)
+												flag_downlink=False,duration=_iperf_duration,bitrate='2000M',mss=_packet_size)
 			base_dict.update(df_iperf_tcp_dl)
 			base_dict.update(df_iperf_tcp_ul)
 			base_dict.update(df_iperf_udp_dl)
 			base_dict.update(df_iperf_udp_ul)
 
-			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=100,interval=ping_interval)
-			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=100,interval=ping_interval)
+			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval)
+			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval)
 			base_dict.update(dict_owamp)
 			base_dict.update(dict_twamp)
 
-			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=1200,num_packets=500,interval_ms=20)
+			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=_packet_size,num_packets=_ping_packs,interval_ms=_ping_interval)
 			base_dict.update(dict_udp_ping)
 
 			mystr=''
