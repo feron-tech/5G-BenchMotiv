@@ -1,6 +1,6 @@
 from monitor import Monitor
 
-server_ip='192.168.200.118'
+server_ip='192.168.200.117'
 
 
 mon = Monitor()

@@ -39,7 +39,7 @@ app.layout = html.Div(children=[
 
                 html.Label('Server IP', style={'color': 'Black', 'font-size': 35}),
                 html.Br(),
-                dcc.Input(id='in_set_server_ip', type='text', value='192.168.200.117', style={'width': '600px', 'font-size': 25}),
+                dcc.Input(id='in_set_server_ip', type='text', value='192.168.168.11.2', style={'width': '600px', 'font-size': 25}),
                 html.Br(),
                 html.Br(),
 
