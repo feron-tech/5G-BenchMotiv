@@ -319,7 +319,7 @@ class Monitor:
 	def get_udpping_stats(self,server_ip,packet_size=1250,num_packets=5000,interval_ms=20,port=1234):
 		print('(Monitor) DBG: Entered udpPing at:'+str(self.helper.get_str_timestamp()))
 		print('(Monitor) DBG: Settings: packet_size='+str(packet_size)+',num_packets='+str(num_packets)+
-			  'interval_ms='+str(interval_ms)+'...')
+			  ',interval_ms='+str(interval_ms)+'...')
 		# get loc
 		try:
 			mypath=os.path.join(gparams._ROOT_DIR,'client')
@@ -385,7 +385,7 @@ class Monitor:
 
 	def get_owamp_stats(self,host,packs,interval,packet_size=1200):
 		print('(Monitor) DBG: Entered OWAMP at:' + str(self.helper.get_str_timestamp()))
-		print('(Monitor) DBG: packs=' + str(packs)+'packetSize='+str(packet_size)+'interval='+str(interval)+'...')
+		print('(Monitor) DBG: packs=' + str(packs)+',packetSize='+str(packet_size)+',interval='+str(interval)+'...')
 		try:
 			command = ["owping", "-c", str(packs), "-s", str(packet_size) , "-i",str(interval),host]
 			result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -535,7 +535,7 @@ class Monitor:
 
 	def get_twamp_stats(self,host,packs,interval,packet_size=1200):
 		print('(Monitor) DBG: Entered TWAMP at:' + str(self.helper.get_str_timestamp()))
-		print('(Monitor) DBG: packs=' + str(packs)+'packetSize='+str(packet_size)+'interval='+str(interval)+'...')
+		print('(Monitor) DBG: packs=' + str(packs)+',packetSize='+str(packet_size)+',interval='+str(interval)+'...')
 
 		cmd = ["twping", "-c", str(packs), "-s", str(packet_size), "-i", str(interval), host]
 		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

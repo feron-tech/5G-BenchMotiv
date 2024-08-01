@@ -74,7 +74,7 @@ class Backend:
 				mycsv_line = self.helper.get_str_timestamp() + gparams._DELIMITER + myline
 				self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
 				print('(Backend) DBG: ' + myline)
-				print('--------------------------------')
+				print('---   ---   --- ---   ---   --- ---   ---   --- ')
 
 			self.counter_camp=self.counter_camp+1
 
