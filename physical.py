@@ -306,7 +306,7 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
     qnwinfo_info = my_modem.get_net_info()
     my_modem.serving_cell()
 
-    if False:
+    if True:
         print(mode_pref)
         print(oper)
         print(act)
@@ -350,7 +350,7 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
                     str(sinr_rx3) + gparams._DELIMITER +
                     str(sinr_sysmode) )
 
-    helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
+    helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_PHY, mystr=mycsv_line)
 
 if __name__ == "__main__":
     try:
