@@ -354,7 +354,8 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
 
 if __name__ == "__main__":
     try:
-        main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt', camp_name=None, camp_id=0,
+        while True:
+            main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt', camp_name=None, camp_id=0,
              exp_id=0)
     except Exception as ex:
         print('(Physical) ERROR: Failed='+str(ex))

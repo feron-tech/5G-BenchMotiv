@@ -100,7 +100,8 @@ class Backend:
 		if (self.df_in_user['in_app_base'].iloc[0]):
 
 			try:
-				subprocess.run(["/home/targetx/anaconda3/envs/golden_unit/bin/python", "physical.py"], capture_output=True, text=True)
+				subprocess.run(["/home/targetx/anaconda3/envs/golden_unit/bin/python", "physical.py"],
+							   capture_output=True, text=True)
 				print('(Backend) DBG: physical capture OK')
 			except Exception as ex:
 				print('(Backend) ERROR: At physical capture:'+str(ex))
