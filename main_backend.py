@@ -180,10 +180,10 @@ class Backend:
 		try:
 			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
 			_iperf_duration=10
-			_camp_name = 'test'
-			_ping_interval = 0.020
+			_camp_name = 'dur_10,int_7ms,packs_5k,size_908'
+			_ping_interval = 0.007
 			_ping_packs = 5000
-			_packet_size=1200
+			_packet_size=908
 			print('(Backend) DBG: Get baseline measurements for ip='+str(_server_ip)+'...')
 
 			base_dict={}
