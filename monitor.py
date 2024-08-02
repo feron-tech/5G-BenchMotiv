@@ -29,7 +29,7 @@ class Monitor:
 
 		try:
 
-
+			# ping has a max packet len around 1500 bytes
 			res = ping(server_ip, count=packs, interval=interval,privileged=False,timeout=0.5)
 			print('(Monitor) DBG: Ping res=' + str(res))
 			#first_row=True

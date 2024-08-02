@@ -1,5 +1,14 @@
+import iperf3
+from icmplib import ping, multiping, traceroute, resolve
+from icmplib import async_ping, async_multiping, async_resolve
+from icmplib import ICMPv4Socket, ICMPv6Socket, AsyncSocket, ICMPRequest, ICMPReply
+from icmplib import ICMPLibError, NameLookupError, ICMPSocketError
+from icmplib import SocketAddressError, SocketPermissionError
+from icmplib import SocketUnavailableError, SocketBroadcastError, TimeoutExceeded
+from icmplib import ICMPError, DestinationUnreachable, TimeExceeded
+
 from monitor import Monitor
 mon = Monitor()
 
-mydict = mon.get_ping_stats(server_ip='192.168.200.117')
-print(str(mydict))
+res = ping('www.google.gr', count=5, interval=0.01,privileged=False,timeout=0.5,payload_size=1200)
+print(str(res))
