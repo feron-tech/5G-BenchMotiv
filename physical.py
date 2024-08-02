@@ -297,8 +297,8 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
 
     oper, act = my_modem.get_oper_and_mode()
 
-    apn = my_modem.get_apn()
-    resp1 = my_modem.set_apn(myapn)
+    #apn = my_modem.get_apn()
+    #resp1 = my_modem.set_apn(myapn)
     rssi, ber = my_modem.get_csq()
     qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
     rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
@@ -310,8 +310,8 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
         print(mode_pref)
         print(oper)
         print(act)
-        print(apn)
-        print(resp1)
+        #print(apn)
+        #print(resp1)
         print(rssi)
         print(ber)
         print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
