@@ -23,8 +23,12 @@ class Monitor:
 		self.helper=Helper()
 
 	def get_ping_stats(self,server_ip,packs=50,interval=1):
+		print('(Monitor) DBG: Entered Ping at:' + str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: server_ip=' + str(server_ip) + ',num_packets=' + str(packs) +
+			  ',interval=' + str(interval) + '...')
+
 		try:
-			print('(Monitor) DBG: Get ping for ip='+str(server_ip)+'...')
+
 
 			res = ping(server_ip, count=packs, interval=interval,privileged=False,timeout=0.5)
 			print('(Monitor) DBG: Ping res=' + str(res))
