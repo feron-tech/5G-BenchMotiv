@@ -306,7 +306,7 @@ class Monitor:
 				try:
 					mydict['iperf_udp_ul_bps'] = [data['end']['sum']['bits_per_second']]
 					print('(Monitor) DBG: iperf_udp_ul_bps=' + str(mydict['iperf_udp_ul_bps']))
-				except:
+				except Exception as ex:
 					mydict['iperf_udp_ul_bps'] = [None]
 					print('(Monitor) ERROR: iperf_udp_ul_bps=' + str(ex))
 				try:
