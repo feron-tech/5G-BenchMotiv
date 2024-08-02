@@ -182,7 +182,7 @@ class Backend:
 		try:
 			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
 			_iperf_duration=10
-			_camp_name = 'day2_exp2_baseline'
+			_camp_name = 'day2_midband_exp1'
 			_ping_interval = 0.020
 			_ping_packs = 2000
 			_packet_size=1200
