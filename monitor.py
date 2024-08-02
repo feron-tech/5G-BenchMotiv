@@ -26,7 +26,7 @@ class Monitor:
 		try:
 			print('(Monitor) DBG: Get ping for ip='+str(server_ip)+'...')
 
-			res = ping(server_ip, count=packs, interval=interval,privileged=False)
+			res = ping(server_ip, count=packs, interval=interval,privileged=False,timeout=0.5)
 			print('(Monitor) DBG: Ping res=' + str(res))
 			#first_row=True
 			#mydf=None
