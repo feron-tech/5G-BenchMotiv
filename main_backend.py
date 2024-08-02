@@ -184,7 +184,7 @@ class Backend:
 			_iperf_duration=10
 			_camp_name = 'day2_midband_exp1'
 			_ping_interval = 0.020
-			_ping_packs = 2000
+			_ping_packs = 5000
 			_packet_size=1200
 			print('(Backend) DBG: Get baseline measurements for ip='+str(_server_ip)+'...')
 
