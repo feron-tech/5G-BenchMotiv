@@ -101,6 +101,7 @@ python main_backend.py
 open new terminal
 python main_frontend.py
 ```
+
 <!---sudo iptables -I INPUT -s 192.168.200.118 -j ACCEPT-->
 <!---#sudo iptables -I OUTPUT -s 192.168.200.118 -j ACCEPT-->
 
