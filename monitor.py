@@ -714,7 +714,7 @@ class Monitor:
 						self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
 					attempt = attempt + 1
 
-					cap = pyshark.LiveCapture(interface=my_iface, display_filter=display_filter)
+					cap = pyshark.LiveCapture(interface=my_iface, display_filter=display_filter,output_file='path_to_save.pcap')
 					cap.sniff(timeout=1)
 					res=200
 				except:

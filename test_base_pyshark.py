@@ -17,8 +17,11 @@ from icmplib import ICMPLibError, NameLookupError, ICMPSocketError
 from icmplib import SocketAddressError, SocketPermissionError
 from icmplib import SocketUnavailableError, SocketBroadcastError, TimeoutExceeded
 from icmplib import ICMPError, DestinationUnreachable, TimeExceeded
+from monitor import Monitor
 
+mymon=Monitor()
 
+mymon.get_pyshark_kpis(my_iface='vethcc322d1')
 
 cap = pyshark.LiveCapture(interface='Ethernet',output_file='path_to_save.pcap')
 cap.sniff(timeout=1)
