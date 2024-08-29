@@ -38,7 +38,7 @@ Python/Anaconda
 ```python
 conda create --name golden_unit python=3.8
 conda activate golden_unit 
-pip install iperf3 pyshark pandas docker icmplib pyserial paho-mqtt dash dash-bootstrap-components
+pip install iperf3 pyshark pandas docker icmplib pyserial paho-mqtt dash dash-bootstrap-components matplotlib
 ```
 
 Docker images
