@@ -21,17 +21,6 @@ from monitor import Monitor
 
 mymon=Monitor()
 
-mymon.get_pyshark_kpis(my_iface='vethcc322d1')
-
-cap = pyshark.LiveCapture(interface='Ethernet',output_file='path_to_save.pcap')
-cap.sniff(timeout=1)
-
-pack_cnt = 0
-max_packs=100
-
-for pack in cap:
-	print(str(pack))
-	print('--------------------------')
-	if pack_cnt > max_packs:
-		break
-	pack_cnt = pack_cnt + 1
+a,b=mymon.get_pyshark_kpis(my_iface='vethcc322d1',max_packs=50)
+print(str(a))
+print(str(b))
