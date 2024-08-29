@@ -5,10 +5,10 @@ cap = cv2.VideoCapture('http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg')
 
 while(True):
     ret, frame = cap.read()
-    print(str(frame))
     #img_resize = cv2.resize(frame, (960, 540))
     #cv2.imshow('live cam', frame)
-    if cv2.waitKey(50) & 0xFF == ord('q'):
+    print('Client getting data=' + str(frame))
+    if cv2.waitKey(1) == 13:
         break
 
 cap.release()
