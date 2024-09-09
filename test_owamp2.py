@@ -1,27 +1,30 @@
-import json
 import subprocess
-import re
-#from influxdb_client import InfluxDBClient, Point, WritePrecision
-#from influxdb_client.client.write_api import SYNCHRONOUS
-import time
-
-# Target server IP
-host = "192.168.200.117"
-count=5
-#config_file = 'configfile_tcp.json'
-
-command = ["owping", "-c", str(count), host]
-result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-print(result.stdout)
-print('------------------------')
-command = ["owping", "-R", "-c", str(count), host]
-result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-print(result.stdout)
-out=result.stdout
-
 import gparams
 from io import StringIO
 import pandas as pd
+
+server_ip = "192.168.200.117"
+packs=5
+interval_sec=0.020
+payload_bytes=120
+
+cmd=['owping']
+
+cmd.append('-c')
+cmd.append(str(packs))
+
+cmd.append('-s')
+cmd.append(str(payload_bytes))
+
+cmd.append('-i')
+cmd.append(str(interval_sec))
+
+cmd.append('-R')
+
+cmd.append(str(server_ip))
+
+result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+output = result.stdout
 
 cols=[
     'SEQ',
@@ -34,21 +37,21 @@ cols=[
     'TTL'
 ]
 
-out = out.replace(' ', ';')
-out = out.replace('\n', '$')
-out = out.replace('$', '\n')
-df_str = StringIO(out)
+output = output.replace(' ', ';')
+output = output.replace('\n', '$')
+output = output.replace('$', '\n')
+df_str = StringIO(output)
 
 df = pd.read_table(df_str, sep=';', header=None)
 df.columns = cols
-print(str(df))
 
 df['is_previous_larger'] = (df['SEQ'].shift(1) > df['SEQ']).astype(int)
 mylist=df.index[df['is_previous_larger'] == 1].tolist()
-a=mylist[0]
+df = df.drop('is_previous_larger', axis=1)
+sep_raw=mylist[0]
 
-first_ten = df[:a]
-rest = df[a:]
+first_ten = df[:sep_raw]
+rest = df[sep_raw:]
 
 print(str(first_ten))
 print(str(rest))
