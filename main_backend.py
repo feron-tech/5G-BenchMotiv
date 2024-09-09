@@ -26,9 +26,12 @@ class Backend:
 		self.df_out_monitor=None
 
 		# init functions
-		res=self.init_dbs()
-		if res is None:
-			return
+		if gparams._LOCAL_TEST:
+			pass
+		else:
+			res=self.init_dbs()
+			if res is None:
+				return
 
 		# read user input
 		res=self.read_input()

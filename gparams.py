@@ -16,6 +16,7 @@ _UDPPING_ROOT=os.path.join(os.path.join(_ROOT_DIR,'client'),'udp-ping')
 _UDPPING_DELIMITER=';'
 _OWAMP_DELIMITER=';'
 _TWAMP_DELIMITER=';'
+_DELIMITER=';'
 
 _DB_FILE_LOC_OUTPUT_BASE=os.path.join(_DB_DIR,'db_output_base.json')
 _DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
@@ -198,4 +199,5 @@ _MQTT_SLEEP_SEC=0.040
 #_PHY_CMD='AT'
 #_PHY_APN='internet.vodafone.gr'
 
-
+## local test
+_LOCAL_TEST=True
