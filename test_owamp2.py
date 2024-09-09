@@ -43,6 +43,12 @@ df = pd.read_table(df_str, sep=';', header=None)
 df.columns = cols
 print(str(df))
 
+df['is_previous_larger'] = (df['SEQ'].shift(1) > df['SEQ']).astype(int)
+print(str(df))
+
+first_ten = df[:10]
+rest = df[10:]
+
 
 
 
