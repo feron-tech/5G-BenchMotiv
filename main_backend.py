@@ -125,7 +125,7 @@ class Backend:
 	def run_exp(self):
 		# baseline measurements
 		self.get_baseline_measurements()
-
+		exit()
 		max_packs =int(self.db_in_user['in_set_num_packets'].iloc[0])
 
 		# video stream
@@ -206,7 +206,7 @@ class Backend:
 			_duration_sec=int(self.db_in_user['Experiment']['Baseline']['iperf']['duration (sec)'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init iperf test ...')
+			print('(Backend) DBG: Init iperf test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init iperf: '+str(ex))
 			return None
@@ -229,8 +229,8 @@ class Backend:
 
 			if data is not None:
 				try:
-					myjson_line['tcp_dl_retransmits'] = data['tcp_dl_retransmits']
-					myjson_line['tcp_dl_sent_bps'] = data['tcp_dl_sent_bps']
+					myjson_line['tcp_dl_retransmits'] = data['end']['sum_sent']['retransmits']
+					myjson_line['tcp_dl_sent_bps'] = data['end']['sum_sent']['bits_per_second']
 					myjson_line['tcp_dl_sent_bytes'] = data['end']['sum_sent']['bytes']
 					myjson_line['tcp_dl_received_bps'] = data['end']['sum_received']['bits_per_second']
 					myjson_line['tcp_dl_received_bytes'] = data['end']['sum_received']['bytes']
@@ -288,7 +288,12 @@ class Backend:
 	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,
 	                    pack_len=None):
 		print('(Backend) DBG: Entered iperf3 stats at:'+str(self.helper.get_str_timestamp()))
-		print('(Backend) DBG: Settings: UDP='+str(flag_udp)+',Downlink='+str(flag_downlink)+'...')
+		print('(Backend) DBG: Settings: UDP='+str(flag_udp)+
+		      ',Downlink='+str(flag_downlink)+
+		      ',bitrate='+str(bitrate)+
+		      ',duration='+str(duration)+
+				'pack_len='+str(pack_len)+
+		      '...')
 		# init iperf3
 		cmd=['iperf3']
 
@@ -378,17 +383,18 @@ class Backend:
 	def get_icmp_stats(self,server_ip,packs=50,interval_sec=1,payload_bytes=64):
 		print('(Monitor) DBG: Entered ICMP ping stats at:' + str(self.helper.get_str_timestamp()))
 		print('(Monitor) DBG: Settings: server_ip=' + str(server_ip) + ',num_packets=' + str(packs) +
-			  ',interval_sec=' + str(interval_sec) + 'payload_bytes='+str(payload_bytes)+' ...')
+			  ',interval_sec=' + str(interval_sec) + ',payload_bytes='+str(payload_bytes)+' ...')
 
 		try:
 			# ping has a max packet len around 1500 bytes
-			res = ping(server_ip, count=packs, interval=interval_sec,payload=payload_bytes,privileged=False,timeout=0.5)
+			res = ping(server_ip, count=packs, interval=interval_sec,payload_size=payload_bytes,privileged=False,timeout=0.5)
 			print('(Monitor) DBG: Ping res=' + str(res))
 
 			if res.is_alive:
+				print('(Monitor) DBG: Ping alive!')
 				return res
 			else:
-				print('(Monitor) DBG: Ping not alive!')
+				print('(Monitor) DBG: Ping NOT alive!')
 				return None
 
 		except Exception as ex:
@@ -466,9 +472,13 @@ class Backend:
 
 			df = pd.read_table(df_str, sep=gparams._UDPPING_DELIMITER, header=None)
 			df.columns = gparams._RES_FILE_FIELDS_UDPPING
+
+			temp_df=df.tail(1)
+			print('(Backend) Result=' + str(temp_df))
+
 			return df
 		except Exception as ex:
-			print('(Monitor) ERROR cannot process udpPing='+str(ex))
+			print('(Backend) ERROR cannot process udpPing='+str(ex))
 			return None
 
 	def get_owamp(self):
@@ -535,7 +545,7 @@ class Backend:
 			df = pd.read_table(df_str, sep=gparams._OWAMP_DELIMITER, header=None)
 			df.columns = gparams._RES_FILE_FIELDS_OWAMP
 
-			df['is_previous_larger'] = (df['SEQ'].shift(1) > df['SEQ']).astype(int)
+			df['is_previous_larger'] = (df[gparams._KEY_WORD_OWAMP].shift(1) > df[gparams._KEY_WORD_OWAMP]).astype(int)
 			mylist = df.index[df['is_previous_larger'] == 1].tolist()
 			df = df.drop('is_previous_larger', axis=1)
 			sep_raw = mylist[0]

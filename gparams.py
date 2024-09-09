@@ -151,6 +151,7 @@ _RES_FILE_FIELDS_OWAMP=[
     'rx_err_perc',
     'ttl'
 ]
+_KEY_WORD_OWAMP='seq_nr'
 
 _RES_FILE_LOC_TWAMP=os.path.join(_DB_DIR,'twamp.json')
 _RES_FILE_FIELDS_TWAMP=[
