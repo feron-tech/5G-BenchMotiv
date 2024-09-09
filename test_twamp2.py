@@ -8,7 +8,7 @@ packs=5
 interval_sec=0.020
 payload_bytes=120
 
-cmd=['owping']
+cmd=['twping']
 
 cmd.append('-c')
 cmd.append(str(packs))
