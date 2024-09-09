@@ -17,6 +17,31 @@ print('------------------------')
 command = ["owping", "-R", "-c", str(count), host]
 result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 print(result.stdout)
+out=result.stdout
+
+import gparams
+from io import StringIO
+import pandas as pd
+
+cols=[
+    'SEQ',
+    'STIME',
+    'SS',
+    'SERR',
+    'RTIME',
+    'RS',
+    'RERR',
+    'TTL'
+]
+
+out = out.replace(' ', ';')
+out = out.replace('\n', '$')
+out = out.replace('$', '\n')
+df_str = StringIO(out)
+
+df = pd.read_table(df_str, sep=';', header=None)
+df.columns = cols
+print(str(df))
 
 
 
