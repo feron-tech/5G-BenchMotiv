@@ -6,7 +6,7 @@ if os.name == 'nt':
     _ROOT_DIR='C:\\Pycharm\\Projects\\golden_unit'
 else:
     # linux OS
-    _ROOT_DIR='/home/targetx/git/golden_unit'
+    _ROOT_DIR='/home/simu5g/git/golden_unit'
 ################################################################
 
 # folder settings
