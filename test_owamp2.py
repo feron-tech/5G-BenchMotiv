@@ -44,10 +44,14 @@ df.columns = cols
 print(str(df))
 
 df['is_previous_larger'] = (df['SEQ'].shift(1) > df['SEQ']).astype(int)
-print(str(df))
+mylist=df.index[df['is_previous_larger'] == 1].tolist()
+a=mylist[0]
 
-first_ten = df[:10]
-rest = df[10:]
+first_ten = df[:a]
+rest = df[a:]
+
+print(str(first_ten))
+print(str(rest))
 
 
 
