@@ -1,21 +1,23 @@
 import os
 
+#########################  input params  ########################
 if os.name == 'nt':
+    # windows OS
     _ROOT_DIR='C:\\Pycharm\\Projects\\golden_unit'
 else:
+    # linux OS
     _ROOT_DIR='/home/targetx/git/golden_unit'
+################################################################
 
-_DELIMITER=';'
+# folder settings
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
+_RES_DIR=os.path.join(_ROOT_DIR,'results')
+_UDPPING_ROOT=os.path.join(os.path.join(_ROOT_DIR,'client'),'udp-ping')
+_UDPPING_DELIMITER=';'
+_OWAMP_DELIMITER=';'
+_TWAMP_DELIMITER=';'
 
-_DB_FILE_FIELDS_INPUT_UDP_PING=('seq_nr;send_time;server_time;receive_time;client2server_ns;server2client_ns;rtt_ns')
-
-_DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.csv')
-_DB_FILE_FIELDS_INPUT_USER='in_set_client_ip;in_set_server_ip;in_set_num_packets;in_set_exp_duration;in_stats_thru;' \
-                           'in_stats_rtt;in_stats_e2e_delay;in_app_base;in_app_mqtt;' \
-                           'in_app_video_stream;in_app_profinet'
-
-_DB_FILE_LOC_OUTPUT_BASE=os.path.join(_DB_DIR,'db_output_base.csv')
+_DB_FILE_LOC_OUTPUT_BASE=os.path.join(_DB_DIR,'db_output_base.json')
 _DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
                              'ping_rtt_avg;ping_rtt_max;ping_rtt_min;ping_packet_loss_perc;' 
                             'ping_packets_lost;ping_jitter;' 
@@ -52,18 +54,128 @@ _DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
                              'udpping_cl2server_ns;udpping_server2cl_ns;udpping_rtt_ns'
                              )
 
-_DB_FILE_LOC_OUTPUT_APP=os.path.join(_DB_DIR,'db_output_app.csv')
+_DB_FILE_LOC_OUTPUT_APP=os.path.join(_DB_DIR,'db_output_app.json')
 _DB_FILE_FIELDS_OUTPUT_APP='camp_name;camp_id;exp_id;timestamp;app;total_packs;total_bytes;total_time;total_timestamp;' \
                            'mean_rtt;sd_rtt_jitter;throughput_bps;drop_perc;arrive_perc'
 
-_DB_FILE_LOC_OUTPUT_LOG=os.path.join(_DB_DIR,'db_output_log.csv')
+
+_RES_FILE_LOC_PHY=os.path.join(_DB_DIR,'phy.json')
+_RES_FILE_FIELDS_PHY={
+    'timestamp':None,
+    'mode_pref':None,
+    'oper':None,
+    'act':None,
+    'apn':None,
+    'resp1':None,
+    'rssi':None,
+    'ber':None,
+    'qrsrp_prx':None,
+    'qrsrp_drx':None,
+    'qrsrp_rx2':None,
+    'qrsrp_rx3':None,
+    'qrsrp_sysmode':None,
+    'rsrq_prx':None,
+    'rsrq_drx':None,
+    'rsrq_rx2':None,
+    'rsrq_rx3':None,
+    'rsrq_sysmode':None,
+    'sinr_prx':None,
+    'sinr_drx':None,
+    'sinr_rx2':None,
+    'sinr_rx3':None,
+    'sinr_sysmode':None
+}
+
+_RES_FILE_LOC_IPERF=os.path.join(_DB_DIR,'iperf.json')
+_RES_FILE_FIELDS_IPERF={
+    'camp_name': None,
+    'repeat_id': None,
+    'exp_id': None,
+    'timestamp': None,
+    'tcp_dl_retransmits': None,
+    'tcp_dl_sent_bps': None,
+    'tcp_dl_sent_bytes': None,
+    'tcp_dl_received_bps': None,
+    'tcp_dl_received_bytes': None,
+    'tcp_ul_retransmits': None,
+    'tcp_ul_sent_bps': None,
+    'tcp_ul_sent_bytes': None,
+    'tcp_ul_received_bps': None,
+    'tcp_ul_received_bytes': None,
+    'udp_dl_bytes': None,
+    'udp_dl_bps': None,
+    'udp_dl_jitter_ms': None,
+    'udp_dl_lost_percent': None,
+    'udp_ul_bytes': None,
+    'udp_ul_bps': None,
+    'udp_ul_jitter_ms': None,
+    'udp_ul_lost_percent': None
+}
+
+_RES_FILE_LOC_ICMP=os.path.join(_DB_DIR,'icmp.json')
+_RES_FILE_FIELDS_ICMP={
+    'camp_name': None,
+    'repeat_id': None,
+    'exp_id': None,
+    'timestamp': None,
+    'min_rtt_ms': None,
+    'avg_rtt_ms': None,
+    'max_rtt_ms': None,
+    'rtts_ms': None,
+    'packets_sent': None,
+    'packets_received': None,
+    'packet_loss_0to1': None,
+    'jitter_ms': None
+}
+
+_RES_FILE_LOC_UDPPING=os.path.join(_DB_DIR,'udpping.json')
+_RES_FILE_FIELDS_UDPPING=[
+    'seq_nr',
+    'send_time',
+    'server_time',
+    'receive_time',
+    'client2server_ns',
+    'server2client_ns',
+    'rtt_ns'
+]
+
+_RES_FILE_LOC_OWAMP=os.path.join(_DB_DIR,'owamp.json')
+_RES_FILE_FIELDS_OWAMP=[
+    'seq_nr',
+    'tx_time',
+    'tx_sync',
+    'tx_err_perc',
+    'rx_time',
+    'rx_sync',
+    'rx_err_perc',
+    'ttl'
+]
+
+_RES_FILE_LOC_TWAMP=os.path.join(_DB_DIR,'twamp.json')
+_RES_FILE_FIELDS_TWAMP=[
+'tx_seq_nr',
+'tx_time',
+'tx_sync',
+'tx_err_perc',
+'tx_rx_time',
+'tx_rx_sync',
+'tx_rx_err_perc',
+'tx_ttl',
+'reflect_seq_nr',
+'reflect_tx_time',
+'reflect_tx_sync',
+'reflect_tx_err_perc',
+'rx_time',
+'rx_sync',
+'rx_err_perc',
+'reflect_ttl',
+]
+
+_DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.json')
+
+_DB_FILE_LOC_OUTPUT_LOG=os.path.join(_DB_DIR,'db_output_log.json')
 _DB_FILE_FIELDS_OUTPUT_LOG='time;description'
 
-_DB_FILE_LOC_OUTPUT_PHY=os.path.join(_DB_DIR,'db_output_phy.csv')
-_DB_FILE_FIELDS_OUTPUT_PHY=('camp_name;camp_id;exp_id;timestamp;'
-                            'mode_pref;oper;act;apn;resp1;rssi;ber;qrsrp_prx;qrsrp_drx;qrsrp_rx2;qrsrp_rx3'
-                            ';qrsrp_sysmode;rsrq_prx;rsrq_drx;rsrq_rx2;rsrq_rx3;rsrq_sysmode;'
-                            'sinr_prx;sinr_drx;sinr_rx2;sinr_rx3;sinr_sysmode')
 ## ports
 _PORT_SERVER_IPERF=5201
 _PORT_SERVER_MQTT1=1883
@@ -81,9 +193,9 @@ _WAIT_SEC_BACKEND_READ_INPUT_SOURCES=15
 ## app settings
 _MQTT_MAX_PAYLOAD=60000
 _MQTT_SLEEP_SEC=0.040
-_PHY_PORT='/dev/ttyUSB3'
-_PHY_BAUD_RATE=115200
-_PHY_CMD='AT'
-_PHY_APN='internet.vodafone.gr'
+#_PHY_PORT='/dev/ttyUSB3'
+#_PHY_BAUD_RATE=115200
+#_PHY_CMD='AT'
+#_PHY_APN='internet.vodafone.gr'
 
 

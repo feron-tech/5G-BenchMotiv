@@ -185,7 +185,8 @@ class Monitor:
 			print('(Monitor) ERROR: Iperf failed=' + str(ex))
 			return None
 
-	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,mss=None):
+	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,
+	                    pack_len=None):
 		print('(Monitor) DBG: Entered iperf3 at:'+str(self.helper.get_str_timestamp()))
 		print('(Monitor) DBG: Settings: UDP='+str(flag_udp)+',Downlink='+str(flag_downlink)+'...')
 		# init iperf3
@@ -196,7 +197,7 @@ class Monitor:
 		cmd.append(str(server_ip))
 
 		# add server port
-		cmd.append('--cport')
+		cmd.append('--port')
 		cmd.append(str(port))
 
 		# duration in sec
@@ -216,9 +217,9 @@ class Monitor:
 		if flag_udp:
 			cmd.append('--udp')
 
-		if mss is not None:
+		if pack_len is not None:
 			cmd.append('--length')
-			cmd.append(str(mss))
+			cmd.append(str(pack_len))
 
 		cmd.append('--json')
 
@@ -233,90 +234,29 @@ class Monitor:
 		mydict = {}
 		if not flag_udp:
 			if flag_downlink:
-				try:
-					mydict['iperf_tcp_dl_retransmits'] = [data['end']['sum_sent']['retransmits']]
-				except:
-					mydict['iperf_tcp_dl_retransmits'] = [None]
-				try:
-					mydict['iperf_tcp_dl_sent_bps'] = [data['end']['sum_sent']['bits_per_second']]
-				except:
-					mydict['iperf_tcp_dl_sent_bps'] = [None]
-				try:
-					mydict['iperf_tcp_dl_sent_bytes'] = [data['end']['sum_sent']['bytes']]
-				except:
-					mydict['iperf_tcp_dl_sent_bytes'] = [None]
-				try:
-					mydict['iperf_tcp_dl_received_bps'] = [data['end']['sum_received']['bits_per_second']]
-					print('(Monitor) DBG: iperf_tcp_dl_received_bps=' + str(mydict['iperf_tcp_dl_received_bps']))
-				except Exception as ex:
-					mydict['iperf_tcp_dl_received_bps'] = [None]
-					print('(Monitor) ERROR: iperf_tcp_dl_received_bps=' + str(ex))
-				try:
-					mydict['iperf_tcp_dl_received_bytes'] = [data['end']['sum_received']['bytes']]
-				except:
-					mydict['iperf_tcp_dl_received_bytes'] = [None]
+				mydict['tcp_dl_retransmits'] = data['end']['sum_sent']['retransmits']
+				mydict['tcp_dl_sent_bps'] = data['end']['sum_sent']['bits_per_second']
+				mydict['tcp_dl_sent_bytes'] = data['end']['sum_sent']['bytes']
+				mydict['tcp_dl_received_bps'] = data['end']['sum_received']['bits_per_second']
+				mydict['tcp_dl_received_bytes'] = data['end']['sum_received']['bytes']
 			else:
-				try:
-					mydict['iperf_tcp_ul_retransmits'] = [data['end']['sum_sent']['retransmits']]
-				except:
-					mydict['iperf_tcp_ul_retransmits'] = [None]
-				try:
-					mydict['iperf_tcp_ul_sent_bps'] = [data['end']['sum_sent']['bits_per_second']]
-				except:
-					mydict['iperf_tcp_ul_sent_bps'] = [None]
-				try:
-					mydict['iperf_tcp_ul_sent_bytes'] = [data['end']['sum_sent']['bytes']]
-					print('(Monitor) DBG: iperf_tcp_ul_sent_bytes=' + str(mydict['iperf_tcp_ul_sent_bytes']))
-				except Exception as ex:
-					mydict['iperf_tcp_ul_sent_bytes'] = [None]
-					print('(Monitor) ERROR: iperf_tcp_ul_sent_bytes=' + str(ex))
-				try:
-					mydict['iperf_tcp_ul_received_bps'] = [data['end']['sum_received']['bits_per_second']]
-				except:
-					mydict['iperf_tcp_ul_received_bps'] = [None]
-				try:
-					mydict['iperf_tcp_ul_received_bytes'] = [data['end']['sum_received']['bytes']]
-				except:
-					mydict['iperf_tcp_ul_received_bytes'] = [None]
+				mydict['tcp_ul_retransmits'] = data['end']['sum_sent']['retransmits']
+				mydict['tcp_ul_sent_bps'] = data['end']['sum_sent']['bits_per_second']
+				mydict['tcp_ul_sent_bytes'] = data['end']['sum_sent']['bytes']
+				mydict['tcp_ul_received_bps'] = data['end']['sum_received']['bits_per_second']
+				mydict['tcp_ul_received_bytes'] = data['end']['sum_received']['bytes']
 		else:
 			if flag_downlink:
-				try:
-					mydict['iperf_udp_dl_bytes'] = [data['end']['sum']['bytes']]
-				except:
-					mydict['iperf_udp_dl_bytes'] = [None]
-				try:
-					mydict['iperf_udp_dl_bps'] = [data['end']['sum']['bits_per_second']]
-					print('(Monitor) DBG: iperf_udp_dl_bps=' + str(mydict['iperf_udp_dl_bps']))
-				except Exception as ex:
-					mydict['iperf_udp_dl_bps'] = [None]
-					print('(Monitor) ERROR: iperf_udp_dl_bps=' + str(ex))
-				try:
-					mydict['iperf_udp_dl_jitter_ms'] = [data['end']['sum']['jitter_ms']]
-				except:
-					mydict['iperf_udp_dl_jitter_ms'] = [None]
-				try:
-					mydict['iperf_udp_dl_lost_percent'] = [data['end']['sum']['lost_percent']]
-				except:
-					mydict['iperf_udp_dl_lost_percent'] = [None]
+				mydict['udp_dl_bytes'] = data['end']['sum']['bytes']
+				mydict['udp_dl_bps'] = data['end']['sum']['bits_per_second']
+				mydict['udp_dl_jitter_ms'] = data['end']['sum']['jitter_ms']
+				mydict['udp_dl_lost_percent'] = data['end']['sum']['lost_percent']
 			else:
-				try:
-					mydict['iperf_udp_ul_bytes'] = [data['end']['sum']['bytes']]
-				except:
-					mydict['iperf_udp_ul_bytes'] = [None]
-				try:
-					mydict['iperf_udp_ul_bps'] = [data['end']['sum']['bits_per_second']]
-					print('(Monitor) DBG: iperf_udp_ul_bps=' + str(mydict['iperf_udp_ul_bps']))
-				except Exception as ex:
-					mydict['iperf_udp_ul_bps'] = [None]
-					print('(Monitor) ERROR: iperf_udp_ul_bps=' + str(ex))
-				try:
-					mydict['iperf_udp_ul_jitter_ms'] = [data['end']['sum']['jitter_ms']]
-				except:
-					mydict['iperf_udp_ul_jitter_ms'] = [None]
-				try:
-					mydict['iperf_udp_ul_lost_percent'] = [data['end']['sum']['lost_percent']]
-				except:
-					mydict['iperf_udp_ul_lost_percent'] = [None]
+				mydict['udp_ul_bytes'] = data['end']['sum']['bytes']
+				mydict['udp_ul_bps'] = data['end']['sum']['bits_per_second']
+				mydict['udp_ul_jitter_ms'] = data['end']['sum']['jitter_ms']
+				mydict['udp_ul_lost_percent'] = data['end']['sum']['lost_percent']
+
 		return mydict
 
 

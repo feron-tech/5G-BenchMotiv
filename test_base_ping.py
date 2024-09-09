@@ -10,5 +10,5 @@ from icmplib import ICMPError, DestinationUnreachable, TimeExceeded
 from monitor import Monitor
 mon = Monitor()
 
-res = ping('www.google.gr', count=5, interval=0.01,privileged=False,timeout=0.5,payload_size=1200)
+res = ping('8.8.8.8', count=5, interval=0.01,privileged=True,timeout=1,payload_size=1200)
 print(str(res))

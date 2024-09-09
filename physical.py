@@ -4,6 +4,8 @@ import serial
 import time
 from helper import Helper
 import gparams
+import os
+
 # Perform the regex search and extraction
 def extract_values(pattern, response):
     match = re.search(pattern, response)
@@ -285,7 +287,7 @@ class Modem:
         return response
 
 
-def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr',camp_name=None,camp_id=0,exp_id=0):
+def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr'):
     helper=Helper()
     my_modem = Modem()
     my_modem.initialize_port(port, baud_rate, 1)
@@ -306,56 +308,50 @@ def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodaf
     qnwinfo_info = my_modem.get_net_info()
     my_modem.serving_cell()
 
-    if True:
-        print(mode_pref)
-        print(oper)
-        print(act)
-        #print(apn)
-        #print(resp1)
-        print(rssi)
-        print(ber)
-        print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
-        print(rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode)
-        print(sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode)
-        print(qnwinfo_info)
-        print("+++++++++++++++++++++++")
 
+    print(mode_pref)
+    print(oper)
+    print(act)
+    #print(apn)
+    #print(resp1)
+    print(rssi)
+    print(ber)
+    print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
+    print(rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode)
+    print(sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode)
+    print(qnwinfo_info)
     print('(Physical) DBG: Completed serial physical measurements in parallel')
+    print("+++++++++++++++++++++++")
 
-    mycsv_line = (
-                    str(camp_name) + gparams._DELIMITER+
-                    str(camp_id)+ gparams._DELIMITER+
-                    str(exp_id)+ gparams._DELIMITER+
-                    helper.get_str_timestamp() + gparams._DELIMITER +
-                    str(mode_pref) + gparams._DELIMITER +
-                    str(oper) + gparams._DELIMITER +
-                    str(act) + gparams._DELIMITER +
-                    str(None) + gparams._DELIMITER +
-                    str(None) + gparams._DELIMITER +
-                    str(rssi) + gparams._DELIMITER +
-                    str(ber) + gparams._DELIMITER +
-                    str(qrsrp_prx) + gparams._DELIMITER +
-                    str(qrsrp_drx) + gparams._DELIMITER +
-                    str(qrsrp_rx2) + gparams._DELIMITER +
-                    str(qrsrp_rx3) + gparams._DELIMITER +
-                    str(qrsrp_sysmode) + gparams._DELIMITER +
-                    str(rsrq_prx) + gparams._DELIMITER +
-                    str(rsrq_drx) + gparams._DELIMITER +
-                    str(rsrq_rx2) + gparams._DELIMITER +
-                    str(rsrq_rx3) + gparams._DELIMITER +
-                    str(rsrq_sysmode) + gparams._DELIMITER +
-                    str(sinr_prx) + gparams._DELIMITER +
-                    str(sinr_drx) + gparams._DELIMITER  +
-                    str(sinr_rx2) + gparams._DELIMITER +
-                    str(sinr_rx3) + gparams._DELIMITER +
-                    str(sinr_sysmode) )
+    myjson_line=gparams._RES_FILE_FIELDS_PHY
+    myjson_line['timestamp']=helper.get_str_timestamp()
+    myjson_line['mode_pref'] = str(mode_pref)
+    myjson_line['oper'] = str(oper)
+    myjson_line['act'] = str(act)
+    myjson_line['rssi'] = str(rssi)
+    myjson_line['ber'] = str(ber)
+    myjson_line['qrsrp_prx'] = str(qrsrp_prx)
+    myjson_line['qrsrp_drx'] = str(qrsrp_drx)
+    myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
+    myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
+    myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
+    myjson_line['rsrq_prx'] = str(rsrq_prx)
+    myjson_line['rsrq_drx'] = str(rsrq_drx)
+    myjson_line['rsrq_rx2'] = str(rsrq_rx2)
+    myjson_line['rsrq_rx3'] = str(rsrq_rx3)
+    myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
+    myjson_line['sinr_prx'] = str(sinr_prx)
+    myjson_line['sinr_drx'] = str(sinr_drx)
+    myjson_line['sinr_rx2'] = str(sinr_rx2)
+    myjson_line['sinr_rx3'] = str(sinr_rx3)
+    myjson_line['sinr_sysmode'] = str(sinr_sysmode)
 
-    helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_PHY, mystr=mycsv_line)
+    myloc=os...............
+    helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
 
 if __name__ == "__main__":
     try:
         while True:
-            main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt', camp_name=None, camp_id=0,
-             exp_id=0)
+            main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt')
     except Exception as ex:
         print('(Physical) ERROR: Failed='+str(ex))

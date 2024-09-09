@@ -24,126 +24,1267 @@ app.layout = html.Div(children=[
 
     html.Div(children=[
 
-        html.Div([
+        # Row 1: Title of UI
+        # Row 2: Settings overall
+        dbc.Row(
+            [
+                # Col 1 - NETWORK SETTINGS & MEASUREMENT SETUP
+                dbc.Col(
+                    [
+                        # Network settings
+                        dbc.Row(
+                            [
+                                html.Div([
+                                    html.Label('Network settings', style={'color': 'Black', 'font-size': 45}),
+                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                          'justify-content': 'center'}),
 
-            html.Div(children=[
+                                html.Hr(style={'borderWidth':'0.3vh','width':'100%','borderColor':'#000000','opacity':'unset'}),
+                            ]
+                        ),
 
-                html.Label('Settings', style={'color': 'Black', 'font-size': 60}),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Client IP',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Client IP', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_client_ip', type='text', value='127.0.0.1', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='ntw_client_ip', type='text', value='192.168.1.1',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('Server IP', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_server_ip', type='text', value='192.168.11.2', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Server IP',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Number of probe packets', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_num_packets', type='text', value='12', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='ntw_server_ip', type='text', value='192.200.0.1',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('Max probe duration (sec)', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_exp_duration', type='text', value='3', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('APN',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Ping interval (sec)', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_ping_interval', type='text', value='0.5', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='ntw_apn', type='text', value='internet.vodafone.gr',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('Ping packets', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_set_ping_packs', type='text', value='50', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Modem port',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-            ], style={'padding': 10, 'flex': 1, 'width': '10%'}),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='ntw_modem_port', type='text', value='/dev/ttyUSB3',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-            html.Div(children=[
-                html.Label('Measurement Setup', style={'color': 'Black', 'font-size': 60}),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Baud rate (bps)',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Campaign name', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_meas_campaign_name', type='text', value='test', style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='ntw_baud_rate', type='text', value='115200',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('Experiments per campaign', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_meas_exps', type='text', value='3',
-                          style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                        # Measurement setup
+                        dbc.Row(
+                            [
+                                html.Div([
+                                    html.Label('Measurement setup', style={'color': 'Black', 'font-size': 45}),
+                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                          'justify-content': 'center'}),
 
-                html.Label('Campaign repetitions (times)', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_meas_repet', type='text', value='2',
-                          style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                                html.Hr(style={'borderWidth':'0.3vh','width':'100%','borderColor':'#000000','opacity':'unset'}),
+                            ]
+                        ),
 
-                html.Label('Repetition time gap (hours)', style={'color': 'Black', 'font-size': 35}),
-                html.Br(),
-                dcc.Input(id='in_meas_gap', type='text', value='1',
-                          style={'width': '600px', 'font-size': 25}),
-                html.Br(),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Campaign name',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-            ], style={'padding': 10, 'flex': 1}),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='mes_name', type='text', value='Test01',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-            html.Div(children=[
-                html.Label('Application Filter', style={'color': 'Black', 'font-size': 60}),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('# experiments per campaign',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Baseline', style={'color': 'Black', 'font-size': 35}),
-                html.Div([
-                    dcc.Dropdown(['True', 'False'], 'True', id='in_app_base',style={'width': '600px', 'font-size': 25}),
-                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='mes_exps', type='text', value='1',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('MQTT', style={'color': 'Black', 'font-size': 35}),
-                html.Div([
-                    dcc.Dropdown(['True', 'False'], 'True', id='in_app_mqtt',style={'width': '600px', 'font-size': 25}),
-                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('# repetitions per campaign',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Label('Video Stream', style={'color': 'Black', 'font-size': 35}),
-                html.Div([
-                    dcc.Dropdown(['True', 'False'], 'True', id='in_app_video_stream',style={'width': '600px', 'font-size': 25}),
-                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-                html.Br(),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='mes_repet', type='text', value='1',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                html.Label('Profinet', style={'color': 'Black', 'font-size': 35}),
-                html.Div([
-                    dcc.Dropdown(['True', 'False'], 'True', id='in_app_profinet',style={'width': '600px', 'font-size': 25}),
-                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-                html.Br(),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.Label('Repetition time gap (hours)',
+                                                       style={'color': 'Black', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
 
-                html.Div(children=[
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            dcc.Input(id='mes_gap', type='text', value='1',
+                                                      style={'width': '100%', 'font-size': 20}),
+                                        ], style={'width': '100%', 'display': 'flex',
+                                                  'align-items': 'left',
+                                                  'justify-content': 'left'}),
+                                    ]
+                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                            ]
+                        ),
 
-                    html.Button(id='button_start', n_clicks=0, children='Start!',
-                                style={'font-size': '55px', 'width': '200px', 'display': 'inline-block',
-                                       'margin-bottom': '10px',
-                                       'margin-right': '5px', 'height': '100px', 'verticalAlign': 'top',
-                                       'color': 'rgb(255,215,0)',
-                                       'background-color': 'rgb(0,0,0)'}),
+                    ]
+                    ,width=3,style={'margin-right': '0px', 'margin-left': '10px'}
+                ),
 
-                ], style={'padding': 10, 'flex': 1}),
+                # Col 2 - EXPERIMENT SETTINGS
+                dbc.Col(
+                    [
+                        dbc.Row(
+                            [
+                                html.Div([
+                                    html.Label('Experiment settings', style={'color': 'Black', 'font-size': 45}),
+                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                          'justify-content': 'center'}),
 
-            ], style={'padding': 10, 'flex': 1}),
+                                html.Hr(style={'borderWidth': '0.3vh', 'width': '100%', 'borderColor': '#000000',
+                                               'opacity': 'unset'}),
+                            ]
+                        ),
 
-        ], style={'display': 'flex', 'flex-direction': 'row'})
+                        dbc.Row(
+                            [
+                                # Column: Baseline Measurements
+                                dbc.Col(
+                                    [
+                                        # title
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('Baseline measurements (UL/DL)', style={'color': 'Black', 'font-size': 40}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                          'justify-content': 'center'}),
+
+                                                html.Hr(style={'borderWidth': '0.2vh', 'width': '100%',
+                                                               'borderColor': '#000000', 'opacity': 'unset'}),
+                                            ]
+                                        ),
+
+                                        ##### 01 iperf3 test BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('Iperf3 test', style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr(style={'width': '100%'})
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_base_perf_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Protocol(s)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['TCP', 'UDP', 'All'], 'All', id='exp_base_perf_protocol',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Payload size (bytes)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_perf_payload_bytes', type='text', value='50',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Target bitrate (Mbps)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_perf_rate_mbps', type='text', value='2000',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Probe duration (sec)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_perf_duration_sec', type='text',
+                                                                      value='10',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 01 iperf3 test END
+
+                                        ##### 02 ICMP ping test BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('ICMP Ping test',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_base_icmp_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet size (bytes)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_icmp_payload_bytes', type='text', value='56',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet interval (ms)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_icmp_interval_ms', type='text',
+                                                                      value='20',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('# packets',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_icmp_packets', type='text',
+                                                                      value='1000',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 02 ICMP ping test END
+
+                                        ##### 03 UDP ping test BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('UDP Ping test',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_base_udpping_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet size (bytes)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_udpping_payload_bytes', type='text', value='56',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet interval (ms)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_udpping_interval_ms', type='text',
+                                                                      value='20',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('# packets',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_udpping_packets', type='text',
+                                                                      value='1000',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 03 UDP ping test END
+
+                                        ##### 04 OWAMP/TWAMP test BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('OWAMP/TWAMP test',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_base_wamp_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet size (bytes)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_wamp_payload_bytes', type='text', value='56',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Packet interval (ms)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_wamp_interval_ms', type='text',
+                                                                      value='20',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('# packets',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_base_wamp_packets', type='text',
+                                                                      value='1000',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 04 OWAMP/TWAMP test END
+
+                                    ]
+                                    , width=5, style={'margin-right': '0px', 'margin-left': '100px'}
+                                ),
+
+                                # Column: Application-specific Measurements
+                                dbc.Col(
+                                    [
+                                        # title
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('Application-specific measurements', style={'color': 'Black', 'font-size': 40}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                          'justify-content': 'center'}),
+
+                                                html.Hr(style={'borderWidth': '0.2vh', 'width': '100%',
+                                                               'borderColor': '#000000', 'opacity': 'unset'}),
+                                            ]
+                                        ),
+
+                                        ##### 00 wireshark BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('Wireshark capture settings',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Max capture time (sec)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_shark_captime_sec', type='text', value='10',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Max captured packets',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_shark_maxpacks', type='text', value='5000',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 00 wireshark END
+
+                                        ##### 01 mqtt BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('App: MQTT publisher (UL)', style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_app_mqtt_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Max payload size (bytes)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_mqtt_payload_bytes', type='text', value='50',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Publish interval (ms)',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_mqtt_interval_ms', type='text', value='20',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 01 mqtt END
+
+                                        ##### 02 videostream BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('App: Video streamer (UL)',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'True', id='exp_app_video_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('FPS',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_video_fps', type='text',
+                                                                      value='30',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Frame width',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_video_width', type='text',
+                                                                      value='1280',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Frame height',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Input(id='exp_app_video_height', type='text',
+                                                                      value='720',
+                                                                      style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 02 videostream END
+
+                                        ##### 03 profinet BEGIN
+                                        dbc.Row(
+                                            [
+                                                html.Div([
+                                                    html.Label('App: Profinet client (UL)',
+                                                               style={'color': 'Black', 'font-size': 30}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'left',
+                                                          'justify-content': 'left'}),
+
+                                                html.Hr()
+                                            ]
+                                        ),
+
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            html.Label('Enable',
+                                                                       style={'color': 'Black', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+
+                                                dbc.Col(
+                                                    [
+                                                        html.Div([
+                                                            dcc.Dropdown(['True', 'False'], 'False', id='exp_app_profinet_enable',
+                                                                         style={'width': '100%', 'font-size': 20}),
+                                                        ], style={'width': '100%', 'display': 'flex',
+                                                                  'align-items': 'left',
+                                                                  'justify-content': 'left'}),
+                                                    ]
+                                                    , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                ),
+                                            ]
+                                        ),
+
+                                        ##### 03 profinet END
+
+                                        ##### placeholders
+                                        dbc.Row(
+                                            [
+                                                html.Br(),
+                                                html.Br(),
+                                                html.Br(),
+                                                html.Br(),
+                                            ]
+                                        ),
+                                        ##### 04 button start
+                                        dbc.Row(
+                                            [
+                                                html.Div(children=[
+
+                                                    html.Button(id='button_start', n_clicks=0, children='Start!',
+                                                                style={'font-size': '55px', 'width': '200px',
+                                                                       'display': 'inline-block',
+                                                                       'margin-bottom': '40px',
+                                                                       'margin-right': '5px', 'height': '100px',
+                                                                       'verticalAlign': 'top',
+                                                                       'color': 'rgb(255,215,0)',
+                                                                       'background-color': 'rgb(0,0,0)'}),
+
+                                                ], style={'padding': 10, 'flex': 1}),
+                                            ]
+                                        ),
+
+
+                                    ]
+                                    , width=5, style={'margin-right': '0px', 'margin-left': '100px'}
+                                ),
+
+                            ]
+                        ),
+
+                    ]
+                    , width=8, style={'margin-right': '0px', 'margin-left': '50px'}
+                ),
+
+            ]
+        ),
 
     ], style={'padding': 10, 'flex': 1, 'width': '10%',"border-left":"2px black solid"}),
 
@@ -405,59 +1546,160 @@ app.layout = html.Div(children=[
     #Output('modal-fs', 'is_open'),
     Input('button_start', 'n_clicks'),
 
-    State('in_set_client_ip', 'value'),
-    State('in_set_server_ip', 'value'),
-    State('in_set_num_packets', 'value'),
-    State('in_set_exp_duration', 'value'),
-    State('in_set_ping_interval', 'value'),
-    State('in_set_ping_packs', 'value'),
+    State('ntw_client_ip', 'value'),
+    State('ntw_server_ip', 'value'),
+    State('ntw_apn', 'value'),
+    State('ntw_modem_port', 'value'),
+    State('ntw_baud_rate', 'value'),
 
-    State('in_meas_campaign_name', 'value'),
-    State('in_meas_exps', 'value'),
-    State('in_meas_repet', 'value'),
-    State('in_meas_gap', 'value'),
+    State('mes_name', 'value'),
+    State('mes_exps', 'value'),
+    State('mes_repet', 'value'),
+    State('mes_gap', 'value'),
 
-    State('in_app_base', 'value'),
-    State('in_app_mqtt', 'value'),
-    State('in_app_video_stream', 'value'),
-    State('in_app_profinet', 'value')
+    State('exp_base_perf_enable', 'value'),
+    State('exp_base_perf_protocol', 'value'),
+    State('exp_base_perf_payload_bytes', 'value'),
+    State('exp_base_perf_rate_mbps', 'value'),
+    State('exp_base_perf_duration_sec', 'value'),
+
+    State('exp_base_icmp_enable', 'value'),
+    State('exp_base_icmp_payload_bytes', 'value'),
+    State('exp_base_icmp_interval_ms', 'value'),
+    State('exp_base_icmp_packets', 'value'),
+
+    State('exp_base_udpping_enable', 'value'),
+    State('exp_base_udpping_payload_bytes', 'value'),
+    State('exp_base_udpping_interval_ms', 'value'),
+    State('exp_base_udpping_packets', 'value'),
+
+    State('exp_base_wamp_enable', 'value'),
+    State('exp_base_wamp_payload_bytes', 'value'),
+    State('exp_base_wamp_interval_ms', 'value'),
+    State('exp_base_wamp_packets', 'value'),
+
+    State('exp_app_shark_captime_sec', 'value'),
+    State('exp_app_shark_maxpacks', 'value'),
+
+    State('exp_app_mqtt_enable', 'value'),
+    State('exp_app_mqtt_payload_bytes', 'value'),
+    State('exp_app_mqtt_interval_ms', 'value'),
+
+    State('exp_app_video_enable', 'value'),
+    State('exp_app_video_fps', 'value'),
+    State('exp_app_video_width', 'value'),
+    State('exp_app_video_height', 'value'),
+
+
+    State('exp_app_profinet_enable', 'value')
+
 )
 def update_output(button_start,
-in_set_client_ip,
-in_set_server_ip,
-in_set_num_packets,
-in_set_exp_duration,
-in_set_ping_interval,
-in_set_ping_packs,
-in_meas_campaign_name,
-in_meas_exps,
-in_meas_repet,
-in_meas_gap,
-in_app_base,
-in_app_mqtt,
-in_app_video_stream,
-in_app_profinet
+ntw_client_ip,
+ntw_server_ip,
+ntw_apn,
+ntw_modem_port,
+ntw_baud_rate,
+mes_name,
+mes_exps,
+mes_repet,
+mes_gap,
+exp_base_perf_enable,
+exp_base_perf_protocol,
+exp_base_perf_payload_bytes,
+exp_base_perf_rate_mbps,
+exp_base_perf_duration_sec,
+exp_base_icmp_enable,
+exp_base_icmp_payload_bytes,
+exp_base_icmp_interval_ms,
+exp_base_icmp_packets,
+exp_base_udpping_enable,
+exp_base_udpping_payload_bytes,
+exp_base_udpping_interval_ms,
+exp_base_udpping_packets,
+exp_base_wamp_enable,
+exp_base_wamp_payload_bytes,
+exp_base_wamp_interval_ms,
+exp_base_wamp_packets,
+exp_app_shark_captime_sec,
+exp_app_shark_maxpacks,
+exp_app_mqtt_enable,
+exp_app_mqtt_payload_bytes,
+exp_app_mqtt_interval_ms,
+exp_app_video_enable,
+exp_app_video_fps,
+exp_app_video_width,
+exp_app_video_height,
+exp_app_profinet_enable
 ):
     mydict={
-        'in_set_client_ip':[in_set_client_ip],
-        'in_set_server_ip': [in_set_server_ip],
-        'in_set_num_packets': [in_set_num_packets],
-        'in_set_exp_duration': [in_set_exp_duration],
-        'in_set_ping_interval': [in_set_ping_interval],
-        'in_set_ping_packs': [in_set_ping_packs],
-        'in_meas_campaign_name': [in_meas_campaign_name],
-        'in_meas_exps': [in_meas_exps],
-        'in_meas_repet': [in_meas_repet],
-        'in_meas_gap': [in_meas_gap],
-        'in_app_base': [in_app_base],
-        'in_app_mqtt': [in_app_mqtt],
-        'in_app_video_stream': [in_app_video_stream],
-        'in_app_profinet': [in_app_profinet],
+        'Network':{
+            'Client IP':ntw_client_ip,
+            'Server IP': ntw_server_ip,
+            'APN': ntw_apn,
+            'Modem port': ntw_modem_port,
+            'Baud rate': ntw_baud_rate
+        },
+        'Measurement':{
+            'Campaign name':mes_name,
+            'Experiments per campaign':mes_exps,
+            'Repetitions per campaign':mes_repet,
+            'Repetition time gap (hours)':mes_gap
+        },
+        'Experiment': {
+            'Baseline':{
+                'iperf':{
+                    'enable':exp_base_perf_enable,
+                    'protocols':exp_base_perf_protocol,
+                    'payload (bytes)':exp_base_perf_payload_bytes,
+                    'bitrate (Mbps)':exp_base_perf_rate_mbps,
+                    'duration (sec)':exp_base_perf_duration_sec
+                },
+                'icmp':{
+                    'enable':exp_base_icmp_enable,
+                    'payload (bytes)':exp_base_icmp_payload_bytes,
+                    'interval (ms)':exp_base_icmp_interval_ms,
+                    'packets':exp_base_icmp_packets
+                },
+                'udp ping':{
+                    'enable': exp_base_udpping_enable,
+                    'payload (bytes)': exp_base_udpping_payload_bytes,
+                    'interval (ms)': exp_base_udpping_interval_ms,
+                    'packets': exp_base_udpping_packets
+                },
+                'wamp':{
+                    'enable': exp_base_wamp_enable,
+                    'payload (bytes)': exp_base_wamp_payload_bytes,
+                    'interval (ms)': exp_base_wamp_interval_ms,
+                    'packets': exp_base_wamp_packets
+                }
+            },
+            'Application':{
+                'Wireshark':{
+                    'capture time (sec)': exp_app_shark_captime_sec,
+                    'max packets': exp_app_shark_maxpacks,
+                },
+                'MQTT':{
+                    'enable': exp_app_mqtt_enable,
+                    'payload (bytes)': exp_app_mqtt_payload_bytes,
+                    'interval (ms)': exp_app_mqtt_interval_ms
+                },
+                'Video':{
+                    'enable': exp_app_video_enable,
+                    'fps':exp_app_video_fps,
+                    'width':exp_app_video_width,
+                    'height':exp_app_video_height
+                },
+                'Profinet':{
+                    'enable': exp_app_profinet_enable,
+                }
+            }
+
+        },
     }
 
-    mydf=pd.DataFrame(mydict)
-    helper.clean_db(loc=gparams._DB_FILE_LOC_INPUT_USER)
-    res=helper.write_df2db(loc=gparams._DB_FILE_LOC_INPUT_USER,df=mydf,header=True)
+    res=helper.write_dict2json(loc=gparams._DB_FILE_LOC_INPUT_USER,mydict=mydict,clean=True)
+
     if res is not None:
         print('(DEBUG) DB: Updated db according to new user input - Success')
     else:

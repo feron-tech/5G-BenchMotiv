@@ -38,7 +38,7 @@ Python/Anaconda
 ```python
 conda create --name golden_unit python=3.8
 conda activate golden_unit 
-pip install iperf3 pyshark pandas docker icmplib pyserial paho-mqtt dash dash-bootstrap-components matplotlib
+pip install iperf3 pyshark pandas docker icmplib pyserial paho-mqtt dash dash-bootstrap-components matplotlib fsspec
 ```
 
 Docker images
@@ -91,12 +91,30 @@ iperf3 --server
 $ cd /{ROOT}/golden_unit/server/udp-ping
 $ ./udpServer
 + twampy/owampy activation
+
+curl -s https://downloads.perfsonar.net/install | sh -s - tools
+
+
+
+https://downloads.perfsonar.net/install
+https://downloads.perfsonar.net
+sudo apt install perfsonar-tools
+
+sudo apt install owamp-server
+
+sudo apt install owamp-client
+
+και το ίδιο για twamp
+
+αφού τρέξεις τον server στον client κάνεις owping
+
 ```
 
 ### Client-side
 ```python
 cd /golden_unit
 nano gparams.py (settings)
+{ROOT}/envs/golden_unit/bin/python physical.py
 python main_backend.py 
 open new terminal
 python main_frontend.py
@@ -115,3 +133,51 @@ python main_frontend.py
 <!---#sudo iptables -A PREROUTING -t nat -i ens18 -p tcp --dport 8050 -j DNAT --to 127.0.0.1:8050-->
 <!---sudo iptables -A FORWARD -p tcp -d 127.0.0.1 --dport 8050 -j ACCEPT-->
 
+## Tools repository
+	https://docs.perfsonar.net/manage_regular_tests.html
+	https://github.com/perfsonar/owamp
+	https://github.com/nokia/twampy
+	https://github.com/emirica/twamp-protocol
+	https://github.com/perfsonar/toolkit
+	https://data.mendeley.com/datasets/8cjkkw79z2/1
+	https://github.com/sonata-nfv/tng-sdk-benchmark
+	https://github.com/EricssonResearch/udp-ping
+	https://github.com/rtlabs-com/p-net
+	
+## Output
+1) Owamp -> owamp.json
+* camp_name-> campaign name
+* repeat_id-> campaign repetition ID
+* exp_id -> campaign's experiment ID
+* timestamp-> program timestamp
+* seq_nr      sequence number     unsigned long
+* tx_time    sendtime            owptimestamp (%020 PRIu64)
+* tx_sync       send synchronized   boolean unsigned
+* tx_err_perc     send err estimate   float (%g)
+* rx_time    recvtime            owptimestamp (%020 PRIu64)
+* rx_sync       recv synchronized   boolean unsigned
+* rx_err_perc     recv err estimate   float (%g)
+* ttl      ttl                 unsigned short
+* direction      direction                string: client to/from server (ul/dl)
+ 
+2) TWAMP -> twamp.json
+* camp_name-> campaign name
+* repeat_id-> campaign repetition ID
+* exp_id -> campaign's experiment ID
+* timestamp-> program timestamp
+* tx_seq_nr     send sequence number           unsigned long
+* tx_time    sendtime                       owptimestamp (%020 PRIu64)
+* tx_sync       send synchronized              boolean unsigned
+* tx_err_perc     send err estimate              float (%g)
+* tx_rx_time   send (receive) time            owptimestamp (%020 PRIu64)
+* tx_rx_sync      send (receive) synchronized    boolean unsigned
+* tx_rx_err_perc    send (receive) err estimate    float (%g)
+* tx_ttl     send ttl                       unsigned short
+* reflect_seq_nr     reflect sequence number        unsigned long
+* reflect_tx_time    reflected (send) time          owptimestamp (%020 PRIu64)
+* reflect_tx_sync       reflected (send) synchronized  boolean unsigned
+* reflect_tx_err_perc     reflected (send) err estimate  float (%g)
+* rx_time    recvtime                       owptimestamp (%020 PRIu64)
+* rx_sync       recv synchronized              boolean unsigned
+* rx_err_perc     recv err estimate              float (%g)
+* reflect_ttl     reflected ttl                  unsigned short

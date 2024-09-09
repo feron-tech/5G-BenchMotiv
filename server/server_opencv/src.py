@@ -5,6 +5,10 @@ import struct
 
 def do_stream(client_socket,client_address):
     cap = cv2.VideoCapture('space_sample.mp4')
+    cap.set(cv2.CAP_PROP_FPS,60)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
     try:
         while cap.isOpened():
             ret, frame = cap.read()

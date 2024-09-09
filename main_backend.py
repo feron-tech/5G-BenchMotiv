@@ -6,35 +6,65 @@ from orchestrator import Orchestrator
 import socket
 import time
 import subprocess
+import os
+import json
+from icmplib import ping, multiping, traceroute, resolve
+from icmplib import async_ping, async_multiping, async_resolve
+from icmplib import ICMPv4Socket, ICMPv6Socket, AsyncSocket, ICMPRequest, ICMPReply
+from icmplib import ICMPLibError, NameLookupError, ICMPSocketError
+from icmplib import SocketAddressError, SocketPermissionError
+from icmplib import SocketUnavailableError, SocketBroadcastError, TimeoutExceeded
+from icmplib import ICMPError, DestinationUnreachable, TimeExceeded
+from io import StringIO
 
 class Backend:
 	def __init__(self):
-		self.df_out_monitor=None
+		# help functions and params
 		self.helper = Helper()
-		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_APP, header=gparams._DB_FILE_FIELDS_OUTPUT_APP)
-		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_BASE, header=gparams._DB_FILE_FIELDS_OUTPUT_BASE)
-		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, header=gparams._DB_FILE_FIELDS_OUTPUT_LOG)
-		self.helper.init_db(loc=gparams._DB_FILE_LOC_OUTPUT_PHY, header=gparams._DB_FILE_FIELDS_OUTPUT_PHY)
-
-		
 		self.counter_exp=0
 		self.counter_camp=0
-		# read user input
-		self.df_in_user = self.read_input()
+		self.df_out_monitor=None
 
-		if self.df_in_user is not None:
-			self.run_campaign()
+		# init functions
+		res=self.init_dbs()
+		if res is None:
+			return
+
+		# read user input
+		res=self.read_input()
+		if res is None:
+			return
+
+		# run campaign
+		self.db_in_user = res # python translates str booleans to Python types
+		self.run_campaign()
+
+	def init_dbs(self):
+		mydbs=[
+			gparams._DB_FILE_LOC_INPUT_USER,
+			gparams._DB_FILE_LOC_OUTPUT_APP,
+			gparams._DB_FILE_LOC_OUTPUT_BASE,
+			gparams._DB_FILE_LOC_OUTPUT_LOG,
+			gparams._RES_FILE_LOC_PHY,
+		]
+
+		for el in mydbs:
+			res=self.helper.init_db(loc=el,header=None)
+			if res is None:
+				return None
+
+		return 200
 
 	def read_input(self):
-		res_df=None
+		res=None
 		attempt = 1
-		while (res_df is None) or (res_df.empty):
+		while (res is None):
 			print('(Backend) DBG: Reading input sources (attempt='+str(attempt)+')...')
 
 			if attempt>1:
 				self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
 
-			res_df=self.helper.read_db_df(loc=gparams._DB_FILE_LOC_INPUT_USER)
+			res=self.helper.read_json2dict(loc=gparams._DB_FILE_LOC_INPUT_USER)
 			attempt=attempt+1
 
 			if attempt>=gparams._ATTEMPTS_BACKEND_READ_INPUT_SOURCES:
@@ -42,20 +72,20 @@ class Backend:
 				return None
 
 		print('(Backend) DBG: Read input sources - Success')
-		return res_df
+		return res
 
 	def run_campaign(self):
 		try:
-			_camp_repet=int(self.df_in_user['in_meas_repet'].iloc[0])
-			_camp_gap = int(self.df_in_user['in_meas_gap'].iloc[0])
-			_camp_name = self.df_in_user['in_meas_campaign_name'].iloc[0]
-			_exp_num=int(self.df_in_user['in_meas_exps'].iloc[0])
+			_camp_repet=int(self.db_in_user['Measurement']['Repetitions per campaign'])
+			_camp_gap_hours = float(self.db_in_user['Measurement']['Repetition time gap (hours)'])
+			_camp_name = self.db_in_user['Measurement']['Campaign name']
+			_exp_num=int(self.db_in_user['Measurement']['Experiments per campaign'])
 
-			myline='Initiating campaign with name:'+ str(_camp_name)+',repet='+str(_camp_repet)+',gap='+str(_camp_gap)+',for exps='+str(_exp_num)
+			myline='Initiating campaign with name:'+ str(_camp_name)+',repet='\
+			       +str(_camp_repet)+',gap='+str(_camp_gap_hours)+',for exps='+str(_exp_num)
 			print('(Backend) DBG:'+str(myline))
 			mycsv_line = self.helper.get_str_timestamp()+gparams._DELIMITER+myline
 			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
-
 		except Exception as ex:
 			print('(Backend) ERROR: At input settings=' + str(ex))
 			return None
@@ -79,37 +109,24 @@ class Backend:
 			self.counter_camp=self.counter_camp+1
 
 			curr_time=self.helper.get_curr_time()
-			while (self.helper.diff_betw_times(time_start,curr_time)<3600*_camp_gap):
+			wait_time_sec=int((3600*_camp_gap_hours)/20)
+			while (self.helper.diff_betw_times(time_start,curr_time)<3600*_camp_gap_hours):
 				curr_time = self.helper.get_curr_time()
 				if (self.helper.diff_betw_times(time_start,curr_time) % 1200==0) or (self.helper.diff_betw_times(time_start,curr_time)<300):
-					myline = 'Waiting for new campaign, remaining (sec):' + str(3600*_camp_gap-self.helper.diff_betw_times(time_start,curr_time))
+					myline = 'Waiting for new repetition, remaining (sec):' + str(3600*_camp_gap_hours-self.helper.diff_betw_times(time_start,curr_time))
 					mycsv_line = self.helper.get_str_timestamp() + gparams._DELIMITER + myline
 					self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
 					print('(Backend) DBG: ' + myline)
-				self.helper.wait(300)
+				self.helper.wait(wait_time_sec)
 
 	def run_exp(self):
-		try:
-			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
-			print('(Backend) DBG: Initiating new experiment, target IP=' + str(_server_ip))
-		except Exception as ex:
-			print('(Backend) ERROR: Cannot init new experiment='+str(ex))
+		# baseline measurements
+		self.get_baseline_measurements()
 
-		if (self.df_in_user['in_app_base'].iloc[0]):
-
-			try:
-				subprocess.run(["/home/targetx/anaconda3/envs/golden_unit/bin/python", "physical.py"],
-							   capture_output=True, text=True)
-				print('(Backend) DBG: physical capture OK')
-			except Exception as ex:
-				print('(Backend) ERROR: At physical capture:'+str(ex))
-
-			self.get_baseline_measurements()
-
-		max_packs =int(self.df_in_user['in_set_num_packets'].iloc[0])
+		max_packs =int(self.db_in_user['in_set_num_packets'].iloc[0])
 
 		# video stream
-		if (self.df_in_user['in_app_video_stream'].iloc[0]):
+		if (self.db_in_user['in_app_video_stream'].iloc[0]):
 
 			env = {
 				'ENV_SERVER_IP': _server_ip,
@@ -119,7 +136,7 @@ class Backend:
 			                          env=env, max_packs=max_packs)
 
 		# mqtt
-		if (self.df_in_user['in_app_mqtt'].iloc[0]):
+		if (self.db_in_user['in_app_mqtt'].iloc[0]):
 			env = {
 				'ENV_SERVER_IP': _server_ip,
 				'ENV_SERVER_PORT': int(gparams._PORT_SERVER_MQTT1),
@@ -155,7 +172,7 @@ class Backend:
 			_DB_FILE_FIELDS_OUTPUT_APP = 'camp_name;camp_id;exp_id;timestamp;app;total_packs;total_bytes;total_time;total_timestamp;' \
 			                             'mean_rtt;sd_rtt_jitter;throughput_bps;drop_perc;arrive_perc'
 
-			mystr = self.df_in_user['in_meas_campaign_name'].iloc[0]+gparams._DELIMITER+\
+			mystr = self.db_in_user['in_meas_campaign_name'].iloc[0]+gparams._DELIMITER+\
 				str(self.counter_camp)+gparams._DELIMITER+\
 			        str(self.counter_exp)+gparams._DELIMITER+\
 			        str(dict_res['timestamp'][0]) +gparams._DELIMITER+\
@@ -177,64 +194,433 @@ class Backend:
 		else:
 			print('(Backend) ERROR: Get measurements for app=' + str(app_name) + ' failed!')
 
-	def get_baseline_measurements(self):
-		mon = Monitor()
+	def get_iperf(self):
 		try:
-			_server_ip = self.df_in_user['in_set_server_ip'].iloc[0]
-			_iperf_duration=10
-			_camp_name = 'day2_midband_exp7'
-			_ping_interval = 0.040
-			_ping_packs = 2000
-			_packet_size=60000
-			print('(Backend) DBG: Get baseline measurements for ip='+str(_server_ip)+'...')
-
-			base_dict={}
-			base_dict['camp_name'] = [str(_camp_name)]
-			base_dict['camp_id'] = [str(self.counter_camp)]
-			base_dict['exp_id'] = [str(self.counter_exp)]
-			base_dict['timestamp'] = [self.helper.get_str_timestamp()]
-
-			try:
-
-				df_ping=mon.get_ping_stats(server_ip=_server_ip,packs=_ping_packs,interval=_ping_interval)
-			except:
-				df_ping = mon.get_ping_stats(server_ip=_server_ip)
-			base_dict.update(df_ping)
-
-			df_iperf_tcp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=True,duration=_iperf_duration,bitrate=None,mss=_packet_size)
-			df_iperf_tcp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=False,
-												flag_downlink=False,duration=_iperf_duration,bitrate=None,mss=_packet_size)
-			df_iperf_udp_dl=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=True,duration=_iperf_duration,bitrate='2000M',mss=_packet_size)
-			df_iperf_udp_ul=mon.get_iperf_stats(server_ip=_server_ip,port=gparams._PORT_SERVER_IPERF,flag_udp=True,
-												flag_downlink=False,duration=_iperf_duration,bitrate='2000M',mss=_packet_size)
-			base_dict.update(df_iperf_tcp_dl)
-			base_dict.update(df_iperf_tcp_ul)
-			base_dict.update(df_iperf_udp_dl)
-			base_dict.update(df_iperf_udp_ul)
-
-			dict_owamp=mon.get_owamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval,packet_size=_packet_size)
-			dict_twamp=mon.get_twamp_stats(host=_server_ip,packs=_ping_packs,interval=_ping_interval,packet_size=_packet_size)
-			base_dict.update(dict_owamp)
-			base_dict.update(dict_twamp)
-
-			dict_udp_ping=mon.get_udpping_stats(server_ip=_server_ip,packet_size=_packet_size,num_packets=_ping_packs,
-												interval_ms=_ping_interval)
-			base_dict.update(dict_udp_ping)
-
-			mystr=''
-			mylist=gparams._DB_FILE_FIELDS_OUTPUT_BASE.split(gparams._DELIMITER)
-			for el in mylist:
-				mystr=mystr+str(base_dict[el][0])+gparams._DELIMITER
-			mystr = mystr[:-1]
-
-			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_BASE,mystr=mystr)
-
-			print('(Backend) DBG: Get baseline measurements OK!')
+			_enable=self.db_in_user['Experiment']['Baseline']['iperf']['enable']
+			_protocol = self.db_in_user['Experiment']['Baseline']['iperf']['protocols']
+			_payload_bytes = int(self.db_in_user['Experiment']['Baseline']['iperf']['payload (bytes)'])
+			_target_rate_mbps=int(self.db_in_user['Experiment']['Baseline']['iperf']['bitrate (Mbps)'])
+			_duration_sec=int(self.db_in_user['Experiment']['Baseline']['iperf']['duration (sec)'])
+			_server_ip=self.db_in_user['Network']['Server IP']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init iperf test ...')
 		except Exception as ex:
-			print('(Backend) ERROR: Failed to get baseline measurements='+str(ex))
+			print('(Backend) ERROR: Init iperf: '+str(ex))
 			return None
+
+		if not _enable:
+			return None
+
+		myjson_line = gparams._RES_FILE_FIELDS_IPERF
+		myjson_line['camp_name'] = _camp_name
+		myjson_line['repeat_id'] = str(self.counter_camp)
+		myjson_line['exp_id'] = str(self.counter_exp)
+		myjson_line['timestamp'] = self.helper.get_str_timestamp()
+
+		if _protocol in ['TCP','All']:
+
+			# TCP downlink
+			data = self.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,
+			                                      flag_udp=False,flag_downlink=True, duration=_duration_sec,
+			                                      bitrate=None,pack_len=_payload_bytes)
+
+			if data is not None:
+				try:
+					myjson_line['tcp_dl_retransmits'] = data['tcp_dl_retransmits']
+					myjson_line['tcp_dl_sent_bps'] = data['tcp_dl_sent_bps']
+					myjson_line['tcp_dl_sent_bytes'] = data['end']['sum_sent']['bytes']
+					myjson_line['tcp_dl_received_bps'] = data['end']['sum_received']['bits_per_second']
+					myjson_line['tcp_dl_received_bytes'] = data['end']['sum_received']['bytes']
+				except Exception as ex:
+					print('(Backend) ERROR: TCP downlink write ' + str(ex))
+
+			# TCP uplink
+			data = self.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,
+			                                      flag_udp=False,flag_downlink=False, duration=_duration_sec,
+			                                      bitrate=None,pack_len=_payload_bytes)
+
+			if data is not None:
+				try:
+					myjson_line['tcp_ul_retransmits'] = data['end']['sum_sent']['retransmits']
+					myjson_line['tcp_ul_sent_bps'] = data['end']['sum_sent']['bits_per_second']
+					myjson_line['tcp_ul_sent_bytes'] = data['end']['sum_sent']['bytes']
+					myjson_line['tcp_ul_received_bps'] = data['end']['sum_received']['bits_per_second']
+					myjson_line['tcp_ul_received_bytes'] = data['end']['sum_received']['bytes']
+				except Exception as ex:
+					print('(Backend) ERROR: TCP uplink write ' + str(ex))
+
+		if _protocol in ['UDP','All']:
+			_bitrate=str(_target_rate_mbps)+'M'
+
+			# UDP downlink
+			data = self.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,
+			                                      flag_udp=True,flag_downlink=True, duration=_duration_sec,
+			                                      bitrate=_bitrate,pack_len=_payload_bytes)
+
+			if data is not None:
+				try:
+					myjson_line['udp_dl_bytes'] = data['end']['sum']['bytes']
+					myjson_line['udp_dl_bps'] = data['end']['sum']['bits_per_second']
+					myjson_line['udp_dl_jitter_ms'] = data['end']['sum']['jitter_ms']
+					myjson_line['udp_dl_lost_percent'] = data['end']['sum']['lost_percent']
+				except Exception as ex:
+					print('(Backend) ERROR: UDP downlink write ' + str(ex))
+
+			# UDP uplink
+			data = self.get_iperf_stats(server_ip=_server_ip, port=gparams._PORT_SERVER_IPERF,
+			                                      flag_udp=True,flag_downlink=False, duration=_duration_sec,
+			                                      bitrate=_bitrate,pack_len=_payload_bytes)
+
+			if data is not None:
+				try:
+					myjson_line['udp_ul_bytes'] = data['end']['sum']['bytes']
+					myjson_line['udp_ul_bps'] = data['end']['sum']['bits_per_second']
+					myjson_line['udp_ul_jitter_ms'] = data['end']['sum']['jitter_ms']
+					myjson_line['udp_ul_lost_percent'] = data['end']['sum']['lost_percent']
+				except Exception as ex:
+					print('(Backend) ERROR: UDP uplink write ' + str(ex))
+
+		self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_IPERF, mydict=myjson_line, clean=False)
+
+	def get_iperf_stats(self,server_ip,port=5201,flag_udp=False,flag_downlink=False,duration=10,bitrate=None,
+	                    pack_len=None):
+		print('(Backend) DBG: Entered iperf3 stats at:'+str(self.helper.get_str_timestamp()))
+		print('(Backend) DBG: Settings: UDP='+str(flag_udp)+',Downlink='+str(flag_downlink)+'...')
+		# init iperf3
+		cmd=['iperf3']
+
+		# add server IP
+		cmd.append('--client')
+		cmd.append(str(server_ip))
+
+		# add server port
+		cmd.append('--port')
+		cmd.append(str(port))
+
+		# duration in sec
+		cmd.append('--time')
+		cmd.append(str(duration))
+
+		# bitrate in bps
+		if bitrate is not None:
+			cmd.append('--bitrate')
+			cmd.append(str(bitrate))
+
+		# check if reverse (uplink if the default in iperf, from client to server)
+		if flag_downlink:
+			cmd.append('--reverse')
+
+		# check if udp, default is tcp
+		if flag_udp:
+			cmd.append('--udp')
+
+		if pack_len is not None:
+			cmd.append('--length')
+			cmd.append(str(pack_len))
+
+		cmd.append('--json')
+
+		result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+		output= result.stdout
+
+		try:
+			data = json.loads(output)
+			return data
+		except Exception as ex:
+			print('(Monitor) ERROR in iperf3 output json='+str(ex))
+			return None
+
+
+	def get_icmp(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Baseline']['icmp']['enable']
+			_payload_bytes = int(self.db_in_user['Experiment']['Baseline']['icmp']['payload (bytes)'])
+			_interval_ms=int(self.db_in_user['Experiment']['Baseline']['icmp']['interval (ms)'])
+			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
+			_server_ip=self.db_in_user['Network']['Server IP']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init ICMP ping test ...')
+		except Exception as ex:
+			print('(Backend) ERROR: Init ICMP ping: '+str(ex))
+			return None
+
+		if not _enable:
+			return None
+
+		myjson_line = gparams._RES_FILE_FIELDS_ICMP
+		myjson_line['camp_name'] = _camp_name
+		myjson_line['repeat_id'] = str(self.counter_camp)
+		myjson_line['exp_id'] = str(self.counter_exp)
+		myjson_line['timestamp'] = self.helper.get_str_timestamp()
+
+		_interval_sec=_interval_ms*1e-3
+		data = self.get_icmp_stats(server_ip=_server_ip,packs=_packets,
+		                           interval_sec=_interval_sec,payload_bytes=_payload_bytes)
+
+		if data is not None:
+			try:
+				myjson_line['min_rtt_ms'] = data.min_rtt
+				myjson_line['avg_rtt_ms'] = data.avg_rtt
+				myjson_line['max_rtt_ms'] = data.max_rtt
+				myjson_line['rtts_ms']=data.rtts
+				myjson_line['packets_sent'] = data.packets_sent
+				myjson_line['packets_received'] = data.packets_received
+				myjson_line['packet_loss_0to1'] = data.packet_loss
+				myjson_line['jitter_ms'] = data.jitter
+			except Exception as ex:
+				print('(Backend) ERROR: ICMP ping write=' + str(ex))
+
+		self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_ICMP, mydict=myjson_line, clean=False)
+
+	def get_icmp_stats(self,server_ip,packs=50,interval_sec=1,payload_bytes=64):
+		print('(Monitor) DBG: Entered ICMP ping stats at:' + str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: server_ip=' + str(server_ip) + ',num_packets=' + str(packs) +
+			  ',interval_sec=' + str(interval_sec) + 'payload_bytes='+str(payload_bytes)+' ...')
+
+		try:
+			# ping has a max packet len around 1500 bytes
+			res = ping(server_ip, count=packs, interval=interval_sec,payload=payload_bytes,privileged=False,timeout=0.5)
+			print('(Monitor) DBG: Ping res=' + str(res))
+
+			if res.is_alive:
+				return res
+			else:
+				print('(Monitor) DBG: Ping not alive!')
+				return None
+
+		except Exception as ex:
+			print('(Monitor) ERROR: Ping failed=' + str(ex))
+			return None
+
+	def get_udpping(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Baseline']['icmp']['enable']
+			_payload_bytes = int(self.db_in_user['Experiment']['Baseline']['icmp']['payload (bytes)'])
+			_interval_ms=int(self.db_in_user['Experiment']['Baseline']['icmp']['interval (ms)'])
+			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
+			_server_ip=self.db_in_user['Network']['Server IP']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init UDP ping test ...')
+		except Exception as ex:
+			print('(Backend) ERROR: Init UDP ping: '+str(ex))
+			return None
+
+		if not _enable:
+			return None
+
+		myjson_line = gparams._RES_FILE_FIELDS_UDPPING
+		data_df = self.get_udpping_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
+		                                 packs=_packets,interval_ms=_interval_ms)
+
+		if data_df is not None:
+			try:
+				data_df['camp_name'] = _camp_name
+				data_df['repeat_id'] = str(self.counter_camp)
+				data_df['exp_id'] = str(self.counter_exp)
+				data_df['timestamp'] = self.helper.get_str_timestamp()
+
+				data_df.to_json(gparams._RES_FILE_LOC_UDPPING,orient='records', lines=True)
+			except Exception as ex:
+				print('(Backend) ERROR: UDP ping write=' + str(ex))
+
+	def get_udpping_stats(self,server_ip,payload_bytes=1250,packs=5000,interval_ms=20,port=1234):
+		print('(Monitor) DBG: Entered udpPing at:'+str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: payload_bytes='+str(payload_bytes)+',packs='+str(packs)+
+			  ',interval_ms='+str(interval_ms)+'...')
+		# get loc
+		try:
+			mypath=gparams._UDPPING_ROOT
+			cmd=[]
+			#cmd.append(str(mypath))
+			#cmd.append('&&')
+			cmd.append('./udpClient')
+
+			# add server IP
+			cmd.append('-a')
+			cmd.append(str(server_ip))
+
+			# add packet size
+			cmd.append('-s')
+			cmd.append(str(payload_bytes))
+
+			# num_packets
+			cmd.append('-n')
+			cmd.append(str(packs))
+
+			# interval_ms
+			cmd.append('-i')
+			cmd.append(str(interval_ms))
+
+			out = subprocess.check_output(cmd,cwd=mypath)
+
+			my_strs = (str(out)).split('(all times in ns)')
+			temp_str = my_strs[1].split('out of')
+			final_str = temp_str[0]
+			final_str = final_str.replace('\\n', '$')
+			final_str = final_str.replace('\n', '$')
+			final_str = final_str.replace('$', '\n')
+			df_str = StringIO(final_str)
+
+			df = pd.read_table(df_str, sep=gparams._UDPPING_DELIMITER, header=None)
+			df.columns = gparams._RES_FILE_FIELDS_UDPPING
+			return df
+		except Exception as ex:
+			print('(Monitor) ERROR cannot process udpPing='+str(ex))
+			return None
+
+	def get_owamp(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Baseline']['wamp']['enable']
+			_payload_bytes = int(self.db_in_user['Experiment']['Baseline']['wamp']['payload (bytes)'])
+			_interval_ms=int(self.db_in_user['Experiment']['Baseline']['wamp']['interval (ms)'])
+			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
+			_server_ip=self.db_in_user['Network']['Server IP']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init OWAMP test ...')
+		except Exception as ex:
+			print('(Backend) ERROR: Init OWAMP: '+str(ex))
+			return None
+
+		if not _enable:
+			return None
+
+		myjson_line = gparams._RES_FILE_FIELDS_OWAMP
+		data_df = self.get_owamp_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
+		                                 packs=_packets,interval_ms=_interval_ms)
+
+		if data_df is not None:
+			try:
+				data_df['camp_name'] = _camp_name
+				data_df['repeat_id'] = str(self.counter_camp)
+				data_df['exp_id'] = str(self.counter_exp)
+				data_df['timestamp'] = self.helper.get_str_timestamp()
+
+				data_df.to_json(gparams._RES_FILE_LOC_OWAMP,orient='records', lines=True)
+			except Exception as ex:
+				print('(Backend) ERROR: OWAMP write=' + str(ex))
+
+	def get_owamp_stats(self,server_ip,payload_bytes=1250,packs=5000,interval_ms=20):
+		print('(Monitor) DBG: Entered OWAMP at:'+str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: payload_bytes='+str(payload_bytes)+',packs='+str(packs)+
+			  ',interval_ms='+str(interval_ms)+'...')
+		# get loc
+		try:
+			cmd = ['owping']
+
+			cmd.append('-c')
+			cmd.append(str(packs))
+
+			cmd.append('-s')
+			cmd.append(str(payload_bytes))
+
+			interval_sec=interval_ms*1e-3
+			cmd.append('-i')
+			cmd.append(str(interval_sec))
+
+			cmd.append('-R')
+
+			cmd.append(str(server_ip))
+
+			result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+			output = result.stdout
+
+			output = output.replace(' ', gparams._OWAMP_DELIMITER)
+			output = output.replace('\n', '$')
+			output = output.replace('$', '\n')
+			df_str = StringIO(output)
+
+			df = pd.read_table(df_str, sep=gparams._OWAMP_DELIMITER, header=None)
+			df.columns = gparams._RES_FILE_FIELDS_OWAMP
+
+			df['is_previous_larger'] = (df['SEQ'].shift(1) > df['SEQ']).astype(int)
+			mylist = df.index[df['is_previous_larger'] == 1].tolist()
+			df = df.drop('is_previous_larger', axis=1)
+			sep_raw = mylist[0]
+
+			df.loc[:sep_raw, 'direction'] = 'ul'
+			df.loc[sep_raw:, 'direction'] = 'dl'
+
+			return df
+		except Exception as ex:
+			print('(Monitor) ERROR cannot process OWAMP='+str(ex))
+			return None
+
+	def get_twamp(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Baseline']['wamp']['enable']
+			_payload_bytes = int(self.db_in_user['Experiment']['Baseline']['wamp']['payload (bytes)'])
+			_interval_ms=int(self.db_in_user['Experiment']['Baseline']['wamp']['interval (ms)'])
+			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
+			_server_ip=self.db_in_user['Network']['Server IP']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init TWAMP test ...')
+		except Exception as ex:
+			print('(Backend) ERROR: Init TWAMP: '+str(ex))
+			return None
+
+		if not _enable:
+			return None
+
+		myjson_line = gparams._RES_FILE_FIELDS_TWAMP
+		data_df = self.get_twamp_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
+		                                 packs=_packets,interval_ms=_interval_ms)
+
+		if data_df is not None:
+			try:
+				data_df['camp_name'] = _camp_name
+				data_df['repeat_id'] = str(self.counter_camp)
+				data_df['exp_id'] = str(self.counter_exp)
+				data_df['timestamp'] = self.helper.get_str_timestamp()
+
+				data_df.to_json(gparams._RES_FILE_LOC_TWAMP,orient='records', lines=True)
+			except Exception as ex:
+				print('(Backend) ERROR: OWAMP write=' + str(ex))
+
+	def get_twamp_stats(self,server_ip,payload_bytes=1250,packs=5000,interval_ms=20):
+		print('(Monitor) DBG: Entered TWAMP at:'+str(self.helper.get_str_timestamp()))
+		print('(Monitor) DBG: Settings: payload_bytes='+str(payload_bytes)+',packs='+str(packs)+
+			  ',interval_ms='+str(interval_ms)+'...')
+		# get loc
+		try:
+			cmd = ['twping']
+
+			cmd.append('-c')
+			cmd.append(str(packs))
+
+			cmd.append('-s')
+			cmd.append(str(payload_bytes))
+
+			interval_sec=interval_ms*1e-3
+			cmd.append('-i')
+			cmd.append(str(interval_sec))
+
+			cmd.append('-R')
+
+			cmd.append(str(server_ip))
+
+			result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+			output = result.stdout
+
+			output = output.replace(' ', gparams._TWAMP_DELIMITER)
+			output = output.replace('\n', '$')
+			output = output.replace('$', '\n')
+			df_str = StringIO(output)
+
+			df = pd.read_table(df_str, sep=gparams._TWAMP_DELIMITER, header=None)
+			df.columns = gparams._RES_FILE_FIELDS_TWAMP
+
+			return df
+		except Exception as ex:
+			print('(Monitor) ERROR cannot process TWAMP='+str(ex))
+			return None
+
+	def get_baseline_measurements(self):
+		self.get_iperf()
+		self.get_icmp()
+		self.get_udpping()
+		self.get_owamp()
+		self.get_twamp()
+
 
 if __name__ == '__main__':
 	print('(Backend) DBG: Backend initialized')
