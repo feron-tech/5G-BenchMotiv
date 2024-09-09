@@ -50,11 +50,11 @@ mylist=df.index[df['is_previous_larger'] == 1].tolist()
 df = df.drop('is_previous_larger', axis=1)
 sep_raw=mylist[0]
 
-first_ten = df[:sep_raw]
-rest = df[sep_raw:]
+df.loc[:sep_raw, 'direction'] = 'ul'
+df.loc[sep_raw:, 'direction'] = 'dl'
 
-print(str(first_ten))
-print(str(rest))
+print(str(df))
+
 
 
 
