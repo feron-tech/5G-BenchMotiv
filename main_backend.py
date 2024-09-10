@@ -198,9 +198,6 @@ class Backend:
 		# deactivate app
 		orch.deactivate(image=_client_app_image_name)
 
-		print('(Backend) DBG: Get measurements for app=' + str(_app_name) + ' OK!')
-
-		print('(Backend) ERROR: Get measurements for app=' + str(_app_name) + ' failed!')
 
 	def get_pyshark_kpis(self,my_iface='Ethernet',display_filter=None,max_packs=5000,
 	                     captime_sec=10,camp_name='',app_name=''):
@@ -364,7 +361,7 @@ class Backend:
 				self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_APP, mydict=myjson_line, clean=False)
 
 			try:
-				os.remove(gparams._RES_FILE_LOC_APP)
+				os.remove(gparams._SHARK_TEMP_OUT_FILE)
 			except:
 				pass
 
@@ -373,8 +370,6 @@ class Backend:
 		except Exception as ex:
 			print('(Backend) ERROR: Capture analysis:'+str(ex))
 			return None
-
-
 
 	def get_iperf(self):
 		try:
