@@ -240,6 +240,7 @@ class Backend:
 					myjson_line['tcp_dl_sent_bytes'] = data['end']['sum_sent']['bytes']
 					myjson_line['tcp_dl_received_bps'] = data['end']['sum_received']['bits_per_second']
 					myjson_line['tcp_dl_received_bytes'] = data['end']['sum_received']['bytes']
+					print('(Backend) DBG: TCP downlink bps ' + str(myjson_line['tcp_dl_received_bps']))
 				except Exception as ex:
 					print('(Backend) ERROR: TCP downlink write ' + str(ex))
 
@@ -255,6 +256,7 @@ class Backend:
 					myjson_line['tcp_ul_sent_bytes'] = data['end']['sum_sent']['bytes']
 					myjson_line['tcp_ul_received_bps'] = data['end']['sum_received']['bits_per_second']
 					myjson_line['tcp_ul_received_bytes'] = data['end']['sum_received']['bytes']
+					print('(Backend) DBG: TCP uplink bps ' + str(myjson_line['tcp_ul_received_bps']))
 				except Exception as ex:
 					print('(Backend) ERROR: TCP uplink write ' + str(ex))
 
@@ -272,6 +274,7 @@ class Backend:
 					myjson_line['udp_dl_bps'] = data['end']['sum']['bits_per_second']
 					myjson_line['udp_dl_jitter_ms'] = data['end']['sum']['jitter_ms']
 					myjson_line['udp_dl_lost_percent'] = data['end']['sum']['lost_percent']
+					print('(Backend) DBG: UDP downlink bps ' + str(myjson_line['udp_dl_bps']))
 				except Exception as ex:
 					print('(Backend) ERROR: UDP downlink write ' + str(ex))
 
@@ -286,6 +289,7 @@ class Backend:
 					myjson_line['udp_ul_bps'] = data['end']['sum']['bits_per_second']
 					myjson_line['udp_ul_jitter_ms'] = data['end']['sum']['jitter_ms']
 					myjson_line['udp_ul_lost_percent'] = data['end']['sum']['lost_percent']
+					print('(Backend) DBG: UDP uplink bps ' + str(myjson_line['udp_ul_bps']))
 				except Exception as ex:
 					print('(Backend) ERROR: UDP uplink write ' + str(ex))
 
@@ -298,7 +302,7 @@ class Backend:
 		      ',Downlink='+str(flag_downlink)+
 		      ',bitrate='+str(bitrate)+
 		      ',duration='+str(duration)+
-				'pack_len='+str(pack_len)+
+			  ',pack_len='+str(pack_len)+
 		      '...')
 		# init iperf3
 		cmd=['iperf3']
@@ -353,7 +357,7 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init ICMP ping test ...')
+			print('(Backend) DBG: Init ICMP ping test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init ICMP ping: '+str(ex))
 			return None
@@ -415,7 +419,7 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init UDP ping test ...')
+			print('(Backend) DBG: Init UDP ping test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init UDP ping: '+str(ex))
 			return None
@@ -495,7 +499,7 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init OWAMP test ...')
+			print('(Backend) DBG: Init OWAMP test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init OWAMP: '+str(ex))
 			return None
@@ -558,10 +562,10 @@ class Backend:
 
 			df.loc[:sep_raw, 'direction'] = 'ul'
 			df.loc[sep_raw:, 'direction'] = 'dl'
-
+			print('(Backend) DBG OWAMP tx sync status='+str(df[gparams._DBG_KEY_WORD_OWAMP].mean()))
 			return df
 		except Exception as ex:
-			print('(Monitor) ERROR cannot process OWAMP='+str(ex))
+			print('(Backend) ERROR cannot process OWAMP='+str(ex))
 			return None
 
 	def get_twamp(self):
@@ -572,7 +576,7 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init TWAMP test ...')
+			print('(Backend) DBG: Init TWAMP test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init TWAMP: '+str(ex))
 			return None
@@ -627,7 +631,7 @@ class Backend:
 
 			df = pd.read_table(df_str, sep=gparams._TWAMP_DELIMITER, header=None)
 			df.columns = gparams._RES_FILE_FIELDS_TWAMP
-
+			print('(Backend) DBG OWAMP tx sync status='+str(df[gparams._DBG_KEY_WORD_OWAMP].mean()))
 			return df
 		except Exception as ex:
 			print('(Monitor) ERROR cannot process TWAMP='+str(ex))

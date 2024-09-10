@@ -152,6 +152,7 @@ _RES_FILE_FIELDS_OWAMP=[
     'ttl'
 ]
 _KEY_WORD_OWAMP='seq_nr'
+_DBG_KEY_WORD_OWAMP='tx_sync'
 
 _RES_FILE_LOC_TWAMP=os.path.join(_DB_DIR,'twamp.json')
 _RES_FILE_FIELDS_TWAMP=[
@@ -172,6 +173,7 @@ _RES_FILE_FIELDS_TWAMP=[
 'rx_err_perc',
 'reflect_ttl',
 ]
+_DBG_KEY_WORD_TWAMP='tx_sync'
 
 _DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.json')
 
