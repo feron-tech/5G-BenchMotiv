@@ -360,6 +360,10 @@ class Backend:
 				pack_cnt=pack_cnt+1
 				self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_APP, mydict=myjson_line, clean=False)
 
+
+				if pack_cnt<2:
+					print('(Backend) DBG: Capture example pack addr dest='+str(myjson_line['addr_dest']))
+
 			try:
 				os.remove(gparams._SHARK_TEMP_OUT_FILE)
 			except:
