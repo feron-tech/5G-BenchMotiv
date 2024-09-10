@@ -26,12 +26,9 @@ class Backend:
 		self.df_out_monitor=None
 
 		# init functions
-		if gparams._LOCAL_TEST:
-			pass
-		else:
-			res=self.init_dbs()
-			if res is None:
-				return
+		res=self.init_dbs()
+		if res is None:
+			return
 
 		# read user input
 		res=self.read_input()
@@ -43,13 +40,22 @@ class Backend:
 		self.run_campaign()
 
 	def init_dbs(self):
-		mydbs=[
-			gparams._DB_FILE_LOC_INPUT_USER,
-			gparams._DB_FILE_LOC_OUTPUT_APP,
-			gparams._DB_FILE_LOC_OUTPUT_BASE,
-			gparams._DB_FILE_LOC_OUTPUT_LOG,
-			gparams._RES_FILE_LOC_PHY,
-		]
+
+		if gparams._LOCAL_TEST:
+			mydbs=[
+				gparams._DB_FILE_LOC_OUTPUT_APP,
+				gparams._DB_FILE_LOC_OUTPUT_BASE,
+				gparams._DB_FILE_LOC_OUTPUT_LOG,
+				gparams._RES_FILE_LOC_PHY,
+			]
+		else:
+			mydbs=[
+				gparams._DB_FILE_LOC_INPUT_USER,
+				gparams._DB_FILE_LOC_OUTPUT_APP,
+				gparams._DB_FILE_LOC_OUTPUT_BASE,
+				gparams._DB_FILE_LOC_OUTPUT_LOG,
+				gparams._RES_FILE_LOC_PHY,
+			]
 
 		for el in mydbs:
 			res=self.helper.init_db(loc=el,header=None)
