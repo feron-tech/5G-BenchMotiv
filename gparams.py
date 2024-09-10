@@ -55,10 +55,29 @@ _DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
                              'udpping_cl2server_ns;udpping_server2cl_ns;udpping_rtt_ns'
                              )
 
-_DB_FILE_LOC_OUTPUT_APP=os.path.join(_DB_DIR,'db_output_app.json')
-_DB_FILE_FIELDS_OUTPUT_APP='camp_name;camp_id;exp_id;timestamp;app;total_packs;total_bytes;total_time;total_timestamp;' \
-                           'mean_rtt;sd_rtt_jitter;throughput_bps;drop_perc;arrive_perc'
+_DB_FILE_LOC_OUTPUT_LOG=os.path.join(_DB_DIR,'db_output_log.json')
+_DB_FILE_FIELDS_OUTPUT_LOG='time;description'
 
+_RES_FILE_LOC_APP=os.path.join(_DB_DIR,'app.json')
+_RES_FILE_FIELDS_APP={
+    'camp_name': None,
+    'repeat_id': None,
+    'exp_id': None,
+    'timestamp': None,
+    'app_name': None,
+    'pack_id': None,
+    'sniff_time':None,
+    'sniff_timestamp': None,
+    'protocol': None,
+    'pack_len_bytes': None,
+    'addr_src': None,
+    'port_src': None,
+    'addr_dest': None,
+    'port_dest': None,
+    'rtt': None,
+    'drop_flag': None,
+}
+_SHARK_TEMP_OUT_FILE=os.path.join(_ROOT_DIR,'mypcap.pcap')
 
 _RES_FILE_LOC_PHY=os.path.join(_DB_DIR,'phy.json')
 _RES_FILE_FIELDS_PHY={
@@ -177,8 +196,7 @@ _DBG_KEY_WORD_TWAMP='tx_sync'
 
 _DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.json')
 
-_DB_FILE_LOC_OUTPUT_LOG=os.path.join(_DB_DIR,'db_output_log.json')
-_DB_FILE_FIELDS_OUTPUT_LOG='time;description'
+
 
 ## ports
 _PORT_SERVER_IPERF=5201

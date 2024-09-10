@@ -6,7 +6,12 @@ WORKDIR /app
 # Copy your Python script and any required files into the container
 COPY src.py /app/
 COPY requirements.txt /app/
+
+# set env
 ENV ENV_SERVER_IP='127.0.0.1'
+ENV ENV_SERVER_PORT='1234'
+ENV SLEEP_SEC='1'
+ENV MAX_PAYLOAD_SIZE_BYTES='5'
 
 # Install any required Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

@@ -8,12 +8,11 @@ def on_publish(client, userdata, mid, reason_code, properties):
         userdata.remove(mid)
     except KeyError:
         print("on_publish() is called with a mid not present in unacked_publish")
-_server_ip= os.environ['ENV_SERVER_IP']
 
-_sleep_sec=os.environ['SLEEP_SEC']
 _server_ip= os.environ['ENV_SERVER_IP']
 _server_port= int(os.environ['ENV_SERVER_PORT'])
-_max_size=int(os.environ['MAX_PAYLOAD_SIZE'])
+_sleep_sec=os.environ['SLEEP_SEC']
+_max_size=int(os.environ['MAX_PAYLOAD_SIZE_BYTES'])
 print('Will send to ip:'+str(_server_ip)+',port='+str(_server_port))
 
 

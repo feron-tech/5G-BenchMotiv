@@ -1,12 +1,13 @@
+import time
 import pandas as pd
 from helper import Helper
 import gparams
-from monitor import Monitor
 from orchestrator import Orchestrator
 import socket
 import time
 import subprocess
 import os
+import pyshark
 import json
 from icmplib import ping, multiping, traceroute, resolve
 from icmplib import async_ping, async_multiping, async_resolve
@@ -92,7 +93,7 @@ class Backend:
 
 			myline='Initiating campaign with name:'+ str(_camp_name)+',repet='\
 			       +str(_camp_repet)+',gap='+str(_camp_gap_hours)+',for exps='+str(_exp_num)
-			print('(Backend) DBG:'+str(myline))
+			print('(Backend) DBG: '+str(myline))
 			mycsv_line = self.helper.get_str_timestamp()+gparams._DELIMITER+myline
 			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
 		except Exception as ex:
@@ -129,79 +130,246 @@ class Backend:
 				self.helper.wait(wait_time_sec)
 
 	def run_exp(self):
-		# baseline measurements
 		self.get_baseline_measurements()
-		exit()
-		max_packs =int(self.db_in_user['in_set_num_packets'].iloc[0])
+		self.get_app_measurements()
 
-		# video stream
-		if (self.db_in_user['in_app_video_stream'].iloc[0]):
+	def get_app_measurements(self):
+		self.get_app_mqtt()
+		self.get_app_video()
+		self.get_app_profinet()
 
-			env = {
-				'ENV_SERVER_IP': _server_ip,
-				'ENV_SERVER_PORT': int(gparams._PORT_SERVER_OPENCV)
-			}
-			self.get_app_measurements(app_name='video_stream', app_image='client_opencv',
-			                          env=env, max_packs=max_packs)
+	def get_app_mqtt(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Application']['MQTT']['enable']
+			_payload_bytes=int(self.db_in_user['Experiment']['Application']['MQTT']['payload (bytes)'])
+			_interval_ms=float(self.db_in_user['Experiment']['Application']['MQTT']['interval (ms)'])
+			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
+			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init MQTT test ................')
+		except Exception as ex:
+			print('(Backend) ERROR: Init MQTT: '+str(ex))
+			return None
 
-		# mqtt
-		if (self.db_in_user['in_app_mqtt'].iloc[0]):
-			env = {
-				'ENV_SERVER_IP': _server_ip,
-				'ENV_SERVER_PORT': int(gparams._PORT_SERVER_MQTT1),
-				'MAX_PAYLOAD_SIZE':int(gparams._MQTT_MAX_PAYLOAD),
-				'SLEEP_SEC':float(gparams._MQTT_SLEEP_SEC)
-			}
-			self.get_app_measurements(app_name='mqtt', app_image='client_mqtt',
-			                          env=env, max_packs=max_packs)
+		if not _enable:
+			return None
 
-	def get_app_measurements(self,app_name,app_image,env,max_packs):
-		print('(Backend) DBG: Get measurements for app='+str(app_name)+'...')
+		config_dict={
+			'app_name':'MQTT',
+			'client_app_image_name':'client_mqtt',
+			'env':{
+				'ENV ENV_SERVER_IP' : '127.0.0.1',
+				'ENV_SERVER_PORT' : '1234',
+				'SLEEP_SEC' : '1',
+				'MAX_PAYLOAD_SIZE_BYTES' : '5'
+			},
+			'shark_captime_sec':_shark_captime_sec,
+			'shark_max_packs': _shark_max_packs,
+		}
+
+		res=self.activate_app(config_dict=config_dict)
+
+	def activate_app(self,config_dict):
+		try:
+			_app_name=config_dict['app_name']
+			_client_app_image_name=config_dict['client_app_image_name']
+			_env=config_dict['env']
+			_shark_captime_sec=config_dict['shark_captime_sec']
+			_shark_max_packs=config_dict['shark_max_packs']
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Activating app='+str(_app_name)+'...')
+		except Exception as ex:
+			print('(Backend) ERROR: Activate app:'+str(ex)+'...')
+			return None
 
 		# activate app
 		orch = Orchestrator()
-		iface=orch.activate(image=app_image, detach=True, env=env)
+		iface=orch.activate(image=_client_app_image_name, detach=True, env=_env)
 
 		# monitor stats
-		mon=Monitor()
-		df_res,dict_res=mon.get_pyshark_kpis(my_iface=iface,max_packs=max_packs)
+		self.get_pyshark_kpis(my_iface=iface,display_filter=None,max_packs=_shark_max_packs,
+		                      captime_sec=_shark_captime_sec,camp_name=_camp_name,app_name=_app_name)
 
 		# deactivate app
-		orch.deactivate(image=app_image)
+		orch.deactivate(image=_client_app_image_name)
 
-		# assign app name to output
-		df_res['app'] = [app_name]
-		df_res['timestamp'] = [self.helper.get_str_timestamp()]
-		dict_res['app'] = [app_name]
-		dict_res['timestamp'] = [self.helper.get_str_timestamp()]
+		print('(Backend) DBG: Get measurements for app=' + str(_app_name) + ' OK!')
 
-		# write to db
-		if df_res is not None:
+		print('(Backend) ERROR: Get measurements for app=' + str(_app_name) + ' failed!')
 
-			_DB_FILE_FIELDS_OUTPUT_APP = 'camp_name;camp_id;exp_id;timestamp;app;total_packs;total_bytes;total_time;total_timestamp;' \
-			                             'mean_rtt;sd_rtt_jitter;throughput_bps;drop_perc;arrive_perc'
+	def get_pyshark_kpis(self,my_iface='Ethernet',display_filter=None,max_packs=5000,
+	                     captime_sec=10,camp_name='',app_name=''):
+		print('(Backend) DBG: Initiate pyshark kpis ...')
 
-			mystr = self.db_in_user['in_meas_campaign_name'].iloc[0]+gparams._DELIMITER+\
-				str(self.counter_camp)+gparams._DELIMITER+\
-			        str(self.counter_exp)+gparams._DELIMITER+\
-			        str(dict_res['timestamp'][0]) +gparams._DELIMITER+\
-			        str(dict_res['app'][0]) +gparams._DELIMITER+\
-			        str(dict_res['total_packs'][0]) +gparams._DELIMITER+\
-			        str(dict_res['total_bytes'][0])+gparams._DELIMITER+\
-			        str(dict_res['total_time'][0])+gparams._DELIMITER+\
-			        str(dict_res['total_timestamp'][0]) +gparams._DELIMITER+\
-			        str(dict_res['mean_rtt'][0]) +gparams._DELIMITER+\
-			        str(dict_res['sd_rtt_jitter'][0]) +gparams._DELIMITER+\
-			        str(dict_res['throughput_bps'][0]) +gparams._DELIMITER+\
-			        str(dict_res['drop_perc'][0]) +gparams._DELIMITER+\
-			        str(dict_res['arrive_perc'][0])
+		# hack to get all available veth-xxx interfaces (not supported by Pyshark)
+		#my_iface=None
+		#try:
+		#	# expect this to fail and raise an exception with all available interfaces
+		#	cap=pyshark.LiveCapture(interface='this_is_not_an_interface_100_percent!!', display_filter=display_filter)
+		#	cap.sniff(timeout=1)
+		#except Exception as ex:
+		#	print('(Monitor) DBG: Getting available veth interfaces in the system...')
+		#	# get all words of the exception str
+		#	word_list=str(ex).split()
+		#	for el in word_list:
+		#		if 'veth' in el:
+		#			my_iface=el
+		#			break
 
-			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_APP, mystr=mystr)
+		#if my_iface is None:
+		#	print('(Monitor) ERROR: No veth ifaces found')
+		#	return None
 
 
-			print('(Backend) DBG: Get measurements for app=' + str(app_name) + ' OK!')
-		else:
-			print('(Backend) ERROR: Get measurements for app=' + str(app_name) + ' failed!')
+		attempt=1
+		res=None
+		while (res is None):
+			try:
+				print('(Backend) DBG: Initiate capture for veth='+str(my_iface)+' (attempt=' + str(attempt) + ')...')
+				if attempt > 1:
+					self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
+				attempt = attempt + 1
+
+				cap = pyshark.LiveCapture(interface=my_iface, display_filter=display_filter,
+				                          output_file=gparams._SHARK_TEMP_OUT_FILE)
+				cap.sniff_continuously()
+				res=200
+			except:
+				if attempt >= 5:
+					print('(Backend) ERROR: Cannot find iface in Pyshark!')
+					res = 500
+		if res!=200:
+			print('(Backend) ERROR: Exiting...')
+			return None
+
+		try:
+			pack_cnt=0
+			start_time = time.time()
+			sniff_duration_sec=0
+
+			for pack in cap:
+				sniff_duration_sec=time.time() - start_time
+				if (pack_cnt>max_packs) or (sniff_duration_sec>captime_sec):
+					break
+				pack_cnt = pack_cnt + 1
+			print('(Backend) DBG: Capture OK, pack_cnt='+str(pack_cnt)+',duration (sec)='+str(sniff_duration_sec))
+		except Exception as ex:
+			print('(Backend) ERROR during capture:'+str(ex))
+			return None
+
+		try:
+			cap = pyshark.FileCapture(input_file=gparams._SHARK_TEMP_OUT_FILE)
+			pack_cnt=0
+			for pack in cap:
+				myjson_line=gparams._RES_FILE_FIELDS_APP
+
+				try:
+					myjson_line['camp_name'] = camp_name
+				except:
+					pass
+
+				try:
+					myjson_line['repeat_id'] = str(self.counter_camp)
+				except:
+					pass
+
+				try:
+					myjson_line['exp_id'] = str(self.counter_exp)
+				except:
+					pass
+
+				try:
+					myjson_line['timestamp'] = self.helper.get_str_timestamp()
+				except:
+					pass
+
+				try:
+					myjson_line['app_name'] = app_name
+				except:
+					pass
+
+				try:
+					myjson_line['pack_id'] = str(pack_cnt)
+				except:
+					pass
+
+				try:
+					myjson_line['sniff_time'] = str(pack.sniff_time)
+				except:
+					pass
+
+				try:
+					myjson_line['sniff_timestamp'] = str(pack.sniff_timestamp)
+				except:
+					pass
+
+				try:
+					myjson_line['protocol'] = str(pack.highest_layer)
+				except:
+					pass
+
+				try:
+					myjson_line['pack_len_bytes'] = str(pack.length)
+				except:
+					pass
+
+				try:
+					myjson_line['addr_src'] = str(pack.ip.src)
+				except:
+					pass
+
+				try:
+					myjson_line['port_src'] = str(pack[pack.transport_layer].srcport)
+				except:
+					pass
+
+				try:
+					myjson_line['addr_dest'] = str(pack.ip.dst)
+				except:
+					pass
+
+				try:
+					myjson_line['port_dest'] = str(pack[pack.transport_layer].dstport)
+				except:
+					pass
+
+				try:
+					myjson_line['rtt'] = str(pack.tcp.analysis_ack_rtt)
+				except:
+					pass
+
+				try:
+					str_p = str(pack)
+					if (
+						"TCP Dup ACK" in str_p
+						or "TCP Previous" in str_p
+						or "TCP Retransmission" in str_p
+						or "TCP Fast Retransmission" in str_p
+						or "Out-Of-Order" in str_p
+						or "TCP Spurious Retransmission" in str_p):
+						res = True
+					else:
+						res = False
+
+					myjson_line['drop_flag'] = str(res)
+				except:
+					pass
+
+				pack_cnt=pack_cnt+1
+				self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_APP, mydict=myjson_line, clean=False)
+
+			try:
+				os.remove(gparams._RES_FILE_LOC_APP)
+			except:
+				pass
+
+			print('(Backend) DBG: Capture analysis OK')
+			return 200
+		except Exception as ex:
+			print('(Backend) ERROR: Capture analysis:'+str(ex))
+			return None
+
+
 
 	def get_iperf(self):
 		try:
@@ -483,7 +651,7 @@ class Backend:
 			df = pd.read_table(df_str, sep=gparams._UDPPING_DELIMITER, header=None)
 			df.columns = gparams._RES_FILE_FIELDS_UDPPING
 
-			temp_df=df.tail(1)
+			temp_df=df.head(1)
 			print('(Backend) Result=' + str(temp_df))
 
 			return df
