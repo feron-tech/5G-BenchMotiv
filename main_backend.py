@@ -148,6 +148,7 @@ class Backend:
 			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
 			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			_server_ip=self.db_in_user['Network']['Server IP']
 			print('(Backend) DBG: Init MQTT test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init MQTT: '+str(ex))
@@ -156,14 +157,16 @@ class Backend:
 		if not _enable:
 			return None
 
+		sleep_sec=_interval_ms*1e-3
+
 		config_dict={
 			'app_name':'MQTT',
 			'client_app_image_name':'client_mqtt',
 			'env':{
-				'ENV ENV_SERVER_IP' : '127.0.0.1',
-				'ENV_SERVER_PORT' : '1234',
-				'SLEEP_SEC' : '1',
-				'MAX_PAYLOAD_SIZE_BYTES' : '5'
+				'ENV_SERVER_IP' : _server_ip,
+				'ENV_SERVER_PORT' : gparams._PORT_SERVER_MQTT1,
+				'SLEEP_SEC' : sleep_sec,
+				'MAX_PAYLOAD_SIZE_BYTES' : _payload_bytes
 			},
 			'shark_captime_sec':_shark_captime_sec,
 			'shark_max_packs': _shark_max_packs,
