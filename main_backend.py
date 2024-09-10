@@ -42,21 +42,23 @@ class Backend:
 
 	def init_dbs(self):
 
+		mydbs=[
+			gparams._DB_FILE_LOC_OUTPUT_BASE,
+			gparams._DB_FILE_LOC_OUTPUT_LOG,
+			gparams._RES_FILE_LOC_TWAMP,
+			gparams._RES_FILE_LOC_OWAMP,
+			gparams._RES_FILE_LOC_UDPPING,
+			gparams._RES_FILE_LOC_ICMP,
+			gparams._RES_FILE_LOC_IPERF,
+			gparams._RES_FILE_LOC_PHY,
+			gparams._RES_FILE_LOC_APP
+		]
+
 		if gparams._LOCAL_TEST:
-			mydbs=[
-				gparams._DB_FILE_LOC_OUTPUT_APP,
-				gparams._DB_FILE_LOC_OUTPUT_BASE,
-				gparams._DB_FILE_LOC_OUTPUT_LOG,
-				gparams._RES_FILE_LOC_PHY,
-			]
+			pass
 		else:
-			mydbs=[
-				gparams._DB_FILE_LOC_INPUT_USER,
-				gparams._DB_FILE_LOC_OUTPUT_APP,
-				gparams._DB_FILE_LOC_OUTPUT_BASE,
-				gparams._DB_FILE_LOC_OUTPUT_LOG,
-				gparams._RES_FILE_LOC_PHY,
-			]
+			mydbs.append(gparams._DB_FILE_LOC_INPUT_USER)
+
 
 		for el in mydbs:
 			res=self.helper.init_db(loc=el,header=None)
