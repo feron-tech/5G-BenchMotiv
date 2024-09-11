@@ -18,16 +18,22 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div(children=[
 
     html.Div([
-        html.Label('Golden Unit Monitoring', style={'color': 'Black', 'font-size': 55}),
-    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
-
-    html.Div([
 
     html.Div(id='hidden-div', style={'display': 'none'}),
 
     html.Div(children=[
 
         # Row 1: Title of UI
+        dbc.Row(
+            dbc.Col(
+                html.Div([
+                    html.Label('Golden Unit Monitoring', style={'color': 'Black', 'font-size': 55}),
+                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+
+                width={"size": 6, "offset": 3},
+            )
+        ),
+
         # Row 2: Settings overall
         dbc.Row(
             [
@@ -1299,8 +1305,10 @@ app.layout = html.Div(children=[
                 dbc.Row(
                     dbc.Col(
                         html.Div([
-                            html.Label('Golden Unit Monitoring', style={'color': 'Black', 'font-size': 75}),
-                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center', 'justify-content': 'center'}),
+                            html.Label('Golden Unit Monitoring', style={'color': 'Black', 'font-size': 55}),
+                        ], style={'width': '100%', 'display': 'flex',
+                                  'align-items': 'center', 'justify-content': 'center'}
+                        ),
 
                         width={"size": 6, "offset": 3},
                     )
@@ -1308,86 +1316,20 @@ app.layout = html.Div(children=[
 
                 # Row 2: Base stats
                 dbc.Row(
-                    html.Div(children=[
-                        # Row 2.1: Title
-                        dbc.Row(
-                            dbc.Col(
-                                html.Div([
-                                    html.Label('Baseline statistics', style={'color': 'Black', 'font-size': 35}),
-                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                          'justify-content': 'center'}),
-                                width={"size": 6, "offset": 3},
-                            )
-                        ),
-
-                        # Row 2.2: Graphs
-                        dbc.Row(
                             [
-                                dbc.Col(
-                                    [
-
-                                        #html.Div([
-                                          #  html.Label('TCP Throughput (Mbps)', style={'color': 'Black', 'font-size': 20}),
-                                      #  ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                               #   'justify-content': 'center'}),
-
-                                        html.Div([
-                                            dcc.Graph(id="fig_thru_tcp", style={}),
-                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                  'justify-content': 'center'}),
-
-                                    ]
-                                ,width=2,style={'margin-right': '0px', 'margin-left': '200px'}),
-
-                                dbc.Col(
-                                    [
-
-                                        #html.Div([
-                                        #    html.Label('UDP Throughput (Mbps)', style={'color': 'Black', 'font-size': 20}),
-                                        #], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                          #        'justify-content': 'center'}),
-
-                                        html.Div([
-                                            dcc.Graph(id="fig_thru_udp", style={}),
-                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                  'justify-content': 'center'}),
-                                    ]
-                                ,width=2,style={'margin-right': '0px', 'margin-left': '400px'}),
-
-                                dbc.Col(
-                                    [
-
-                                        #html.Div([
-                                        #    html.Label('Latency (msec)', style={'color': 'Black', 'font-size': 20}),
-                                       # ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                        #          'justify-content': 'center'}),
-
-                                        html.Div([
-                                            dcc.Graph(id="fig_delay", style={}),
-                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                  'justify-content': 'center'}),
-
-                                    ]
-                                ,width=2,style={'margin-right': '0px', 'margin-left': '400px'}),
-                            ]
-                        ),
-                    ], style={}),
-                ),
-
-                # Row 3: App stats and log/buttons
-                dbc.Row(
-                    [
-                        # Left col-> app stats
-                        dbc.Col(
-                            html.Div(children=[
-                                # Row Title
+                                # Row 2.1: Title
                                 dbc.Row(
                                     dbc.Col(
-                                        html.Div([
-                                            html.Label('Application-specific statistics', style={'color': 'Black', 'font-size': 35}),
-                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                  'justify-content': 'center'}),
-                                        width={"size": 6, "offset": 3},
+                                                [
+                                                    html.Div([
+                                                        html.Label('Baseline statistics', style={'color': 'Black', 'font-size': 35}),
+                                                    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                              'justify-content': 'center'}),
+
+                                                    html.Hr(
+                                                        style={'borderWidth': '0.3vh', 'width': '100%', 'borderColor': '#000000',
+                                                               'opacity': 'unset'}),
+                                                ],width={"size": 6, "offset": 3},
                                     )
                                 ),
 
@@ -1396,127 +1338,181 @@ app.layout = html.Div(children=[
                                     [
                                         dbc.Col(
                                             [
-
-                                                #html.Div([
-                                                #    html.Label('Throughput (Mbps)',
-                                                #               style={'color': 'Black', 'font-size': 20}),
-                                               # ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                 #         'justify-content': 'center'}),
-
                                                 html.Div([
-                                                    dcc.Graph(id="fig_app_thru", style={}),
+                                                    dcc.Graph(id="fig_thru_tcp", style={}),
                                                 ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
                                                           'justify-content': 'center'}),
-
                                             ]
-                                            , width=1, style={'margin-right': '0px', 'margin-left': '300px'}
-                                        ),
+                                        ,width=4,style={'margin-right': '0px', 'margin-left': '0px'}),
 
                                         dbc.Col(
                                             [
+                                                html.Div([
+                                                    dcc.Graph(id="fig_thru_udp", style={}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                          'justify-content': 'center'}),
+                                            ]
+                                        ,width=4,style={'margin-right': '0px', 'margin-left': '0px'}),
 
-                                                #html.Div([
-                                                #    html.Label('RTT (msec)',
-                                                #               style={'color': 'Black', 'font-size': 20}),
-                                                #], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                #          'justify-content': 'center'}),
+                                        dbc.Col(
+                                            [
+                                                html.Div([
+                                                    dcc.Graph(id="fig_delay", style={}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                          'justify-content': 'center'}),
+                                            ]
+                                        ,width=4,style={'margin-right': '0px', 'margin-left': '0px'}),
+                                    ]
+                                ),
+                            ],
+                        ),
+
+                dbc.Row(
+                    [
+                        html.Hr(style={'width': '100%'}),
+                        html.Br(),
+                    ]
+                ),
+
+                # Row 3: App stats and log/buttons
+                dbc.Row(
+                            [
+                                # Left col-> app stats
+                                dbc.Col(
+                                            [
+                                                # Row Title
+                                                dbc.Row(
+                                                    dbc.Col(
+                                                            [
+                                                                html.Div([
+                                                                    html.Label('Application-specific statistics', style={'color': 'Black', 'font-size': 35}),
+                                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                                          'justify-content': 'center'}),
+
+                                                                html.Hr(
+                                                                    style={'borderWidth': '0.3vh', 'width': '100%',
+                                                                           'borderColor': '#000000',
+                                                                           'opacity': 'unset'}),
+                                                            ],width={"size": 6, "offset": 3},
+                                                    )
+                                                ),
+
+                                                # Row 2.2: Graphs
+                                                dbc.Row(
+                                                    [
+                                                        dbc.Col(
+                                                            [
+
+                                                                html.Div([
+                                                                    dcc.Graph(id="fig_app_thru", style={}),
+                                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                                          'justify-content': 'center'}),
+
+                                                            ]
+                                                            , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                        ),
+
+                                                        dbc.Col(
+                                                            [
+
+                                                                html.Div([
+                                                                    dcc.Graph(id="fig_app_delay", style={}),
+                                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                                          'justify-content': 'center'}),
+
+                                                            ]
+                                                            , width=6, style={'margin-right': '0px', 'margin-left': '0px'}
+                                                        ),
+                                                    ]
+                                                )
+                                            ],width=8,style={'margin-right': '0px', 'margin-left': '0px'}
+                                ),
+                                # Right col-> misc
+                                dbc.Col(
+                                            [
+                                                dbc.Row(
+                                                    dbc.Col(
+                                                                [
+                                                                    html.Div([
+                                                                        html.Label('Event log',
+                                                                                   style={'color': 'Black', 'font-size': 35}),
+                                                                    ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                                              'justify-content': 'center'}),
+
+                                                                    html.Hr(
+                                                                        style={'borderWidth': '0.3vh', 'width': '100%',
+                                                                               'borderColor': '#000000',
+                                                                               'opacity': 'unset'}),
+                                                                ],width={"size": 6, "offset": 3},
+                                                    )
+                                                ),
 
                                                 html.Div([
-                                                    dcc.Graph(id="fig_app_delay", style={}),
+                                            dash_table.DataTable(id='table_news',
+                                                                 style_data={'whiteSpace': 'normal',
+                                                                             'backgroundColor': 'rgb(255,215,0)',
+                                                                             'color': 'black'},
+                                                                 style_header={'backgroundColor': 'black', 'color': 'white'},
+                                                                 fill_width=True,
+                                                                 css=[{
+                                                                     'selector': '.dash-spreadsheet td div',
+                                                                     'rule': '''
+                                                                        line-height: 15px;
+                                                                        max-height: 30px; min-height: 30px; height: 30px;
+                                                                        display: block;
+                                                                        overflow-y: hidden;
+                                                                        '''
+                                                                 }],
+                                                                 style_cell={'textAlign': 'left',
+                                                                             'minWidth': '500px',
+                                                                             'width': '500px',
+                                                                             'maxWidth': '500px'},
+                                                                 style_cell_conditional=[
+                                                                     {'if': {'column_id': 'time'},
+                                                                      'textAlign': 'left',
+                                                                      'minWidth': '150px',
+                                                                      'width': '150px',
+                                                                      'maxWidth': '150px'},
+                                                                     {'if': {'column_id': 'description'},
+                                                                      'textAlign': 'left',
+                                                                      'minWidth': '500px',
+                                                                      'width': '500px',
+                                                                      'maxWidth': '500px'},
+                                                                 ]
+                                                                 ),
+                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center','justify-content': 'center'}),
+
+                                                dcc.Interval(
+                                                    id='interval1',
+                                                    interval=1 * 1000,  # in milliseconds
+                                                    n_intervals=0
+                                                ),
+
+                                                html.Br(),
+
+                                                # Button
+                                                html.Div([
+                                                    html.Button(id='button_save', n_clicks=0, children='Save stats',
+                                                                style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
+                                                                       'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
+                                                                       'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
+                                                                       'background-color': 'rgb(100,100,100)'}),
+                                                    dcc.Download(id="download_save"),
                                                 ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
                                                           'justify-content': 'center'}),
 
-                                            ]
-                                            , width=1, style={'margin-right': '0px', 'margin-left': '600px'}
-                                        ),
-                                    ]
-                                )
-                            ], style={}),
-                        ),
-                        # Right col-> misc
-                        dbc.Col(
-                            html.Div(children=[
+                                                # Button
+                                                html.Div([
+                                                    html.Button(id='button_exit', n_clicks=0, children='Exit',
+                                                                style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
+                                                                       'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
+                                                                       'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
+                                                                       'background-color': 'rgb(0,0,0)'}),
+                                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center','justify-content': 'center'}),
 
-                                dbc.Row(
-                                    dbc.Col(
-                                        html.Div([
-                                            html.Label('Event log',
-                                                       style={'color': 'Black', 'font-size': 35}),
-                                        ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                                  'justify-content': 'center'}),
-                                        width={"size": 6, "offset": 3},
-                                    )
+                                    ], width=4, style={'margin-right': '0px', 'margin-left': '0px'}
                                 ),
-
-                                html.Div([
-                                    dash_table.DataTable(id='table_news',
-                                                         style_data={'whiteSpace': 'normal',
-                                                                     'backgroundColor': 'rgb(255,215,0)',
-                                                                     'color': 'black'},
-                                                         style_header={'backgroundColor': 'black', 'color': 'white'},
-                                                         fill_width=True,
-                                                         css=[{
-                                                             'selector': '.dash-spreadsheet td div',
-                                                             'rule': '''
-                                                                line-height: 15px;
-                                                                max-height: 30px; min-height: 30px; height: 30px;
-                                                                display: block;
-                                                                overflow-y: hidden;
-                                                                '''
-                                                         }],
-                                                         style_cell={'textAlign': 'left',
-                                                                     'minWidth': '500px',
-                                                                     'width': '500px',
-                                                                     'maxWidth': '500px'},
-                                                         style_cell_conditional=[
-                                                             {'if': {'column_id': 'time'},
-                                                              'textAlign': 'left',
-                                                              'minWidth': '150px',
-                                                              'width': '150px',
-                                                              'maxWidth': '150px'},
-                                                             {'if': {'column_id': 'description'},
-                                                              'textAlign': 'left',
-                                                              'minWidth': '500px',
-                                                              'width': '500px',
-                                                              'maxWidth': '500px'},
-                                                         ]
-                                                         ),
-                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center','justify-content': 'center'}),
-
-                                dcc.Interval(
-                                    id='interval1',
-                                    interval=1 * 1000,  # in milliseconds
-                                    n_intervals=0
-                                ),
-
-                                html.Br(),
-
-                                # Button
-                                html.Div([
-                                    html.Button(id='button_save', n_clicks=0, children='Save stats',
-                                                style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
-                                                       'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
-                                                       'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
-                                                       'background-color': 'rgb(100,100,100)'}),
-                                    dcc.Download(id="download_save"),
-                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                          'justify-content': 'center'}),
-
-                                # Button
-                                html.Div([
-                                    html.Button(id='button_exit', n_clicks=0, children='Exit',
-                                                style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
-                                                       'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
-                                                       'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
-                                                       'background-color': 'rgb(0,0,0)'}),
-                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center','justify-content': 'center'}),
-
-
-                            ], style={}),width={"size": 4, "order": "1", "offset": 0},
-
-
-                        ),
-                    ]
+                            ]
                 ),
 
             ], style={'text-align': 'left','backgroundColor':'rgb(255,215,0)'})
@@ -1720,9 +1716,10 @@ def func(n_clicks):
     # create the zip file first parameter path/name, second mode
     print('(Frontend) DBG: Zipping...')
     zip_name='zip'+helper.get_folderstr_timestamp()+'.zip'
-    zf = zipfile.ZipFile(zip_name, mode="w")
+    zf = zipfile.ZipFile(zip_name, mode="a")
     try:
         for file in os.listdir(gparams._DB_DIR):
+            print('(Frontend) DBG: File='+str(file)+'...')
             filename = os.fsdecode(file)
             dir=os.path.join(gparams._DB_DIR,filename)
             if 'git' in str(filename):
@@ -1784,8 +1781,8 @@ def update_graph_live(n_intervals):
     fig_my_thru_tcp.update_layout(
         yaxis_title='TCP Throughput (Mbps)',
         xaxis_title='Timestamp',
-        width=500,
-        height=250,
+        width=600,
+        height=300,
         margin={'l': 0, 'b': 0, 't': 0, 'r': 0},
         plot_bgcolor='rgb(255,215,0)',
         paper_bgcolor='rgb(255,215,0)',
@@ -1834,8 +1831,8 @@ def update_graph_live(n_intervals):
     fig_my_thru_udp.update_layout(
         yaxis_title='UDP Throughput (Mbps)',
         xaxis_title='Timestamp',
-        width=500,
-        height=250,
+        width=600,
+        height=300,
         margin={'l': 0, 'b': 0, 't': 0, 'r': 0},
         plot_bgcolor='rgb(255,215,0)',
         paper_bgcolor='rgb(255,215,0)',
@@ -1884,10 +1881,10 @@ def update_graph_live(n_intervals):
     )
 
     fig_my_delay.update_layout(
-        yaxis_title='Latency',
+        yaxis_title='Latency (msec)',
         xaxis_title='Timestamp',
-        width=500,
-        height=250,
+        width=600,
+        height=300,
         margin={'l': 0, 'b': 0, 't': 0, 'r': 0},
         plot_bgcolor='rgb(255,215,0)',
         paper_bgcolor='rgb(255,215,0)',
@@ -1979,8 +1976,8 @@ def update_graph_live(n_intervals):
     fig_my_app_thru.update_layout(
         yaxis_title='Throughput (Mbps)',
         xaxis_title='Timestamp',
-        width=500,
-        height=250,
+        width=600,
+        height=300,
         margin={'l': 0, 'b': 0, 't': 0, 'r': 0},
         plot_bgcolor='rgb(255,215,0)',
         paper_bgcolor='rgb(255,215,0)',
@@ -2024,8 +2021,8 @@ def update_graph_live(n_intervals):
     fig_my_app_delay.update_layout(
         yaxis_title='RTT (msec)',
         xaxis_title='Timestamp',
-        width=500,
-        height=250,
+        width=600,
+        height=300,
         margin={'l': 0, 'b': 0, 't': 0, 'r': 0},
         plot_bgcolor='rgb(255,215,0)',
         paper_bgcolor='rgb(255,215,0)',
