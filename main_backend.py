@@ -295,7 +295,7 @@ class Backend:
 			return None
 
 		try:
-			print('(Backend) DBG: Capture acquire...')
+			print('(Backend) DBG: Capture for max packs='+str(max_packs)+' OR max duration (sec)='+str(captime_sec)+'...')
 			pack_cnt=0
 			start_time = time.time()
 			sniff_duration_sec=0
@@ -305,7 +305,7 @@ class Backend:
 				if (pack_cnt>max_packs) or (sniff_duration_sec>captime_sec):
 					break
 				pack_cnt = pack_cnt + 1
-			print('(Backend) DBG: Capture OK, pack_cnt='+str(pack_cnt)+',duration (sec)='+str(sniff_duration_sec))
+			print('(Backend) DBG: Capture OK, final pack_cnt='+str(pack_cnt)+',duration (sec)='+str(sniff_duration_sec))
 		except Exception as ex:
 			print('(Backend) ERROR during capture:'+str(ex))
 			return None
