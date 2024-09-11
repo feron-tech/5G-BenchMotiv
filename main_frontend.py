@@ -1747,12 +1747,13 @@ def func(n_clicks):
     Input('interval1', 'n_intervals'),
 )
 def update_graph_live(n_intervals):
-    df_out_base=helper.read_db_df(loc=gparams._DB_FILE_LOC_OUTPUT_BASE)
 
-    df_out_base['TCP Uplink (Mbps)'] = df_out_base['iperf_tcp_ul_sent_bps']  * (1e-6)
-    df_out_base['TCP Downlink (Mbps)'] = df_out_base['iperf_tcp_dl_received_bps'] * (1e-6)
+    # Figure 1 TCP UL/DL
+    df_iperf=helper.read_jsonlines2pandas(loc=gparams._RES_FILE_LOC_IPERF)
+    df_iperf['TCP Uplink (Mbps)'] = df_iperf['tcp_ul_sent_bps']  * (1e-6)
+    df_iperf['TCP Downlink (Mbps)'] = df_iperf['tcp_dl_received_bps'] * (1e-6)
 
-    fig_my_thru_tcp = px.area(df_out_base, x="timestamp", y=['TCP Uplink (Mbps)','TCP Downlink (Mbps)'],markers=False)
+    fig_my_thru_tcp = px.area(df_iperf, x="timestamp", y=['TCP Uplink (Mbps)','TCP Downlink (Mbps)'],markers=False)
 
     fig_my_thru_tcp.update_xaxes(
         #title_text="Time",
@@ -1799,11 +1800,10 @@ def update_graph_live(n_intervals):
     )
 
     ######### Fig 2 UDP ###########
+    df_iperf['UDP Uplink (Mbps)'] = df_iperf['udp_ul_bps']  * (1e-6)
+    df_iperf['UDP Downlink (Mbps)'] = df_iperf['udp_dl_bps'] * (1e-6)
 
-    df_out_base['UDP Uplink (Mbps)'] = df_out_base['iperf_udp_ul_bps']  * (1e-6)
-    df_out_base['UDP Downlink (Mbps)'] = df_out_base['iperf_udp_dl_bps'] * (1e-6)
-
-    fig_my_thru_udp = px.area(df_out_base, x="timestamp", y=['UDP Uplink (Mbps)','UDP Downlink (Mbps)'],markers=False)
+    fig_my_thru_udp = px.area(df_iperf, x="timestamp", y=['UDP Uplink (Mbps)','UDP Downlink (Mbps)'],markers=False)
 
     fig_my_thru_udp.update_xaxes(
         #title_text="Time",
@@ -1850,11 +1850,12 @@ def update_graph_live(n_intervals):
     )
 
     ############## Fig 3 Delay #########
+    # Figure 3 ICMP delay
+    df_icmp=helper.read_jsonlines2pandas(loc=gparams._RES_FILE_LOC_ICMP)
+    df_icmp['Mean RTT (msec)'] = df_icmp['avg_rtt_ms']
+    df_icmp['Jitter (msec)'] = df_icmp['jitter_ms']
 
-    df_out_base['RTT (msec)'] = df_out_base['ping_rtt_avg']
-    df_out_base['Jitter (msec)'] = df_out_base['ping_jitter']
-
-    fig_my_delay = px.area(df_out_base, x="timestamp", y=['RTT (msec)', 'Jitter (msec)'], markers=False)
+    fig_my_delay = px.area(df_icmp, x="timestamp", y=['Mean RTT (msec)', 'Jitter (msec)'], markers=False)
 
     fig_my_delay.update_xaxes(
         # title_text="Time",
@@ -1900,22 +1901,47 @@ def update_graph_live(n_intervals):
         # marker_color='black'
     )
 
-
     ############## Fig 4 app thru #########
-    df_out_app=helper.read_db_df(loc=gparams._DB_FILE_LOC_OUTPUT_APP)
+    df_app = helper.read_jsonlines2pandas(loc=gparams._RES_FILE_LOC_APP)
 
-    df_out_app['Throughput (Mbps)'] = df_out_app['throughput_bps'] * (1e-6)
-    df_out_app['RTT (msec)'] = df_out_app['mean_rtt']
+    list_of_repeat_id = df_app['repeat_id'].unique()
+    list_of_exp_id = df_app['exp_id'].unique()
+    list_of_apps = df_app['app_name'].unique()
+
+    final_list_of_dicts = []
+
+    for _app in list_of_apps:
+        for _repeat_id in list_of_repeat_id:
+            for _exp_id in list_of_exp_id:
+                curr_df = df_app.loc[
+                    (df_app['app_name'] == _app) & (df_app['exp_id'] == _exp_id) & (df_app['repeat_id'] == _repeat_id)]
+
+                min_time = curr_df['sniff_timestamp'].min()
+                max_time = curr_df['sniff_timestamp'].max()
+                total_bytes = curr_df['pack_len_bytes'].sum()
+                mean_rtt_sec = curr_df['rtt'].mean()
+                time_diff = max_time - min_time
+                thru_bps = float((total_bytes * 8) / time_diff)
+
+                mydict = {
+                    'RTT (msec)': mean_rtt_sec * 1e3,
+                    'app': _app,
+                    'Throughput (Mbps)': float(thru_bps * 1e-6),
+                    'timestamp': curr_df['timestamp'].max()
+                }
+                final_list_of_dicts.append(mydict)
+
+    final_df = pd.DataFrame(final_list_of_dicts)
+
     # get all apps (filter)
-    list_of_apps=df_out_app['app'].unique()
+    list_of_apps=final_df['app'].unique()
 
     # plot the data
     fig_my_app_thru = go.Figure()
     fig_my_app_delay=go.Figure()
 
-
     for app in list_of_apps:
-        app_df=df_out_app.loc[df_out_app['app'] == app]
+        app_df=final_df.loc[final_df['app'] == app]
 
         fig_my_app_thru = fig_my_app_thru.add_trace(go.Scatter(x=app_df["timestamp"],
                                        y=app_df["Throughput (Mbps)"],
@@ -2006,11 +2032,10 @@ def update_graph_live(n_intervals):
         # title={'text':'Global convergence (training loss) w.r.t. time','font':{'color':'black','size':25}}
     )
 
-    try:
-        mydf_news=helper.read_jsonlines2pandas(loc=gparams._DB_FILE_LOC_OUT_LOG)
-        mydf_news = mydf_news.tail(6)
-    except:
-        mydf_news=pd.DataFrame(gparams._DB_FILE_FIELDS_OUT_LOG)
+
+    mydf_news=helper.read_jsonlines2pandas(loc=gparams._DB_FILE_LOC_OUT_LOG)
+    mydf_news = mydf_news.tail(6)
+
 
     output_news=mydf_news.to_dict('records')
 

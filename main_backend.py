@@ -99,7 +99,7 @@ class Backend:
 			myjson_line=gparams._DB_FILE_FIELDS_OUT_LOG
 			myjson_line['time']=self.helper.get_str_timestamp()
 			myjson_line['description']=my_event
-			self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG,mydict=myjson_line)
+			self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG,mydict=myjson_line,clean=False)
 
 		except Exception as ex:
 			print('(Backend) ERROR: At input settings=' + str(ex))
@@ -119,7 +119,7 @@ class Backend:
 				myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
 				myjson_line['time'] = self.helper.get_str_timestamp()
 				myjson_line['description'] = my_event
-				self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line)
+				self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
 
 				print('(Backend) DBG: ' + my_event)
 				print('---   ---   --- ---   ---   --- ---   ---   --- ')
@@ -138,7 +138,7 @@ class Backend:
 					myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
 					myjson_line['time'] = self.helper.get_str_timestamp()
 					myjson_line['description'] = my_event
-					self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line)
+					self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
 
 				self.helper.wait(wait_time_sec)
 
