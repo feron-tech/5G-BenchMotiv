@@ -12,14 +12,12 @@ def receive_frames(client_socket):
     while True:
         try:
             # Retrieve the message size
+            print('Retrieve message size...')
             while len(data) < payload_size:
                 packet = client_socket.recv(4 * 1024)  # 4KB chunk
                 if not packet:  # If no packet is received, the connection might be closed
-                    raise ConnectionResetError
+                    raise ConnectionResetError("No packet received, connection may be closed.")
                 data += packet
-
-            if len(data) < payload_size:
-                raise ConnectionResetError
 
             packed_msg_size = data[:payload_size]
             data = data[payload_size:]
@@ -27,9 +25,13 @@ def receive_frames(client_socket):
             # Unpack the message size
             msg_size = struct.unpack("Q", packed_msg_size)[0]
 
-            # Retrieve all data based on the message size
+            # Get the full frame data
+            print('Get the full frame data...')
             while len(data) < msg_size:
-                data += client_socket.recv(4 * 1024)
+                packet = client_socket.recv(4 * 1024)
+                if not packet:
+                    raise ConnectionResetError("No packet received, connection lost.")
+                data += packet
 
             frame_data = data[:msg_size]
             data = data[msg_size:]
@@ -46,9 +48,8 @@ def receive_frames(client_socket):
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        except (ConnectionResetError, BrokenPipeError, socket.error):
-            print("Connection lost, attempting to reconnect...")
-            client_socket.close()
+        except (ConnectionResetError, socket.timeout, socket.error) as e:
+            print(f"Connection error: {e}")
             return
 
 def connect_to_server(ip,port):
@@ -60,7 +61,7 @@ def connect_to_server(ip,port):
             client_socket.connect((ip, port))
             print("Connected to server")
             return client_socket
-        except socket.error:
+        except (socket.error,socket.timeout):
             print("Server unavailable, retrying...")
 
 
@@ -68,6 +69,8 @@ def main(ip,port):
     while True:
         client_socket = connect_to_server(ip=ip,port=port)
         receive_frames(client_socket)
+        client_socket.close()
+        print("Reconnecting to server...")
 
 if __name__ == "__main__":
     try:
