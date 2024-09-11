@@ -154,48 +154,77 @@ _RES_FILE_FIELDS_TWAMP=[
 ]
 _DBG_KEY_WORD_TWAMP='tx_sync'
 
-_DB_FILE_LOC_INPUT_USER=os.path.join(_DB_DIR,'db_input_user.json')
+_DB_FILE_LOC_IN_USER=os.path.join(_DB_DIR,'in_user.json')
+_DB_FILE_FIELDS_IN_USER={
+    'Network': {
+        'Client IP': '192.168.1.1',
+        'Server IP': '192.200.0.1',
+        'APN': 'internet.vodafone.gr',
+        'Modem port': '/dev/ttyUSB3',
+        'Baud rate': '115200'
+    },
+    'Measurement': {
+        'Campaign name': 'Test01',
+        'Experiments per campaign': '1',
+        'Repetitions per campaign': '1',
+        'Repetition time gap (hours)': '1'
+    },
+    'Experiment': {
+        'Baseline': {
+            'iperf': {
+                'enable': 'True',
+                'protocols': 'All',
+                'payload (bytes)': '50',
+                'bitrate (Mbps)': '2000',
+                'duration (sec)': '10'
+            },
+            'icmp': {
+                'enable': 'True',
+                'payload (bytes)': '56',
+                'interval (ms)': '20',
+                'packets': '1000'
+            },
+            'udp ping': {
+                'enable': 'True',
+                'payload (bytes)': '56',
+                'interval (ms)': '20',
+                'packets': '1000'
+            },
+            'wamp': {
+                'enable': 'True',
+                'payload (bytes)': '56',
+                'interval (ms)': '20',
+                'packets': '1000'
+            }
+        },
+        'Application': {
+            'Wireshark': {
+                'capture time (sec)': '60',
+                'max packets': '500'
+            },
+            'MQTT': {
+                'enable': 'True',
+                'payload (bytes)': '50',
+                'interval (ms)': '20'
+            },
+            'Video': {
+                'enable': 'True',
+                'fps': '30',
+                'width': '400',
+                'height': '400'
+            },
+            'Profinet': {
+                'enable': 'False'
+            }
+        }
+    }
+}
 
-_DB_FILE_LOC_OUTPUT_BASE=os.path.join(_DB_DIR,'db_output_base.json')
-_DB_FILE_FIELDS_OUTPUT_BASE=('camp_name;camp_id;exp_id;timestamp;'
-                             'ping_rtt_avg;ping_rtt_max;ping_rtt_min;ping_packet_loss_perc;' 
-                            'ping_packets_lost;ping_jitter;' 
-                            'iperf_tcp_dl_retransmits;iperf_tcp_dl_sent_bps;iperf_tcp_dl_sent_bytes;' 
-                            'iperf_tcp_dl_received_bps;iperf_tcp_dl_received_bytes;iperf_tcp_ul_retransmits;' 
-                            'iperf_tcp_ul_sent_bps;iperf_tcp_ul_sent_bytes;iperf_tcp_ul_received_bps;' 
-                            'iperf_tcp_ul_received_bytes;iperf_udp_dl_bytes;iperf_udp_dl_bps;' 
-                            'iperf_udp_dl_jitter_ms;iperf_udp_dl_lost_percent;iperf_udp_ul_bytes;' 
-                            'iperf_udp_ul_bps;iperf_udp_ul_jitter_ms;iperf_udp_ul_lost_percent;'
-                             'owamp_ul_packets_sent;'
-                             'owamp_ul_packets_lost;'
-                             'owamp_ul_loss_percentage;'
-                             'owamp_ul_duplicates;'
-                             'owamp_ul_delay_min;'
-                             'owamp_ul_delay_median;'
-                             'owamp_ul_delay_max;'
-                             'owamp_ul_jitter;'
-                             'owamp_ul_hops;'
-                             'owamp_ul_reordering;'
-                             'owamp_dl_packets_sent;'
-                             'owamp_dl_packets_lost;'
-                             'owamp_dl_loss_percentage;'
-                             'owamp_dl_duplicates;'
-                             'owamp_dl_delay_min;'
-                             'owamp_dl_delay_median;'
-                             'owamp_dl_delay_max;'
-                             'owamp_dl_jitter;'
-                             'owamp_dl_hops;'
-                             'owamp_dl_reordering;'
-                             'twamp_sent;twamp_lost;twamp_loss_percentage;twamp_rtt_min;'
-                             'twamp_rtt_median;twamp_rtt_max;twamp_send_min;twamp_send_median;twamp_send_max;'
-                             'twamp_reflect_min;twamp_reflect_median;twamp_reflect_max;twamp_reflector_min;'
-                             'twamp_reflector_max;twamp_two_way_jitter;twamp_send_jitter;twamp_reflect_jitter;'
-                             'udpping_cl2server_ns;udpping_server2cl_ns;udpping_rtt_ns'
-                             )
-
-_DB_FILE_LOC_OUTPUT_LOG=os.path.join(_DB_DIR,'db_output_log.json')
-_DB_FILE_FIELDS_OUTPUT_LOG='time;description'
-
+_DB_FILE_LOC_OUT_LOG=os.path.join(_DB_DIR,'out_log.json')
+_DB_FILE_FIELDS_OUT_LOG={
+    'time': None,
+    'description': None
+}
 
 ## ports
 _PORT_SERVER_IPERF=5201

@@ -43,8 +43,7 @@ class Backend:
 	def init_dbs(self):
 
 		mydbs=[
-			gparams._DB_FILE_LOC_OUTPUT_BASE,
-			gparams._DB_FILE_LOC_OUTPUT_LOG,
+			gparams._DB_FILE_LOC_OUT_LOG,
 			gparams._RES_FILE_LOC_TWAMP,
 			gparams._RES_FILE_LOC_OWAMP,
 			gparams._RES_FILE_LOC_UDPPING,
@@ -57,7 +56,7 @@ class Backend:
 		if gparams._LOCAL_TEST:
 			pass
 		else:
-			mydbs.append(gparams._DB_FILE_LOC_INPUT_USER)
+			mydbs.append(gparams._DB_FILE_LOC_IN_USER)
 
 
 		for el in mydbs:
@@ -76,7 +75,7 @@ class Backend:
 			if attempt>1:
 				self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
 
-			res=self.helper.read_json2dict(loc=gparams._DB_FILE_LOC_INPUT_USER)
+			res=self.helper.read_json2dict(loc=gparams._DB_FILE_LOC_IN_USER)
 			attempt=attempt+1
 
 			if attempt>=gparams._ATTEMPTS_BACKEND_READ_INPUT_SOURCES:
@@ -93,11 +92,15 @@ class Backend:
 			_camp_name = self.db_in_user['Measurement']['Campaign name']
 			_exp_num=int(self.db_in_user['Measurement']['Experiments per campaign'])
 
-			myline='Initiating campaign with name:'+ str(_camp_name)+',repet='\
+			my_event='Initiating campaign with name:'+ str(_camp_name)+',repet='\
 			       +str(_camp_repet)+',gap='+str(_camp_gap_hours)+',for exps='+str(_exp_num)
-			print('(Backend) DBG: '+str(myline))
-			mycsv_line = self.helper.get_str_timestamp()+gparams._DELIMITER+myline
-			self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
+			print('(Backend) DBG: '+str(my_event))
+
+			myjson_line=gparams._DB_FILE_FIELDS_OUT_LOG
+			myjson_line['time']=self.helper.get_str_timestamp()
+			myjson_line['description']=my_event
+			self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG,mydict=myjson_line)
+
 		except Exception as ex:
 			print('(Backend) ERROR: At input settings=' + str(ex))
 			return None
@@ -112,10 +115,13 @@ class Backend:
 				self.run_exp()
 				self.counter_exp = self.counter_exp +1
 
-				myline = 'Completed exp:' + str(self.counter_exp) + ',of campaign repetition:' + str(self.counter_camp)
-				mycsv_line = self.helper.get_str_timestamp() + gparams._DELIMITER + myline
-				self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
-				print('(Backend) DBG: ' + myline)
+				my_event = 'Completed exp:' + str(self.counter_exp) + ',of campaign repetition:' + str(self.counter_camp)
+				myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+				myjson_line['time'] = self.helper.get_str_timestamp()
+				myjson_line['description'] = my_event
+				self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line)
+
+				print('(Backend) DBG: ' + my_event)
 				print('---   ---   --- ---   ---   --- ---   ---   --- ')
 
 			self.counter_camp=self.counter_camp+1
@@ -125,10 +131,15 @@ class Backend:
 			while (self.helper.diff_betw_times(time_start,curr_time)<3600*_camp_gap_hours):
 				curr_time = self.helper.get_curr_time()
 				if (self.helper.diff_betw_times(time_start,curr_time) % 1200==0) or (self.helper.diff_betw_times(time_start,curr_time)<300):
-					myline = 'Waiting for new repetition, remaining (sec):' + str(3600*_camp_gap_hours-self.helper.diff_betw_times(time_start,curr_time))
-					mycsv_line = self.helper.get_str_timestamp() + gparams._DELIMITER + myline
-					self.helper.write_db(loc=gparams._DB_FILE_LOC_OUTPUT_LOG, mystr=mycsv_line)
-					print('(Backend) DBG: ' + myline)
+					my_event = ('Waiting for new repetition, remaining (sec):' +
+					            str(3600*_camp_gap_hours-self.helper.diff_betw_times(time_start,curr_time)))
+					print('(Backend) DBG: ' + str(my_event))
+
+					myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+					myjson_line['time'] = self.helper.get_str_timestamp()
+					myjson_line['description'] = my_event
+					self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line)
+
 				self.helper.wait(wait_time_sec)
 
 	def run_exp(self):

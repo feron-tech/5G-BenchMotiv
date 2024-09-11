@@ -53,6 +53,14 @@ class Helper:
 			print('(Helper) ERROR: During read_json2dict=' + str(ex))
 			return None
 
+	def read_jsonlines2pandas(self,loc):
+		try:
+			df = pd.read_json(loc, lines=True)
+			return df
+		except Exception as ex:
+			print('(Helper) ERROR: During read_jsonlines2pandas=' + str(ex))
+			return None
+
 	def write_dict2json(self,loc,mydict,clean=True):
 		try:
 			# Serializing json

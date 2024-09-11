@@ -32,7 +32,7 @@ def activate_app(config_dict):
 
 def get_app_video():
 	helper=Helper()
-	db_in_user=helper.read_json2dict(loc=gparams._DB_FILE_LOC_INPUT_USER)
+	db_in_user=helper.read_json2dict(loc=gparams._DB_FILE_LOC_IN_USER)
 
 	try:
 		_enable = db_in_user['Experiment']['Application']['Video']['enable']

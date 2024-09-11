@@ -7,7 +7,10 @@ import plotly.express as px
 import gparams
 import plotly.graph_objects as go
 from helper import Helper
-
+import zipfile
+import zlib
+import os
+import shutil
 # Initialize the app - constructor
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -1490,22 +1493,12 @@ app.layout = html.Div(children=[
 
                                 # Button
                                 html.Div([
-                                    html.Button(id='button_save_base', n_clicks=0, children='Save base stats',
+                                    html.Button(id='button_save', n_clicks=0, children='Save stats',
                                                 style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
                                                        'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
                                                        'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
                                                        'background-color': 'rgb(100,100,100)'}),
-                                    dcc.Download(id="download_save_base"),
-                                ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
-                                          'justify-content': 'center'}),
-
-                                html.Div([
-                                    html.Button(id='button_save_apps', n_clicks=0, children='Save app stats',
-                                                style={'font-size': '25px', 'width': '300px', 'display': 'inline-block',
-                                                       'margin-bottom': '10px', 'margin-right': '5px', 'height': '60px',
-                                                       'verticalAlign': 'top', 'color': 'rgb(255,215,0)',
-                                                       'background-color': 'rgb(100,100,100)'}),
-                                    dcc.Download(id="download_save_apps"),
+                                    dcc.Download(id="download_save"),
                                 ], style={'width': '100%', 'display': 'flex', 'align-items': 'center',
                                           'justify-content': 'center'}),
 
@@ -1698,7 +1691,7 @@ exp_app_profinet_enable
         },
     }
 
-    res=helper.write_dict2json(loc=gparams._DB_FILE_LOC_INPUT_USER,mydict=mydict,clean=True)
+    res=helper.write_dict2json(loc=gparams._DB_FILE_LOC_IN_USER,mydict=mydict,clean=True)
 
     if res is not None:
         print('(DEBUG) DB: Updated db according to new user input - Success')
@@ -1717,22 +1710,32 @@ def toggle_modal(button_start, button_exit, is_open):
     return is_open
 
 @callback(
-    Output("download_save_base", "data"),
-    Input("button_save_base", "n_clicks"),
+    Output("download_save", "data"),
+    Input("button_save", "n_clicks"),
     prevent_initial_call=True,
 )
 def func(n_clicks):
-    df=helper.read_db_df(gparams._DB_FILE_LOC_OUTPUT_BASE)
-    return dcc.send_data_frame(df.to_csv, "base_stats.csv", index=False)
+    print('(Frontend) DBG: Downloading exp files...')
 
-@callback(
-    Output("download_save_apps", "data"),
-    Input("button_save_apps", "n_clicks"),
-    prevent_initial_call=True,
-)
-def func(n_clicks):
-    df=helper.read_db_df(gparams._DB_FILE_LOC_OUTPUT_APP)
-    return dcc.send_data_frame(df.to_csv, "app_stats.csv", index=False)
+    # create the zip file first parameter path/name, second mode
+    print('(Frontend) DBG: Zipping...')
+    zip_name='zip'+helper.get_folderstr_timestamp()+'.zip'
+    zf = zipfile.ZipFile(zip_name, mode="w")
+    try:
+        for file in os.listdir(gparams._DB_DIR):
+            filename = os.fsdecode(file)
+            dir=os.path.join(gparams._DB_DIR,filename)
+            if 'git' in str(filename):
+                pass
+            else:
+                zf.write(dir, filename, compress_type=zipfile.ZIP_STORED)
+    except Exception as ex:
+        print('(Frontend) ERROR: During zip='+str(ex))
+    finally:
+        # Don't forget to close the file!
+        zf.close()
+
+    return dcc.send_file(zip_name)
 
 @callback(
     Output('fig_thru_tcp', 'figure'),
@@ -2003,12 +2006,12 @@ def update_graph_live(n_intervals):
         # title={'text':'Global convergence (training loss) w.r.t. time','font':{'color':'black','size':25}}
     )
 
-    mydf_news=helper.read_db_df(loc=gparams._DB_FILE_LOC_OUTPUT_LOG)
-    # remove repeated entries hack
-    #mydf_news = mydf_news.drop_duplicates(subset='description', keep="first")
-    #mydf_news['time'] = pd.to_datetime(mydf_news['time'])
-    #curr_df = mydf_news.loc[mydf_news['time'] < helper.get_curr_time()]
-    mydf_news = mydf_news.tail(6)
+    try:
+        mydf_news=helper.read_jsonlines2pandas(loc=gparams._DB_FILE_LOC_OUT_LOG)
+        mydf_news = mydf_news.tail(6)
+    except:
+        mydf_news=pd.DataFrame(gparams._DB_FILE_FIELDS_OUT_LOG)
+
     output_news=mydf_news.to_dict('records')
 
     return fig_my_thru_tcp,fig_my_thru_udp,fig_my_delay,fig_my_app_thru,fig_my_app_delay,output_news
