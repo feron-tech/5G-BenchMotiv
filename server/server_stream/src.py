@@ -39,6 +39,8 @@ def receive_frames(client_socket):
 
             # Display the frame
             print('Getting data=' + str(frame))
+            if frame is None:
+                raise ConnectionResetError
 
             # Check if the user pressed 'q' to quit the video stream
             if cv2.waitKey(1) & 0xFF == ord('q'):
