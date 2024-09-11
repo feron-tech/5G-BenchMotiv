@@ -37,9 +37,9 @@ def get_app_video():
 	try:
 		_enable = db_in_user['Experiment']['Application']['Video']['enable']
 		_fps = int(db_in_user['Experiment']['Application']['Video']['fps'])
-		_width = float(db_in_user['Experiment']['Application']['Video']['width'])
-		_height = float(db_in_user['Experiment']['Application']['Video']['height'])
-		_shark_captime_sec = float(db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
+		_width = int(db_in_user['Experiment']['Application']['Video']['width'])
+		_height = int(db_in_user['Experiment']['Application']['Video']['height'])
+		_shark_captime_sec = int(db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
 		_shark_max_packs = int(db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 		_camp_name = db_in_user['Measurement']['Campaign name']
 
