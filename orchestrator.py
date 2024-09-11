@@ -18,37 +18,28 @@ class Orchestrator:
 
 	def activate(self,image,detach=True,env=None,network_mode='bridge',port_dict=None):
 		try:
+			print('(Orch) DBG: Activation...')
 			initial_list_of_ifaces=self.get_all_ifaces()
 
 			if env is None:
-				if network_mode is None:
-					if port_dict is None:
-						self.orch.containers.run(image, detach=detach, remove=True)
-					else:
-						self.orch.containers.run(image, detach=detach, remove=True,ports=port_dict)
+				if port_dict is None:
+					self.orch.containers.run(image, detach=detach, remove=True, network_mode=network_mode)
 				else:
-					if port_dict is None:
-						self.orch.containers.run(image, detach=detach, network_mode=network_mode, remove=True)
-					else:
-						self.orch.containers.run(image, detach=detach, network_mode=network_mode, remove=True,ports=port_dict)
+					self.orch.containers.run(image, detach=detach, remove=True,
+					                         network_mode=network_mode,ports=port_dict)
 			else:
-				if network_mode is None:
-					if port_dict is None:
-						self.orch.containers.run(image, detach=detach,environment=env,remove=True)
-					else:
-						self.orch.containers.run(image, detach=detach, environment=env, remove=True,ports=port_dict)
+				if port_dict is None:
+					self.orch.containers.run(image, detach=detach, remove=True, network_mode=network_mode, environment=env)
 				else:
-					if port_dict is None:
-						self.orch.containers.run(image, detach=detach,environment=env,network_mode=network_mode,remove=True)
-					else:
-						self.orch.containers.run(image, detach=detach, environment=env, network_mode=network_mode,
-						                         remove=True,ports=port_dict)
+					self.orch.containers.run(image, detach=detach, remove=True,
+					                         network_mode=network_mode, environment=env,ports=port_dict)
+
 			print('(Orch) DBG: Activated container OK')
 
 			attempt=1
 			res=None
 			while (res is None):
-				print('(Backend) DBG: Seaching for iface (attempt=' + str(attempt) + ')...')
+				print('(Orch) DBG: Seaching for iface (attempt=' + str(attempt) + ')...')
 
 				if attempt > 1:
 					self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
@@ -72,6 +63,7 @@ class Orchestrator:
 
 	def deactivate(self,image):
 		try:
+			print('(Orch) DBG: Container deactivation...')
 			initial_list_of_ifaces = self.get_all_ifaces()
 
 			found=False
@@ -89,7 +81,7 @@ class Orchestrator:
 			attempt = 1
 			res = None
 			while (res is None):
-				print('(Backend) DBG: Seaching for iface (attempt=' + str(attempt) + ')...')
+				print('(Orch) DBG: Seaching for iface (attempt=' + str(attempt) + ')...')
 
 				if attempt > 1:
 					self.helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)

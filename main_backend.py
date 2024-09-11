@@ -295,6 +295,7 @@ class Backend:
 			return None
 
 		try:
+			print('(Backend) DBG: Capture acquire...')
 			pack_cnt=0
 			start_time = time.time()
 			sniff_duration_sec=0
@@ -310,6 +311,7 @@ class Backend:
 			return None
 
 		try:
+			print('(Backend) DBG: Capture analysis...')
 			cap = pyshark.FileCapture(input_file=gparams._SHARK_TEMP_OUT_FILE)
 			pack_cnt=0
 			for pack in cap:
