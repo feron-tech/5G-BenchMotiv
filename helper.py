@@ -56,14 +56,14 @@ class Helper:
 	def write_dict2json(self,loc,mydict,clean=True):
 		try:
 			# Serializing json
-			json_object = json.dumps(mydict, indent=4)
+			json_object = json.dumps(mydict)
 
 			# Writing to sample.json
 			if clean:
 				self.clean_db(loc=loc)
 
 			with open(loc, 'a') as outfile:
-				outfile.write(json_object)
+				outfile.write(json_object+'\n')
 			return 200
 		except Exception as ex:
 			print('(Helper) ERROR: During write_dict2json=' + str(ex))

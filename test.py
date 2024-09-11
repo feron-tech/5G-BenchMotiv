@@ -1,16 +1,15 @@
-from icmplib import ping, multiping, traceroute, resolve
-def get_icmp_stats( server_ip, packs=50, interval_sec=1, payload_bytes=64):
-	print('(Monitor) DBG: Settings: server_ip=' + str(server_ip) + ',num_packets=' + str(packs) +
-	      ',interval_sec=' + str(interval_sec) + ',payload_bytes=' + str(payload_bytes) + ' ...')
+import pandas as pd
+from helper import Helper
 
+a=Helper()
 
-# ping has a max packet len around 1500 bytes
-res = ping(address='127.0.0.1', count=5, interval=0.01, payload_size=12, privileged=False, timeout=0.5)
-print('(Monitor) DBG: Ping res=' + str(res))
+#b='{"a":1,"b":2}\n{"a":3,"b":4}'
 
-if res.is_alive:
-	print('(Monitor) DBG: Ping alive!')
+#json_file='{"camp_name": "Test01","repeat_id": "0"}{"camp_name": "Test01","repeat_id": "0"}'
+json_file='C:\\Users\\giorgos.drainakis\\Downloads\\app.json'
+a.write_dict2json(loc=json_file,mydict={'a':1,'be':2},clean=True)
+a.write_dict2json(loc=json_file,mydict={'a':3,'be':3},clean=False)
 
-else:
-	print('(Monitor) DBG: Ping NOT alive!')
+df=pd.read_json(json_file, lines=True)
 
+print(str(df.describe()))
