@@ -67,8 +67,8 @@ sudo ufw disable
 ```
 Docker images
 ```python
-cd server/server_opencv
-docker build -t server_opencv .
+cd server/server_stream
+docker build -t server_stream .
 ```
 ```python
 $ sudo snap install curl
@@ -85,7 +85,7 @@ $ sudo reboot
 ## Execution
 ### Server-side
 ```python
-docker run -it --rm -p 8888:8888 server_opencv
+docker run -it --rm -e ENV_SERVER_IP=xxxxxxx -e ENV_SERVER_PORT=8888 --network=bridge server_stream
 docker run -d --rm -p 1883:1883 -p 8883:8883 --name nanomq emqx/nanomq:latest
 iperf3 --server
 $ cd /{ROOT}/golden_unit/server/udp-ping
