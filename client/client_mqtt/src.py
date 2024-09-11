@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 import os
 import random
 import string
+
 def on_publish(client, userdata, mid, reason_code, properties):
     try:
         userdata.remove(mid)
