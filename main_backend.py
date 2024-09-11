@@ -212,6 +212,10 @@ class Backend:
 
 		res=self.activate_app(config_dict=config_dict)
 
+	def get_app_profinet(self):
+		# todo: placeholder for profinet client
+		pass
+
 	def activate_app(self,config_dict):
 		try:
 			_app_name=config_dict['app_name']
@@ -239,7 +243,6 @@ class Backend:
 
 		# deactivate app
 		orch.deactivate(image=_client_app_image_name)
-
 
 	def get_pyshark_kpis(self,my_iface='Ethernet',display_filter=None,max_packs=5000,
 	                     captime_sec=10,camp_name='',app_name=''):
@@ -426,12 +429,14 @@ class Backend:
 			_duration_sec=int(self.db_in_user['Experiment']['Baseline']['iperf']['duration (sec)'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init iperf test ................')
+
+			if not _enable:
+				print('(Backend) DBG: Iperf test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init iperf test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init iperf: '+str(ex))
-			return None
-
-		if not _enable:
 			return None
 
 		myjson_line = gparams._RES_FILE_FIELDS_IPERF
@@ -571,13 +576,17 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init ICMP ping test ................')
+
+			if not _enable:
+				print('(Backend) DBG: ICMP ping test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init ICMP ping test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init ICMP ping: '+str(ex))
 			return None
 
-		if not _enable:
-			return None
+
 
 		myjson_line = gparams._RES_FILE_FIELDS_ICMP
 		myjson_line['camp_name'] = _camp_name
@@ -633,13 +642,17 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['icmp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init UDP ping test ................')
+
+			if not _enable:
+				print('(Backend) DBG: UDP ping test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init UDP ping test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init UDP ping: '+str(ex))
 			return None
 
-		if not _enable:
-			return None
+
 
 		myjson_line = gparams._RES_FILE_FIELDS_UDPPING
 		data_df = self.get_udpping_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
@@ -713,13 +726,16 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init OWAMP test ................')
+
+			if not _enable:
+				print('(Backend) DBG: OWAMP test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init OWAMP test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init OWAMP: '+str(ex))
 			return None
 
-		if not _enable:
-			return None
 
 		myjson_line = gparams._RES_FILE_FIELDS_OWAMP
 		data_df = self.get_owamp_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
@@ -790,13 +806,16 @@ class Backend:
 			_packets=int(self.db_in_user['Experiment']['Baseline']['wamp']['packets'])
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init TWAMP test ................')
+
+			if not _enable:
+				print('(Backend) DBG: TWAMP test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init TWAMP test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init TWAMP: '+str(ex))
 			return None
 
-		if not _enable:
-			return None
 
 		myjson_line = gparams._RES_FILE_FIELDS_TWAMP
 		data_df = self.get_twamp_stats(server_ip=_server_ip,payload_bytes=_payload_bytes,
