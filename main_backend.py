@@ -418,8 +418,9 @@ class Backend:
 
 			try:
 				os.remove(gparams._SHARK_TEMP_OUT_FILE)
-			except:
-				pass
+				print('(Backend) DBG: Temp capture removed OK')
+			except Exception as ex:
+				print('(ERROR) DBG: Temp capture remove='+str(ex))
 
 			print('(Backend) DBG: Capture analysis OK')
 			return 200
