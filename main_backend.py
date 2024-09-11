@@ -145,7 +145,7 @@ class Backend:
 			_enable=self.db_in_user['Experiment']['Application']['MQTT']['enable']
 			_payload_bytes=int(self.db_in_user['Experiment']['Application']['MQTT']['payload (bytes)'])
 			_interval_ms=float(self.db_in_user['Experiment']['Application']['MQTT']['interval (ms)'])
-			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
+			_shark_captime_sec=int(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
 			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 			_server_ip=self.db_in_user['Network']['Server IP']
@@ -183,9 +183,9 @@ class Backend:
 		try:
 			_enable=self.db_in_user['Experiment']['Application']['Video']['enable']
 			_fps=int(self.db_in_user['Experiment']['Application']['Video']['fps'])
-			_width=float(self.db_in_user['Experiment']['Application']['Video']['width'])
-			_height = float(self.db_in_user['Experiment']['Application']['Video']['height'])
-			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
+			_width=int(self.db_in_user['Experiment']['Application']['Video']['width'])
+			_height = int(self.db_in_user['Experiment']['Application']['Video']['height'])
+			_shark_captime_sec=int(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
 			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
