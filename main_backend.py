@@ -149,13 +149,16 @@ class Backend:
 			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 			_server_ip=self.db_in_user['Network']['Server IP']
-			print('(Backend) DBG: Init MQTT test ................')
+
+			if _enable == 'False':
+				print('(Backend) DBG: MQTT test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init MQTT test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init MQTT: '+str(ex))
 			return None
 
-		if not _enable:
-			return None
 
 		sleep_sec=_interval_ms*1e-3
 
@@ -185,12 +188,14 @@ class Backend:
 			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
 			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
-			print('(Backend) DBG: Init Video test ................')
+
+			if _enable == 'False':
+				print('(Backend) DBG: Video test deactivated')
+				return None
+			else:
+				print('(Backend) DBG: Init Video test ................')
 		except Exception as ex:
 			print('(Backend) ERROR: Init Video: '+str(ex))
-			return None
-
-		if not _enable:
 			return None
 
 		config_dict={
@@ -430,7 +435,7 @@ class Backend:
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
-			if not _enable:
+			if _enable=='False':
 				print('(Backend) DBG: Iperf test deactivated')
 				return None
 			else:
@@ -577,7 +582,7 @@ class Backend:
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
-			if not _enable:
+			if _enable=='False':
 				print('(Backend) DBG: ICMP ping test deactivated')
 				return None
 			else:
@@ -643,7 +648,7 @@ class Backend:
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
-			if not _enable:
+			if _enable=='False':
 				print('(Backend) DBG: UDP ping test deactivated')
 				return None
 			else:
@@ -727,7 +732,7 @@ class Backend:
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
-			if not _enable:
+			if _enable=='False':
 				print('(Backend) DBG: OWAMP test deactivated')
 				return None
 			else:
@@ -807,7 +812,7 @@ class Backend:
 			_server_ip=self.db_in_user['Network']['Server IP']
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
-			if not _enable:
+			if _enable=='False':
 				print('(Backend) DBG: TWAMP test deactivated')
 				return None
 			else:
