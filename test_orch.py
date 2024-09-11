@@ -71,3 +71,4 @@ def get_app_video():
 
 	res = activate_app(config_dict=config_dict)
 
+get_app_video()
