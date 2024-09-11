@@ -11,7 +11,6 @@ else:
 
 # folder settings
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
-_RES_DIR=os.path.join(_ROOT_DIR,'results')
 _UDPPING_ROOT=os.path.join(os.path.join(_ROOT_DIR,'client'),'udp-ping')
 _UDPPING_DELIMITER=';'
 _OWAMP_DELIMITER=';'
