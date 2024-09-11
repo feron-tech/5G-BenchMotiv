@@ -162,6 +162,8 @@ class Backend:
 		config_dict={
 			'app_name':'MQTT',
 			'client_app_image_name':'client_mqtt',
+			'camp_name':_camp_name,
+			'ports_dict':None,
 			'env':{
 				'ENV_SERVER_IP' : _server_ip,
 				'ENV_SERVER_PORT' : gparams._PORT_SERVER_MQTT1,
@@ -174,14 +176,51 @@ class Backend:
 
 		res=self.activate_app(config_dict=config_dict)
 
+	def get_app_video(self):
+		try:
+			_enable=self.db_in_user['Experiment']['Application']['Video']['enable']
+			_fps=int(self.db_in_user['Experiment']['Application']['Video']['fps'])
+			_width=float(self.db_in_user['Experiment']['Application']['Video']['width'])
+			_height = float(self.db_in_user['Experiment']['Application']['Video']['height'])
+			_shark_captime_sec=float(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
+			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
+			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			print('(Backend) DBG: Init Video test ................')
+		except Exception as ex:
+			print('(Backend) ERROR: Init Video: '+str(ex))
+			return None
+
+		if not _enable:
+			return None
+
+		config_dict={
+			'app_name':'video',
+			'client_app_image_name':'client_stream',
+			'camp_name': _camp_name,
+			'ports_dict':{
+				gparams._PORT_SERVER_OPENCV:gparams._PORT_SERVER_OPENCV
+			},
+			'env':{
+				'ENV_STREAM_PORT': gparams._PORT_SERVER_OPENCV,
+				'ENV_FPS' : _fps,
+				'ENV_FRAME_WIDTH' : _width,
+				'ENV_FRAME_HEIGHT' : _height
+			},
+			'shark_captime_sec':_shark_captime_sec,
+			'shark_max_packs': _shark_max_packs,
+		}
+
+		res=self.activate_app(config_dict=config_dict)
+
 	def activate_app(self,config_dict):
 		try:
 			_app_name=config_dict['app_name']
 			_client_app_image_name=config_dict['client_app_image_name']
+			_ports_dict=config_dict['ports_dict']
 			_env=config_dict['env']
 			_shark_captime_sec=config_dict['shark_captime_sec']
 			_shark_max_packs=config_dict['shark_max_packs']
-			_camp_name=self.db_in_user['Measurement']['Campaign name']
+			_camp_name=config_dict['camp_name']
 			print('(Backend) DBG: Activating app='+str(_app_name)+'...')
 		except Exception as ex:
 			print('(Backend) ERROR: Activate app:'+str(ex)+'...')
@@ -189,7 +228,10 @@ class Backend:
 
 		# activate app
 		orch = Orchestrator()
-		iface=orch.activate(image=_client_app_image_name, detach=True, env=_env)
+		if _ports_dict is None:
+			iface=orch.activate(image=_client_app_image_name, detach=True, env=_env)
+		else:
+			iface = orch.activate(image=_client_app_image_name, detach=True, env=_env,port_dict=_ports_dict)
 
 		# monitor stats
 		self.get_pyshark_kpis(my_iface=iface,display_filter=None,max_packs=_shark_max_packs,

@@ -16,20 +16,33 @@ class Orchestrator:
 				pass
 		return final_list
 
-	def activate(self,image,detach=True,env=None,network_mode='bridge'):
+	def activate(self,image,detach=True,env=None,network_mode='bridge',port_dict=None):
 		try:
 			initial_list_of_ifaces=self.get_all_ifaces()
 
 			if env is None:
 				if network_mode is None:
-					self.orch.containers.run(image, detach=detach, remove=True)
+					if port_dict is None:
+						self.orch.containers.run(image, detach=detach, remove=True)
+					else:
+						self.orch.containers.run(image, detach=detach, remove=True,ports=port_dict)
 				else:
-					self.orch.containers.run(image, detach=detach, network_mode=network_mode, remove=True)
+					if port_dict is None:
+						self.orch.containers.run(image, detach=detach, network_mode=network_mode, remove=True)
+					else:
+						self.orch.containers.run(image, detach=detach, network_mode=network_mode, remove=True,ports=port_dict)
 			else:
 				if network_mode is None:
-					self.orch.containers.run(image, detach=detach,environment=env,remove=True)
+					if port_dict is None:
+						self.orch.containers.run(image, detach=detach,environment=env,remove=True)
+					else:
+						self.orch.containers.run(image, detach=detach, environment=env, remove=True,ports=port_dict)
 				else:
-					self.orch.containers.run(image, detach=detach,environment=env,network_mode=network_mode,remove=True)
+					if port_dict is None:
+						self.orch.containers.run(image, detach=detach,environment=env,network_mode=network_mode,remove=True)
+					else:
+						self.orch.containers.run(image, detach=detach, environment=env, network_mode=network_mode,
+						                         remove=True,ports=port_dict)
 			print('(Orch) DBG: Activated container OK')
 
 			attempt=1
