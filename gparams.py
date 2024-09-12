@@ -6,7 +6,7 @@ if os.name == 'nt': # windows OS
 else: # linux OS
     _ROOT_DIR='/home/simu5g/git/golden_unit'
 
-_LOCAL_TEST=True
+_LOCAL_TEST=False
 ##################################################################
 
 ######################### fixed values (DO NOT ALTER!) ###############################

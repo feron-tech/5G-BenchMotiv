@@ -1580,7 +1580,8 @@ app.layout = html.Div(children=[
     State('exp_app_video_height', 'value'),
 
 
-    State('exp_app_profinet_enable', 'value')
+    State('exp_app_profinet_enable', 'value'),
+    prevent_initial_call=True
 
 )
 def update_output(button_start,
@@ -1699,6 +1700,7 @@ exp_app_profinet_enable
     Input("button_start", "n_clicks"),
     Input("button_exit", "n_clicks"),
     State("modal-fs", "is_open"),
+    prevent_initial_call=True
 )
 def toggle_modal(button_start, button_exit, is_open):
     if button_start or button_exit:
@@ -1708,7 +1710,7 @@ def toggle_modal(button_start, button_exit, is_open):
 @callback(
     Output("download_save", "data"),
     Input("button_save", "n_clicks"),
-    prevent_initial_call=True,
+    prevent_initial_call=True
 )
 def func(n_clicks):
     print('(Frontend) DBG: Downloading exp files...')
