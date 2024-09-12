@@ -287,71 +287,99 @@ class Modem:
         return response
 
 
-def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr'):
+def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr',camp_name='test'):
+    try:
+        helper=Helper()
+        my_modem = Modem()
+        my_modem.initialize_port(port, baud_rate, 1)
+
+        res = my_modem.is_alive()
+
+        mode_pref = my_modem.get_prefered_mode()
+        my_modem.set_prefered_mode("LTE:NR5G")
+
+        oper, act = my_modem.get_oper_and_mode()
+
+        #apn = my_modem.get_apn()
+        #resp1 = my_modem.set_apn(myapn)
+        rssi, ber = my_modem.get_csq()
+        qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
+        rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
+        sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
+        qnwinfo_info = my_modem.get_net_info()
+        my_modem.serving_cell()
+
+        print(mode_pref)
+        print(oper)
+        print(act)
+        #print(apn)
+        #print(resp1)
+        print(rssi)
+        print(ber)
+        print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
+        print(rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode)
+        print(sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode)
+        print(qnwinfo_info)
+        print('(Physical) DBG: Completed serial physical measurements in parallel')
+        print("+++++++++++++++++++++++")
+
+        myjson_line=gparams._RES_FILE_FIELDS_PHY
+        myjson_line['camp_name'] = str(camp_name)
+        myjson_line['timestamp']=helper.get_str_timestamp()
+        myjson_line['mode_pref'] = str(mode_pref)
+        myjson_line['oper'] = str(oper)
+        myjson_line['act'] = str(act)
+        myjson_line['rssi'] = str(rssi)
+        myjson_line['ber'] = str(ber)
+        myjson_line['qrsrp_prx'] = str(qrsrp_prx)
+        myjson_line['qrsrp_drx'] = str(qrsrp_drx)
+        myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
+        myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
+        myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
+        myjson_line['rsrq_prx'] = str(rsrq_prx)
+        myjson_line['rsrq_drx'] = str(rsrq_drx)
+        myjson_line['rsrq_rx2'] = str(rsrq_rx2)
+        myjson_line['rsrq_rx3'] = str(rsrq_rx3)
+        myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
+        myjson_line['sinr_prx'] = str(sinr_prx)
+        myjson_line['sinr_drx'] = str(sinr_drx)
+        myjson_line['sinr_rx2'] = str(sinr_rx2)
+        myjson_line['sinr_rx3'] = str(sinr_rx3)
+        myjson_line['sinr_sysmode'] = str(sinr_sysmode)
+
+        helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
+    except Exception as ex:
+        print('(Physical) ERROR during serial=' + str(ex))
+
+def read_input():
     helper=Helper()
-    my_modem = Modem()
-    my_modem.initialize_port(port, baud_rate, 1)
+    res = None
+    attempt = 1
+    while (res is None):
+        print('(Physical) DBG: Reading input sources (attempt=' + str(attempt) + ')...')
 
-    res = my_modem.is_alive()
+        if attempt > 1:
+            helper.wait(gparams._WAIT_SEC_BACKEND_READ_INPUT_SOURCES)
 
-    mode_pref = my_modem.get_prefered_mode()
-    my_modem.set_prefered_mode("LTE:NR5G")
+        res = helper.read_json2dict(loc=gparams._DB_FILE_LOC_IN_USER)
+        attempt = attempt + 1
 
-    oper, act = my_modem.get_oper_and_mode()
+        if attempt >= gparams._ATTEMPTS_BACKEND_READ_INPUT_SOURCES:
+            print('(Physical) ERROR: Cannot read input sources!')
+            return None
 
-    #apn = my_modem.get_apn()
-    #resp1 = my_modem.set_apn(myapn)
-    rssi, ber = my_modem.get_csq()
-    qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
-    rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
-    sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
-    qnwinfo_info = my_modem.get_net_info()
-    my_modem.serving_cell()
-
-
-    print(mode_pref)
-    print(oper)
-    print(act)
-    #print(apn)
-    #print(resp1)
-    print(rssi)
-    print(ber)
-    print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
-    print(rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode)
-    print(sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode)
-    print(qnwinfo_info)
-    print('(Physical) DBG: Completed serial physical measurements in parallel')
-    print("+++++++++++++++++++++++")
-
-    myjson_line=gparams._RES_FILE_FIELDS_PHY
-    myjson_line['timestamp']=helper.get_str_timestamp()
-    myjson_line['mode_pref'] = str(mode_pref)
-    myjson_line['oper'] = str(oper)
-    myjson_line['act'] = str(act)
-    myjson_line['rssi'] = str(rssi)
-    myjson_line['ber'] = str(ber)
-    myjson_line['qrsrp_prx'] = str(qrsrp_prx)
-    myjson_line['qrsrp_drx'] = str(qrsrp_drx)
-    myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
-    myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
-    myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
-    myjson_line['rsrq_prx'] = str(rsrq_prx)
-    myjson_line['rsrq_drx'] = str(rsrq_drx)
-    myjson_line['rsrq_rx2'] = str(rsrq_rx2)
-    myjson_line['rsrq_rx3'] = str(rsrq_rx3)
-    myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
-    myjson_line['sinr_prx'] = str(sinr_prx)
-    myjson_line['sinr_drx'] = str(sinr_drx)
-    myjson_line['sinr_rx2'] = str(sinr_rx2)
-    myjson_line['sinr_rx3'] = str(sinr_rx3)
-    myjson_line['sinr_sysmode'] = str(sinr_sysmode)
-
-    myloc=os...............
-    helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
+    print('(Physical) DBG: Read input sources - Success')
+    return res
 
 if __name__ == "__main__":
     try:
+        res=read_input()
+        _camp_name = res['Measurement']['Campaign name']
+        _port=str(res['Network']['Modem port'])
+        _baud=int(res['Network']['Baud rate'])
+        _apn = str(res['Network']['APN'])
+
         while True:
-            main(port='/dev/ttyUSB3', baud_rate=115200, command='AT', myapn='static.ipt')
+            main(port=_port, baud_rate=_baud, command='AT', myapn=_apn,camp_name=_camp_name)
     except Exception as ex:
         print('(Physical) ERROR: Failed='+str(ex))

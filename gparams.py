@@ -40,6 +40,7 @@ _SHARK_TEMP_OUT_FILE=os.path.join(_ROOT_DIR,'mypcap.pcap')
 
 _RES_FILE_LOC_PHY=os.path.join(_DB_DIR,'phy.json')
 _RES_FILE_FIELDS_PHY={
+    'camp_name': None,
     'timestamp':None,
     'mode_pref':None,
     'oper':None,
