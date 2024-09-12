@@ -104,10 +104,11 @@ docker run -d --rm -p 1883:1883 -p 8883:8883 --name nanomq emqx/nanomq:latest
 
 ### Client-side
 ```python
-# Terminal 1: Set root dir
+# Terminal 1: Set root dir & activate tool
 cd /{GOLDEN_UNIT_ROOT}/golden_unit/
 nano gparams.py # (settings)
-<change dir to local dir>
+<set your "ROOT_DIR" depending on your OS>
+<disable "LOCAL_TEST" flag>
 <save and exit>
 ```
 ```python

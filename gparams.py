@@ -1,14 +1,15 @@
 import os
 
 #########################  input params  ########################
-if os.name == 'nt':
-    # windows OS
+if os.name == 'nt': # windows OS
     _ROOT_DIR='C:\\Pycharm\\Projects\\golden_unit'
-else:
-    # linux OS
+else: # linux OS
     _ROOT_DIR='/home/simu5g/git/golden_unit'
-################################################################
 
+_LOCAL_TEST=True
+##################################################################
+
+######################### fixed values (DO NOT ALTER!) ###############################
 # folder settings
 _DB_DIR=os.path.join(_ROOT_DIR,'db')
 _UDPPING_ROOT=os.path.join(os.path.join(_ROOT_DIR,'client'),'udp-ping')
@@ -17,6 +18,22 @@ _OWAMP_DELIMITER=';'
 _TWAMP_DELIMITER=';'
 _DELIMITER=';'
 
+## timeouts
+_ATTEMPTS_BACKEND_READ_INPUT_SOURCES=1e6
+_WAIT_SEC_BACKEND_READ_INPUT_SOURCES=15
+
+## ports
+_PORT_SERVER_IPERF=5201
+_PORT_SERVER_MQTT1=1883
+_PORT_SERVER_MQTT2=8883
+_PORT_SERVER_OPENCV=8888
+_PORT_SERVER_UDP_PING=1234
+_PORT_CLIENT_GUI=8050
+_PORT_CLIENT_UDP_PING=1234
+##################################################################
+
+
+######################### data schemas ###############################
 _RES_FILE_LOC_APP=os.path.join(_DB_DIR,'app.json')
 _RES_FILE_FIELDS_APP={
     'camp_name': None,
@@ -225,20 +242,7 @@ _DB_FILE_FIELDS_OUT_LOG={
     'time': None,
     'description': None
 }
+##################################################################
 
-## ports
-_PORT_SERVER_IPERF=5201
-_PORT_SERVER_MQTT1=1883
-_PORT_SERVER_MQTT2=8883
-_PORT_SERVER_OPENCV=8888
-_PORT_SERVER_UDP_PING=1234
 
-_PORT_CLIENT_GUI=8050
-_PORT_CLIENT_UDP_PING=1234
 
-## timeouts
-_ATTEMPTS_BACKEND_READ_INPUT_SOURCES=1e6
-_WAIT_SEC_BACKEND_READ_INPUT_SOURCES=15
-
-## local test
-_LOCAL_TEST=True
