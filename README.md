@@ -283,28 +283,28 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/ #At client-side
 |-----------------------|---------------------------------------------------------------------|
 | camp_name             | Measurement campaign name   |  
 | timestamp             | UNIX timestamp                                           |
-| mode_pref             | xxxx                            |
-| oper             | xxxx                            |
-| act             | xxxx                            |
-| apn             | xxxx                            |
-| resp1             | xxxx                            |
-| rssi             | xxxx                            |
-| ber             | xxxx                            |
-| qrsrp_prx             | xxxx                            |
-| qrsrp_drx             | xxxx                            |
-| qrsrp_rx2             | xxxx                            |
-| qrsrp_rx3             | xxxx                            |
-| qrsrp_sysmode             | xxxx                            |
-| rsrq_prx             | xxxx                            |
-| rsrq_drx             | xxxx                            |
-| rsrq_rx2             | xxxx                            |
-| rsrq_rx3             | xxxx                            |
-| rsrq_sysmode             | xxxx                            |
-| sinr_prx             | xxxx                            |
-| sinr_drx             | xxxx                            |
-| sinr_rx2             | xxxx                            |
-| sinr_rx3             | xxxx                            |
-| sinr_sysmode             | xxxx                            |
+| mode_pref             | RAN mode (LTE/5G)                            |
+| oper             | Operator                           |
+| act             | Operator response                            |
+| apn             | APN                            |
+| resp1             | APN response                            |
+| rssi             | RSSI                            |
+| ber             | Bit-error rate                            |
+| qrsrp_prx             | QRSRP                            |
+| qrsrp_drx             | QRSRP                            |
+| qrsrp_rx2             | QRSRP                            |
+| qrsrp_rx3             | QRSRP                            |
+| qrsrp_sysmode             | QRSRP                            |
+| rsrq_prx             | RSRQ                            |
+| rsrq_drx             | RSRQ                            |
+| rsrq_rx2             | RSRQ                            |
+| rsrq_rx3             | RSRQ                            |
+| rsrq_sysmode             | RSRQ                            |
+| sinr_prx             | SINR                            |
+| sinr_drx             | SINR                            |
+| sinr_rx2             | SINR                            |
+| sinr_rx3             | SINR                            |
+| sinr_sysmode             | SINR                            |
 
 ### input user settings
 * File: in_user.json
