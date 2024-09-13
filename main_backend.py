@@ -323,7 +323,6 @@ class Backend:
 			print('(Backend) DBG: (Previous) temp capture removed OK')
 		except Exception as ex:
 			print('(Backend) Warning: Temp capture remove='+str(ex))
-			return None
 
 		attempt=1
 		res=None
