@@ -24,8 +24,8 @@ class Backend:
 	def __init__(self):
 		# help functions and params
 		self.helper = Helper()
-		self.counter_exp=0
-		self.counter_camp=0
+		self.cnt_exp=0
+		self.cnt_repet=0
 		self.df_out_monitor=None
 
 		# init functions
@@ -108,34 +108,31 @@ class Backend:
 			print('(Backend) ERROR: At input settings=' + str(ex))
 			return None
 
-		self.counter_camp=0
-		while (self.counter_camp<_camp_repet):
+		self.cnt_repet=0
+		while (self.cnt_repet<_camp_repet):
+
 			# start new campaign repetition
-			time_start=self.helper.get_curr_time()
-
-			self.counter_exp=0
+			self.cnt_exp=0
 			for i in range(0,_exp_num):
+				# start new experiments inside the campaign repetition
 				self.run_exp()
-				self.counter_exp = self.counter_exp +1
+				self.cnt_exp = self.cnt_exp +1
 
-				my_event = 'Completed exp:' + str(self.counter_exp) + ',of campaign repetition:' + str(self.counter_camp)
-				myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
-				myjson_line['time'] = self.helper.get_str_timestamp()
-				myjson_line['description'] = my_event
-				self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
+			self.cnt_repet=self.cnt_repet+1
 
-				print('(Backend) DBG: ' + my_event)
-				print('---   ---   --- ---   ---   --- ---   ---   --- ')
+			# check waiting time between campaign repetitions
+			asctime_start=self.helper.get_curr_asctime()
+			total_wait_time_sec=int(3600*_camp_gap_hours)
+			wait_interval_sec=int(total_wait_time_sec/20)
 
-			self.counter_camp=self.counter_camp+1
+			remaining_time_sec=1
+			while (remaining_time_sec>0):
+				asctime_curr = self.helper.get_curr_asctime()
+				remaining_time_sec = (total_wait_time_sec -
+				                      self.helper.diff_asctimes_sec(early=asctime_start,late=asctime_curr))
 
-			curr_time=self.helper.get_curr_time()
-			wait_time_sec=int((3600*_camp_gap_hours)/20)
-			while (self.helper.diff_betw_times(time_start,curr_time)<3600*_camp_gap_hours):
-				curr_time = self.helper.get_curr_time()
-				if (self.helper.diff_betw_times(time_start,curr_time) % 1200==0) or (self.helper.diff_betw_times(time_start,curr_time)<300):
-					my_event = ('Waiting for new repetition, remaining (sec):' +
-					            str(3600*_camp_gap_hours-self.helper.diff_betw_times(time_start,curr_time)))
+				if (remaining_time_sec>0):
+					my_event = ('Waiting for new repetition, remaining time (sec):' + str(remaining_time_sec))
 					print('(Backend) DBG: ' + str(my_event))
 
 					myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
@@ -143,11 +140,20 @@ class Backend:
 					myjson_line['description'] = my_event
 					self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
 
-				self.helper.wait(wait_time_sec)
+					self.helper.wait(wait_interval_sec)
 
 	def run_exp(self):
 		self.get_baseline_measurements()
 		self.get_app_measurements()
+
+		my_event = 'Completed exp:' + str(self.cnt_exp) + ',of campaign repetition:' + str(self.cnt_repet)
+		myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+		myjson_line['time'] = self.helper.get_str_timestamp()
+		myjson_line['description'] = my_event
+		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
+
+		print('(Backend) DBG: ' + my_event)
+		print('---   ---   --- ---   ---   --- ---   ---   --- ')
 
 	def get_app_measurements(self):
 		self.get_app_mqtt()
@@ -344,12 +350,12 @@ class Backend:
 					pass
 
 				try:
-					myjson_line['repeat_id'] = str(self.counter_camp)
+					myjson_line['repeat_id'] = str(self.cnt_repet)
 				except:
 					pass
 
 				try:
-					myjson_line['exp_id'] = str(self.counter_exp)
+					myjson_line['exp_id'] = str(self.cnt_exp)
 				except:
 					pass
 
@@ -490,8 +496,8 @@ class Backend:
 
 		myjson_line = gparams._RES_FILE_FIELDS_IPERF
 		myjson_line['camp_name'] = _camp_name
-		myjson_line['repeat_id'] = str(self.counter_camp)
-		myjson_line['exp_id'] = str(self.counter_exp)
+		myjson_line['repeat_id'] = str(self.cnt_repet)
+		myjson_line['exp_id'] = str(self.cnt_exp)
 		myjson_line['timestamp'] = self.helper.get_str_timestamp()
 
 		if _protocol in ['TCP','All']:
@@ -639,8 +645,8 @@ class Backend:
 
 		myjson_line = gparams._RES_FILE_FIELDS_ICMP
 		myjson_line['camp_name'] = _camp_name
-		myjson_line['repeat_id'] = str(self.counter_camp)
-		myjson_line['exp_id'] = str(self.counter_exp)
+		myjson_line['repeat_id'] = str(self.cnt_repet)
+		myjson_line['exp_id'] = str(self.cnt_exp)
 		myjson_line['timestamp'] = self.helper.get_str_timestamp()
 
 		_interval_sec=_interval_ms*1e-3
@@ -710,8 +716,8 @@ class Backend:
 		if data_df is not None:
 			try:
 				data_df['camp_name'] = _camp_name
-				data_df['repeat_id'] = str(self.counter_camp)
-				data_df['exp_id'] = str(self.counter_exp)
+				data_df['repeat_id'] = str(self.cnt_repet)
+				data_df['exp_id'] = str(self.cnt_exp)
 				data_df['timestamp'] = self.helper.get_str_timestamp()
 
 				data_df.to_json(gparams._RES_FILE_LOC_UDPPING,orient='records', lines=True)
@@ -793,8 +799,8 @@ class Backend:
 		if data_df is not None:
 			try:
 				data_df['camp_name'] = _camp_name
-				data_df['repeat_id'] = str(self.counter_camp)
-				data_df['exp_id'] = str(self.counter_exp)
+				data_df['repeat_id'] = str(self.cnt_repet)
+				data_df['exp_id'] = str(self.cnt_exp)
 				data_df['timestamp'] = self.helper.get_str_timestamp()
 
 				data_df.to_json(gparams._RES_FILE_LOC_OWAMP,orient='records', lines=True)
@@ -873,8 +879,8 @@ class Backend:
 		if data_df is not None:
 			try:
 				data_df['camp_name'] = _camp_name
-				data_df['repeat_id'] = str(self.counter_camp)
-				data_df['exp_id'] = str(self.counter_exp)
+				data_df['repeat_id'] = str(self.cnt_repet)
+				data_df['exp_id'] = str(self.cnt_exp)
 				data_df['timestamp'] = self.helper.get_str_timestamp()
 
 				data_df.to_json(gparams._RES_FILE_LOC_TWAMP,orient='records', lines=True)

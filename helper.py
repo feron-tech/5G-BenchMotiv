@@ -95,15 +95,15 @@ class Helper:
 	def wait(self,time_sec):
 		time.sleep(time_sec)
 
-	def get_curr_time(self):
+	def get_curr_asctime(self):
 		return time.asctime(time.localtime(time.time()))
 
-	def diff_betw_times(self,t1,t2):
-		t1 = time.strptime(t1)
-		t1 = mktime(t1)
-		t2 = time.strptime(t2)
-		t2 = mktime(t2)
-		return t2-t1
+	def diff_asctimes_sec(self,early,late):
+		early = time.strptime(early)
+		early = mktime(early)
+		late = time.strptime(late)
+		late = mktime(late)
+		return late-early
 
 	def get_str_timestamp(self):
 		return str(datetime.now())

@@ -305,7 +305,7 @@ app.layout = html.Div(children=[
                                 dbc.Col(
                                     [
                                         html.Div([
-                                            dcc.Input(id='mes_gap', type='text', value='1',
+                                            dcc.Input(id='mes_gap', type='text', value='0.015',
                                                       style={'width': '100%', 'font-size': 20}),
                                         ], style={'width': '100%', 'display': 'flex',
                                                   'align-items': 'left',
