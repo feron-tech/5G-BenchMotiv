@@ -318,6 +318,12 @@ class Backend:
 		#	print('(Monitor) ERROR: No veth ifaces found')
 		#	return None
 
+		try:
+			os.remove(gparams._SHARK_TEMP_OUT_FILE)
+			print('(Backend) DBG: (Previous) temp capture removed OK')
+		except Exception as ex:
+			print('(Backend) Warning: Temp capture remove='+str(ex))
+			return None
 
 		attempt=1
 		res=None
@@ -511,13 +517,6 @@ class Backend:
 			print('(Backend) DBG: Capture write OK')
 		except Exception as ex:
 			print('(Backend) ERROR: Capture write=' + str(ex))
-
-		try:
-			os.remove(gparams._SHARK_TEMP_OUT_FILE)
-			print('(Backend) DBG: Temp capture removed OK')
-		except Exception as ex:
-			print('(Backend) ERROR: Temp capture remove='+str(ex))
-			return None
 
 		print('(Backend) DBG: Capture analysis OK')
 		return 200

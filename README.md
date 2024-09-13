@@ -128,11 +128,33 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/
 # check that conda env is activated
 python main_gui.py
 ```
+## GUI - Live monitoring
+
+* Baseline statistics
+    * Requires at least 2 experiments for visualization
+    * Live (aggregated) stats
+        * Mean packet throughput - TCP (UL/DL) from iperf3
+        * Mean packet throughput - UDP from iperf3
+        * Packet RTT & Jitter from icmp ping
+
+* Application-specific statistics
+    * Requires at least 2 experiments for visualization
+    * Live (aggregated) stats
+        * Mean throughput for each application
+        * Mean RTT for each application
+        
+* Event log
+    * Shows information in regards to the campaign's progress       
+
+* Save stats button
+    * Downloads raw experiment data (packet-level)
+    * This might require several mins depending on the experiment's settings
+
 ## Results
 ```python
 # Method 1
 Download from GUI at client side: "Save stats" button
-(This might require several mins depending on the experiment's settings
+
 # Method 2
 cd /{GOLDEN_UNIT_ROOT}/golden_unit/ #At client-side
 <results are shown in the "db" folder>
@@ -323,12 +345,6 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/ #At client-side
 
 ### campaign log file
 * File: out_log.json
-
-
-
-
-
-
 
 ## Tools repository
 * https://docs.perfsonar.net/manage_regular_tests.html
