@@ -121,6 +121,7 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/
 cd /{GOLDEN_UNIT_ROOT}/golden_unit/
 # check that conda env is activated
 python main_backend.py
+(note that existing Docker containers will be removed)
 ```
 ```python
 # Terminal 4: Initiate GUI
