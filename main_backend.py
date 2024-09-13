@@ -1,3 +1,5 @@
+import statistics
+import math
 import time
 import pandas as pd
 from helper import Helper
@@ -322,6 +324,13 @@ class Backend:
 			return None
 
 		try:
+			min_sniff_timestamp=math.inf
+			max_sniff_timestamp = 0
+			sum_packet_len_bytes=0
+			rtt_list=[]
+			max_timestamp='1999-01-01 00:00:00.000000'
+
+
 			print('(Backend) DBG: Capture analysis...')
 			cap = pyshark.FileCapture(input_file=gparams._SHARK_TEMP_OUT_FILE)
 			pack_cnt=0
@@ -344,7 +353,9 @@ class Backend:
 					pass
 
 				try:
-					myjson_line['timestamp'] = self.helper.get_str_timestamp()
+					res=self.helper.get_str_timestamp()
+					myjson_line['timestamp'] = res
+					max_timestamp=max(max_timestamp,res)
 				except:
 					pass
 
@@ -364,7 +375,10 @@ class Backend:
 					pass
 
 				try:
-					myjson_line['sniff_timestamp'] = str(pack.sniff_timestamp)
+					res=pack.sniff_timestamp
+					myjson_line['sniff_timestamp'] = str(res)
+					min_sniff_timestamp=min(min_sniff_timestamp,float(res))
+					max_sniff_timestamp = max(max_sniff_timestamp, float(res))
 				except:
 					pass
 
@@ -374,7 +388,9 @@ class Backend:
 					pass
 
 				try:
-					myjson_line['pack_len_bytes'] = str(pack.length)
+					res=pack.length
+					myjson_line['pack_len_bytes'] = str(res)
+					sum_packet_len_bytes=sum_packet_len_bytes+int(res)
 				except:
 					pass
 
@@ -399,7 +415,9 @@ class Backend:
 					pass
 
 				try:
-					myjson_line['rtt'] = str(pack.tcp.analysis_ack_rtt)
+					res=pack.tcp.analysis_ack_rtt
+					myjson_line['rtt'] = str(res)
+					rtt_list.append(float(res))
 				except:
 					pass
 
@@ -426,6 +444,17 @@ class Backend:
 
 				if pack_cnt<2:
 					print('(Backend) DBG: Capture example pack addr dest='+str(myjson_line['addr_dest']))
+
+			# write aggregated results to gui_app.json DB for presentation purposes only
+			myjson_line = gparams._RES_FILE_FIELDS_GUI_APP
+			time_diff = max_sniff_timestamp - min_sniff_timestamp
+			thru_bps = float((sum_packet_len_bytes * 8) / time_diff)
+
+			myjson_line['RTT (msec)'] = str(statistics.mean(rtt_list)* 1e3)
+			myjson_line['app_name'] = app_name
+			myjson_line['Throughput (Mbps)'] = str(thru_bps * 1e-6)
+			myjson_line['timestamp'] = str(max_timestamp)
+			self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_GUI_APP, mydict=myjson_line, clean=False)
 
 			try:
 				os.remove(gparams._SHARK_TEMP_OUT_FILE)

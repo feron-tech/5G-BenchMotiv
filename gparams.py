@@ -34,6 +34,14 @@ _PORT_CLIENT_UDP_PING=1234
 
 
 ######################### data schemas ###############################
+_RES_FILE_LOC_GUI_APP=os.path.join(_DB_DIR,'gui_app.json')
+_RES_FILE_FIELDS_GUI_APP={
+    'RTT (msec)': None,
+    'app_name': None,
+    'Throughput (Mbps)': None,
+    'timestamp': None,
+}
+
 _RES_FILE_LOC_APP=os.path.join(_DB_DIR,'app.json')
 _RES_FILE_FIELDS_APP={
     'camp_name': None,

@@ -1700,7 +1700,6 @@ exp_app_profinet_enable
     Input("button_start", "n_clicks"),
     Input("button_exit", "n_clicks"),
     State("modal-fs", "is_open"),
-    prevent_initial_call=True
 )
 def toggle_modal(button_start, button_exit, is_open):
     if button_start or button_exit:
@@ -1710,7 +1709,6 @@ def toggle_modal(button_start, button_exit, is_open):
 @callback(
     Output("download_save", "data"),
     Input("button_save", "n_clicks"),
-    prevent_initial_call=True
 )
 def func(n_clicks):
     print('(Frontend) DBG: Downloading exp files...')
@@ -1901,46 +1899,17 @@ def update_graph_live(n_intervals):
     )
 
     ############## Fig 4 app thru #########
-    df_app = helper.read_jsonlines2pandas(loc=gparams._RES_FILE_LOC_APP)
-
-    list_of_repeat_id = df_app['repeat_id'].unique()
-    list_of_exp_id = df_app['exp_id'].unique()
-    list_of_apps = df_app['app_name'].unique()
-
-    final_list_of_dicts = []
-
-    for _app in list_of_apps:
-        for _repeat_id in list_of_repeat_id:
-            for _exp_id in list_of_exp_id:
-                curr_df = df_app.loc[
-                    (df_app['app_name'] == _app) & (df_app['exp_id'] == _exp_id) & (df_app['repeat_id'] == _repeat_id)]
-
-                min_time = curr_df['sniff_timestamp'].min()
-                max_time = curr_df['sniff_timestamp'].max()
-                total_bytes = curr_df['pack_len_bytes'].sum()
-                mean_rtt_sec = curr_df['rtt'].mean()
-                time_diff = max_time - min_time
-                thru_bps = float((total_bytes * 8) / time_diff)
-
-                mydict = {
-                    'RTT (msec)': mean_rtt_sec * 1e3,
-                    'app': _app,
-                    'Throughput (Mbps)': float(thru_bps * 1e-6),
-                    'timestamp': curr_df['timestamp'].max()
-                }
-                final_list_of_dicts.append(mydict)
-
-    final_df = pd.DataFrame(final_list_of_dicts)
+    df_gui_app = helper.read_jsonlines2pandas(loc=gparams._RES_FILE_LOC_GUI_APP)
 
     # get all apps (filter)
-    list_of_apps=final_df['app'].unique()
+    list_of_apps=df_gui_app['app_name'].unique()
 
     # plot the data
     fig_my_app_thru = go.Figure()
     fig_my_app_delay=go.Figure()
 
     for app in list_of_apps:
-        app_df=final_df.loc[final_df['app'] == app]
+        app_df=df_gui_app.loc[df_gui_app['app_name'] == app]
 
         fig_my_app_thru = fig_my_app_thru.add_trace(go.Scatter(x=app_df["timestamp"],
                                        y=app_df["Throughput (Mbps)"],
