@@ -132,7 +132,7 @@ class Backend:
 				                      self.helper.diff_asctimes_sec(early=asctime_start,late=asctime_curr))
 
 				if (remaining_time_sec>0):
-					my_event = ('Waiting for new repetition, remaining time (sec):' + str(remaining_time_sec))
+					my_event = ('Remaining time for next repetition (sec):' + str(remaining_time_sec))
 					print('(Backend) DBG: ' + str(my_event))
 
 					myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
@@ -143,6 +143,15 @@ class Backend:
 					self.helper.wait(wait_interval_sec)
 
 	def run_exp(self):
+		my_event = 'Initiating exp:' + str(self.cnt_exp) + ',of campaign repetition:' + str(self.cnt_repet)
+		myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+		myjson_line['time'] = self.helper.get_str_timestamp()
+		myjson_line['description'] = my_event
+		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
+
+		print('(Backend) DBG: ' + my_event +'>>>> >>>> >>>> >>>> >>>>')
+
+
 		self.get_baseline_measurements()
 		self.get_app_measurements()
 
@@ -153,7 +162,7 @@ class Backend:
 		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
 
 		print('(Backend) DBG: ' + my_event)
-		print('---   ---   --- ---   ---   --- ---   ---   --- ')
+		print('>>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>>')
 
 	def get_app_measurements(self):
 		self.get_app_mqtt()
