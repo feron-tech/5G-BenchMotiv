@@ -182,6 +182,10 @@ class Backend:
 		print('--- --- --- --- --- --- --- --- ---')
 
 	def get_app_measurements(self):
+		# remove left-over containers
+		orch = Orchestrator()
+		orch.clean_all()
+
 		self.get_app_mqtt()
 		self.get_app_video()
 		self.get_app_profinet()
@@ -204,7 +208,6 @@ class Backend:
 		except Exception as ex:
 			print('(Backend) ERROR: Init MQTT: '+str(ex))
 			return None
-
 
 		sleep_sec=_interval_ms*1e-3
 
@@ -318,6 +321,7 @@ class Backend:
 		#	print('(Monitor) ERROR: No veth ifaces found')
 		#	return None
 
+		# delete previous left-overs if any
 		try:
 			os.remove(gparams._SHARK_TEMP_OUT_FILE)
 			print('(Backend) DBG: (Previous) temp capture removed OK')
@@ -516,6 +520,13 @@ class Backend:
 			print('(Backend) DBG: Capture write OK')
 		except Exception as ex:
 			print('(Backend) ERROR: Capture write=' + str(ex))
+
+		try:
+			os.remove(gparams._SHARK_TEMP_OUT_FILE)
+			print('(Backend) DBG: (Previous) temp capture removed OK')
+		except Exception as ex:
+			print('(Backend) ERROR: Temp capture remove='+str(ex))
+			return None
 
 		print('(Backend) DBG: Capture analysis OK')
 		return 200
