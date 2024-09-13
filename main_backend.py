@@ -237,8 +237,8 @@ class Backend:
 			_fps=int(self.db_in_user['Experiment']['Application']['Video']['fps'])
 			_width=int(self.db_in_user['Experiment']['Application']['Video']['width'])
 			_height = int(self.db_in_user['Experiment']['Application']['Video']['height'])
-			_shark_captime_sec=int(self.db_in_user['Experiment']['Application']['Wireshark']['capture time (sec)'])
-			_shark_max_packs=int(self.db_in_user['Experiment']['Application']['Wireshark']['max packets'])
+			_shark_captime_sec=gparams._SHARK_VIDEO_TIME_SEC
+			_shark_max_packs=gparams._SHARK_VIDEO_PACKS
 			_camp_name=self.db_in_user['Measurement']['Campaign name']
 
 			if _enable == 'False':
