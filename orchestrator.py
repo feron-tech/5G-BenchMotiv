@@ -1,3 +1,4 @@
+import time
 import docker
 import socket
 from helper import Helper
@@ -21,14 +22,38 @@ class Orchestrator:
 			container_list = self.orch.containers.list()
 			print('(Orch) DBG: Cleaning containers='+str(container_list))
 			for cont in container_list:
-				try:
-					cont.stop()
-					cont.remove()
-				except Exception as ex:
-					print('(Orch) ERROR: Container clean='+str(ex))
+				total_runs=20
+
+				run=0
+				check_stop=False
+				while (not check_stop) or (run<total_runs):
+					try:
+						cont.stop()
+						check_stop=True
+					except:
+						time.sleep(2)
+						run = run+1
+
+				if not check_stop:
+					return None
+
+				run = 0
+				check_rm=False
+				while not check_rm or (run<total_runs):
+					try:
+						cont.remove()
+						check_rm=True
+					except:
+						time.sleep(2)
+						run = run + 1
+
+				if not check_rm:
+					return None
+
 			print('(Orch) DBG: Containers clean OK')
 		except Exception as ex:
 			print('(Orch) ERROR: Containers clean=' + str(ex))
+			return None
 
 	def activate(self,image,detach=True,env=None,network_mode='bridge',port_dict=None):
 		try:
