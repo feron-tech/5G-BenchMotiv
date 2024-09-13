@@ -945,7 +945,7 @@ app.layout = html.Div(children=[
                                                 dbc.Col(
                                                     [
                                                         html.Div([
-                                                            dcc.Input(id='exp_app_shark_captime_sec', type='text', value='10',
+                                                            dcc.Input(id='exp_app_shark_captime_sec', type='text', value='30',
                                                                       style={'width': '100%', 'font-size': 20}),
                                                         ], style={'width': '100%', 'display': 'flex',
                                                                   'align-items': 'left',
@@ -969,7 +969,7 @@ app.layout = html.Div(children=[
                                                 dbc.Col(
                                                     [
                                                         html.Div([
-                                                            dcc.Input(id='exp_app_shark_maxpacks', type='text', value='50',
+                                                            dcc.Input(id='exp_app_shark_maxpacks', type='text', value='150',
                                                                       style={'width': '100%', 'font-size': 20}),
                                                         ], style={'width': '100%', 'display': 'flex',
                                                                   'align-items': 'left',
@@ -1709,6 +1709,7 @@ def toggle_modal(button_start, button_exit, is_open):
 @callback(
     Output("download_save", "data"),
     Input("button_save", "n_clicks"),
+    prevent_initial_call=True
 )
 def func(n_clicks):
     print('(Frontend) DBG: Downloading exp files...')

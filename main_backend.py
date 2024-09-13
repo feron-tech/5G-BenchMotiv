@@ -354,7 +354,6 @@ class Backend:
 			print('(Backend) DBG: Capture OK, final pack_cnt='+str(pack_cnt)+',duration (sec)='+str(sniff_duration_sec))
 		except Exception as ex:
 			print('(Backend) ERROR during capture:'+str(ex))
-			return None
 
 		try:
 			min_sniff_timestamp=math.inf
@@ -362,7 +361,6 @@ class Backend:
 			sum_packet_len_bytes=0
 			rtt_list=[]
 			max_timestamp='1999-01-01 00:00:00.000000'
-
 
 			print('(Backend) DBG: Capture analysis...')
 			cap = pyshark.FileCapture(input_file=gparams._SHARK_TEMP_OUT_FILE)
@@ -478,28 +476,52 @@ class Backend:
 				if pack_cnt<2:
 					print('(Backend) DBG: Capture example pack addr dest='+str(myjson_line['addr_dest']))
 
-			# write aggregated results to gui_app.json DB for presentation purposes only
+			print('(Backend) DBG: Capture read OK')
+		except Exception as ex:
+			print('(Backend) ERROR: Capture read='+str(ex))
+
+		# write aggregated results to gui_app.json DB for presentation purposes only
+		try:
 			myjson_line = gparams._RES_FILE_FIELDS_GUI_APP
 			time_diff = max_sniff_timestamp - min_sniff_timestamp
 			thru_bps = float((sum_packet_len_bytes * 8) / time_diff)
 
-			myjson_line['RTT (msec)'] = str(statistics.mean(rtt_list)* 1e3)
-			myjson_line['app_name'] = app_name
-			myjson_line['Throughput (Mbps)'] = str(thru_bps * 1e-6)
-			myjson_line['timestamp'] = str(max_timestamp)
-			self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_GUI_APP, mydict=myjson_line, clean=False)
+			try:
+				myjson_line['RTT (msec)'] = str(statistics.mean(rtt_list)* 1e3)
+			except:
+				pass
 
 			try:
-				os.remove(gparams._SHARK_TEMP_OUT_FILE)
-				print('(Backend) DBG: Temp capture removed OK')
-			except Exception as ex:
-				print('(ERROR) DBG: Temp capture remove='+str(ex))
+				myjson_line['app_name'] = app_name
+			except:
+				pass
 
-			print('(Backend) DBG: Capture analysis OK')
-			return 200
+			try:
+				myjson_line['Throughput (Mbps)'] = str(thru_bps * 1e-6)
+			except:
+				pass
+
+			try:
+				myjson_line['timestamp'] = str(max_timestamp)
+			except:
+				pass
+
+			self.helper.write_dict2json(loc=gparams._RES_FILE_LOC_GUI_APP, mydict=myjson_line, clean=False)
+
+			print('(Backend) DBG: Capture write OK')
 		except Exception as ex:
-			print('(Backend) ERROR: Capture analysis:'+str(ex))
+			print('(Backend) ERROR: Capture write=' + str(ex))
+
+		try:
+			os.remove(gparams._SHARK_TEMP_OUT_FILE)
+			print('(Backend) DBG: Temp capture removed OK')
+		except Exception as ex:
+			print('(Backend) ERROR: Temp capture remove='+str(ex))
 			return None
+
+		print('(Backend) DBG: Capture analysis OK')
+		return 200
+
 
 	def get_iperf(self):
 		try:
