@@ -37,19 +37,6 @@ class Orchestrator:
 				if not check_stop:
 					return None
 
-				run = 0
-				check_rm=False
-				while not check_rm or (run<total_runs):
-					try:
-						cont.remove()
-						check_rm=True
-					except:
-						time.sleep(2)
-						run = run + 1
-
-				if not check_rm:
-					return None
-
 			print('(Orch) DBG: Containers clean OK')
 		except Exception as ex:
 			print('(Orch) ERROR: Containers clean=' + str(ex))
