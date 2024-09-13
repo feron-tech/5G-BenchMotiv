@@ -18,29 +18,8 @@ class Orchestrator:
 		return final_list
 
 	def clean_all(self):
-		try:
-			container_list = self.orch.containers.list()
-			print('(Orch) DBG: Cleaning containers='+str(container_list))
-			for cont in container_list:
-				total_runs=20
-
-				run=0
-				check_stop=False
-				while (not check_stop) or (run<total_runs):
-					try:
-						cont.stop()
-						check_stop=True
-					except:
-						time.sleep(2)
-						run = run+1
-
-				if not check_stop:
-					return None
-
-			print('(Orch) DBG: Containers clean OK')
-		except Exception as ex:
-			print('(Orch) ERROR: Containers clean=' + str(ex))
-			return None
+		# todo
+		pass
 
 	def activate(self,image,detach=True,env=None,network_mode='bridge',port_dict=None):
 		try:

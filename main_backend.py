@@ -182,12 +182,12 @@ class Backend:
 		print('--- --- --- --- --- --- --- --- ---')
 
 	def get_app_measurements(self):
-		# remove left-over containers
-		orch = Orchestrator()
-		res=orch.clean_all()
-		if res is None:
-			print('(Backend) ERROR at container clean - exit app measurements')
-			return None
+		# remove left-over containers - todo
+		#orch = Orchestrator()
+		#res=orch.clean_all()
+		#if res is None:
+		#	print('(Backend) ERROR at container clean - exit app measurements')
+		#	return None
 
 		self.get_app_mqtt()
 		self.get_app_video()
