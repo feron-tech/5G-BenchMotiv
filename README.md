@@ -276,6 +276,17 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/ #At client-side
 | rtt                | round-trip-time (sec)|
 | drop_flag                | if packet is lost (boolean)|
 
+* File: gui_app.json
+* Stats frequency: per experiment (aggregated app statistics)
+
+| **Feature**           | **Description**                                                     |
+|-----------------------|---------------------------------------------------------------------|
+| RTT (msec)             | Mean Round-trip-time of all application packets (msec)                                           |
+| app_name             | Application name                             |
+| Throughput (Mbps)    | Application throughput during the experiment(Mbps) |
+| timestamp            | Measurement UNIX timestamp                                   |
+
+
 ### physical layer test
 * File: phy.json
 * Stats frequency: serial connection (async w.r.t. to the experiment)

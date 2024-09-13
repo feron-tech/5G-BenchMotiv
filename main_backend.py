@@ -95,8 +95,11 @@ class Backend:
 			_camp_name = self.db_in_user['Measurement']['Campaign name']
 			_exp_num=int(self.db_in_user['Measurement']['Experiments per campaign'])
 
-			my_event='Initiating campaign with name:'+ str(_camp_name)+',repet='\
-			       +str(_camp_repet)+',gap='+str(_camp_gap_hours)+',for exps='+str(_exp_num)
+			print('*** *** *** *** *** *** *** *** *** ***')
+			my_event=('Initiating campaign='+str(_camp_name)+
+			          ',repet='+str(_camp_repet)+
+			          ',gap='+str(_camp_gap_hours)+
+			          ',exps='+str(_exp_num))
 			print('(Backend) DBG: '+str(my_event))
 
 			myjson_line=gparams._DB_FILE_FIELDS_OUT_LOG
@@ -120,27 +123,39 @@ class Backend:
 
 			self.cnt_repet=self.cnt_repet+1
 
-			# check waiting time between campaign repetitions
-			asctime_start=self.helper.get_curr_asctime()
-			total_wait_time_sec=int(3600*_camp_gap_hours)
-			wait_interval_sec=int(total_wait_time_sec/20)
+			# check if still not finished
+			if (self.cnt_repet < _camp_repet):
+				# check waiting time between campaign repetitions
+				asctime_start=self.helper.get_curr_asctime()
+				total_wait_time_sec=int(3600*_camp_gap_hours)
+				wait_interval_sec=int(total_wait_time_sec/20)
 
-			remaining_time_sec=1
-			while (remaining_time_sec>0):
-				asctime_curr = self.helper.get_curr_asctime()
-				remaining_time_sec = (total_wait_time_sec -
-				                      self.helper.diff_asctimes_sec(early=asctime_start,late=asctime_curr))
+				remaining_time_sec=1
+				while (remaining_time_sec>0):
+					asctime_curr = self.helper.get_curr_asctime()
+					remaining_time_sec = (total_wait_time_sec -
+					                      self.helper.diff_asctimes_sec(early=asctime_start,late=asctime_curr))
 
-				if (remaining_time_sec>0):
-					my_event = ('Remaining time for next repetition (sec):' + str(remaining_time_sec))
-					print('(Backend) DBG: ' + str(my_event))
+					if (remaining_time_sec>0):
+						my_event = ('Remaining time for next repetition (sec):' + str(remaining_time_sec))
+						print('(Backend) DBG: ' + str(my_event))
 
-					myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
-					myjson_line['time'] = self.helper.get_str_timestamp()
-					myjson_line['description'] = my_event
-					self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
+						myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+						myjson_line['time'] = self.helper.get_str_timestamp()
+						myjson_line['description'] = my_event
+						self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line,clean=False)
 
-					self.helper.wait(wait_interval_sec)
+						self.helper.wait(wait_interval_sec)
+
+		# print completion msg
+		my_event = 'Completed campaign:' + str(_camp_name)
+		print('(Backend) DBG: ' + str(my_event))
+		print('*** *** *** *** *** *** *** *** *** ***')
+
+		myjson_line = gparams._DB_FILE_FIELDS_OUT_LOG
+		myjson_line['time'] = self.helper.get_str_timestamp()
+		myjson_line['description'] = my_event
+		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
 
 	def run_exp(self):
 		my_event = 'Initiating exp:' + str(self.cnt_exp) + ',of campaign repetition:' + str(self.cnt_repet)
@@ -149,7 +164,9 @@ class Backend:
 		myjson_line['description'] = my_event
 		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
 
-		print('(Backend) DBG: ' + my_event +'>>>> >>>> >>>> >>>> >>>>')
+		print('--- --- --- --- --- --- --- --- ---')
+		print('(Backend) DBG: ' + my_event)
+
 
 
 		self.get_baseline_measurements()
@@ -162,7 +179,7 @@ class Backend:
 		self.helper.write_dict2json(loc=gparams._DB_FILE_LOC_OUT_LOG, mydict=myjson_line, clean=False)
 
 		print('(Backend) DBG: ' + my_event)
-		print('>>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>> >>>>')
+		print('--- --- --- --- --- --- --- --- ---')
 
 	def get_app_measurements(self):
 		self.get_app_mqtt()
