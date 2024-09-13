@@ -97,9 +97,9 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/server/udp-ping
 ```
 ```python
 # Terminal 4: Activate Dockers at server-side
-docker run -it --rm -e ENV_SERVER_IP={GOLDEN_UNIT_CLIENT_IP} -e ENV_SERVER_PORT=8888 --network=bridge server_stream
 docker run -d --rm -p 1883:1883 -p 8883:8883 --name nanomq emqx/nanomq:latest
-
+docker run -it --rm -e ENV_SERVER_IP={GOLDEN_UNIT_CLIENT_IP} -e ENV_SERVER_PORT=8888 --network=bridge server_stream
+(the streamer image needs to be regularly checked and occasionally restarted - check logs)
 ```
 
 ### Client-side
