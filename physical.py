@@ -15,7 +15,6 @@ def extract_values(pattern, response):
     else:
         return None
 
-
 class Modem:
     def __init__(self):
         self.connected = False
@@ -454,165 +453,167 @@ class Modem:
 
 
 def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr',camp_name='test'):
-    try:
-        # prepare logging phy.json, phy_raw.json
-        helper=Helper()
-        myjson_line=gparams._RES_FILE_FIELDS_PHY
-        try:
-            myjson_line['camp_name'] = str(camp_name)
-            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(camp_name))
-        except:
-            pass
-        try:
-            stamp=helper.get_str_timestamp()
-            myjson_line['timestamp']=str(stamp)
-            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(stamp))
-        except:
-            pass
+    # prepare logging phy.json, phy_raw.json
+    helper=Helper()
+    myjson_line=gparams._RES_FILE_FIELDS_PHY
 
-        # init modem
+    try:
+        myjson_line['camp_name'] = str(camp_name)
+        helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(camp_name))
+    except:
+        pass
+
+    try:
+        stamp=helper.get_str_timestamp()
+        myjson_line['timestamp']=str(stamp)
+        helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(stamp))
+    except:
+        pass
+
+    # init modem
+    try:
         my_modem = Modem()
         my_modem.initialize_port(port, baud_rate, 1)
         res = my_modem.is_alive()
-
-        ## 01 get mode
-        mode_pref = my_modem.get_prefered_mode()
-        my_modem.set_prefered_mode("LTE:NR5G")
-        # log
-        try:
-            myjson_line['mode_pref'] = str(mode_pref)
-        except:
-            pass
-        print('(Phy) DBG: 01 get_mode='+str(mode_pref))
-
-        ## 02 get oper and act
-        oper, act = my_modem.get_oper_and_mode()
-        # log
-        try:
-            myjson_line['oper'] = str(oper)
-        except:
-            pass
-        try:
-            myjson_line['act'] = str(act)
-        except:
-            pass
-        print('(Phy) DBG: 02 get_oper_and_mode='+str(oper)+','+str(act))
-
-        #apn = my_modem.get_apn()
-        #resp1 = my_modem.set_apn(myapn)
-        #print(apn)
-        #print(resp1)
-
-        ## 03 get csq
-        rssi, ber = my_modem.get_csq()
-        # log
-        try:
-            myjson_line['rssi'] = str(rssi)
-        except:
-            pass
-        try:
-            myjson_line['ber'] = str(ber)
-        except:
-            pass
-        print('(Phy) DBG: 03 get_csq='+str(rssi)+','+str(ber))
-
-        ## 04 get get_qrsrp
-        qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
-        try:
-            myjson_line['qrsrp_prx'] = str(qrsrp_prx)
-        except:
-            pass
-        try:
-            myjson_line['qrsrp_drx'] = str(qrsrp_drx)
-        except:
-            pass
-        try:
-            myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
-        except:
-            pass
-        try:
-            myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
-        except:
-            pass
-        try:
-            myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
-        except:
-            pass
-        print('(Phy) DBG: 04 get_qrsrp=' + str(qrsrp_prx) + ',' +
-              str(qrsrp_drx)+','+str(qrsrp_rx2)+','+str(qrsrp_rx3)+','+str(qrsrp_sysmode))
-
-        ## 05 get get_qrsrq
-        rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
-        try:
-            myjson_line['rsrq_prx'] = str(rsrq_prx)
-        except:
-            pass
-        try:
-            myjson_line['rsrq_drx'] = str(rsrq_drx)
-        except:
-            pass
-        try:
-            myjson_line['rsrq_rx2'] = str(rsrq_rx2)
-        except:
-            pass
-        try:
-            myjson_line['rsrq_rx3'] = str(rsrq_rx3)
-        except:
-            pass
-        try:
-            myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
-        except:
-            pass
-        print('(Phy) DBG: 05 get_qrsrq=' + str(rsrq_prx) + ',' +
-              str(rsrq_drx)+','+str(rsrq_rx2)+','+str(rsrq_rx3)+','+str(rsrq_sysmode))
-
-        ## 06 get get_qsinr
-        sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
-        try:
-            myjson_line['sinr_prx'] = str(sinr_prx)
-        except:
-            pass
-        try:
-            myjson_line['sinr_drx'] = str(sinr_drx)
-        except:
-            pass
-        try:
-            myjson_line['sinr_rx2'] = str(sinr_rx2)
-        except:
-            pass
-        try:
-            myjson_line['sinr_rx3'] = str(sinr_rx3)
-        except:
-            pass
-        try:
-            myjson_line['sinr_sysmode'] = str(sinr_sysmode)
-        except:
-            pass
-        print('(Phy) DBG: 06 get_qsinr=' + str(sinr_prx) + ',' +
-              str(sinr_drx)+','+str(sinr_rx2)+','+str(sinr_rx3)+','+str(sinr_sysmode))
-
-        ## 07 get get_net_info
-        qnwinfo_info = my_modem.get_net_info()
-        try:
-            myjson_line['net_info'] = str(qnwinfo_info)
-        except:
-            pass
-        print('(Phy) DBG: 07 get_net_info=' + str(qnwinfo_info))
-
-        ## 08 get get_net_info
-        serving_cell_info=my_modem.serving_cell()
-        try:
-            myjson_line['serving_cell_info'] = str(serving_cell_info)
-        except:
-            pass
-        print('(Phy) DBG: 08 serving_cell=' + str(serving_cell_info))
-
-        helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
-        print('(Physical) DBG: Completed serial physical measurements in parallel')
-        print("+++++++++++++++++++++++")
-
     except Exception as ex:
-        print('(Physical) ERROR during serial=' + str(ex))
+        print('(Phy) ERROR during modem init= '+str(ex))
+        return None
+
+    ## 01 get mode
+    mode_pref = my_modem.get_prefered_mode()
+    my_modem.set_prefered_mode("LTE:NR5G")
+    # log
+    try:
+        myjson_line['mode_pref'] = str(mode_pref)
+    except:
+        pass
+    print('(Phy) DBG: 01 get_mode='+str(mode_pref))
+
+    ## 02 get oper and act
+    oper, act = my_modem.get_oper_and_mode()
+    # log
+    try:
+        myjson_line['oper'] = str(oper)
+    except:
+        pass
+    try:
+        myjson_line['act'] = str(act)
+    except:
+        pass
+    print('(Phy) DBG: 02 get_oper_and_mode='+str(oper)+','+str(act))
+
+    #apn = my_modem.get_apn()
+    #resp1 = my_modem.set_apn(myapn)
+    #print(apn)
+    #print(resp1)
+
+    ## 03 get csq
+    rssi, ber = my_modem.get_csq()
+    # log
+    try:
+        myjson_line['rssi'] = str(rssi)
+    except:
+        pass
+    try:
+        myjson_line['ber'] = str(ber)
+    except:
+        pass
+    print('(Phy) DBG: 03 get_csq='+str(rssi)+','+str(ber))
+
+    ## 04 get get_qrsrp
+    qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
+    try:
+        myjson_line['qrsrp_prx'] = str(qrsrp_prx)
+    except:
+        pass
+    try:
+        myjson_line['qrsrp_drx'] = str(qrsrp_drx)
+    except:
+        pass
+    try:
+        myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
+    except:
+        pass
+    try:
+        myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
+    except:
+        pass
+    try:
+        myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
+    except:
+        pass
+    print('(Phy) DBG: 04 get_qrsrp=' + str(qrsrp_prx) + ',' +
+          str(qrsrp_drx)+','+str(qrsrp_rx2)+','+str(qrsrp_rx3)+','+str(qrsrp_sysmode))
+
+    ## 05 get get_qrsrq
+    rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
+    try:
+        myjson_line['rsrq_prx'] = str(rsrq_prx)
+    except:
+        pass
+    try:
+        myjson_line['rsrq_drx'] = str(rsrq_drx)
+    except:
+        pass
+    try:
+        myjson_line['rsrq_rx2'] = str(rsrq_rx2)
+    except:
+        pass
+    try:
+        myjson_line['rsrq_rx3'] = str(rsrq_rx3)
+    except:
+        pass
+    try:
+        myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
+    except:
+        pass
+    print('(Phy) DBG: 05 get_qrsrq=' + str(rsrq_prx) + ',' +
+          str(rsrq_drx)+','+str(rsrq_rx2)+','+str(rsrq_rx3)+','+str(rsrq_sysmode))
+
+    ## 06 get get_qsinr
+    sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
+    try:
+        myjson_line['sinr_prx'] = str(sinr_prx)
+    except:
+        pass
+    try:
+        myjson_line['sinr_drx'] = str(sinr_drx)
+    except:
+        pass
+    try:
+        myjson_line['sinr_rx2'] = str(sinr_rx2)
+    except:
+        pass
+    try:
+        myjson_line['sinr_rx3'] = str(sinr_rx3)
+    except:
+        pass
+    try:
+        myjson_line['sinr_sysmode'] = str(sinr_sysmode)
+    except:
+        pass
+    print('(Phy) DBG: 06 get_qsinr=' + str(sinr_prx) + ',' +
+          str(sinr_drx)+','+str(sinr_rx2)+','+str(sinr_rx3)+','+str(sinr_sysmode))
+
+    ## 07 get get_net_info
+    qnwinfo_info = my_modem.get_net_info()
+    try:
+        myjson_line['net_info'] = str(qnwinfo_info)
+    except:
+        pass
+    print('(Phy) DBG: 07 get_net_info=' + str(qnwinfo_info))
+
+    ## 08 get get_net_info
+    serving_cell_info=my_modem.serving_cell()
+    try:
+        myjson_line['serving_cell_info'] = str(serving_cell_info)
+    except:
+        pass
+    print('(Phy) DBG: 08 serving_cell=' + str(serving_cell_info))
+
+    helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
+    print('(Physical) DBG: Completed serial physical measurements in parallel')
+    print("+++++++++++++++++++++++")
 
 def read_input():
     helper=Helper()
@@ -635,14 +636,11 @@ def read_input():
     return res
 
 if __name__ == "__main__":
-    try:
-        res=read_input()
-        _camp_name = res['Measurement']['Campaign name']
-        _port=str(res['Network']['Modem port'])
-        _baud=int(res['Network']['Baud rate'])
-        _apn = str(res['Network']['APN'])
+    res=read_input()
+    _camp_name = res['Measurement']['Campaign name']
+    _port=str(res['Network']['Modem port'])
+    _baud=int(res['Network']['Baud rate'])
+    _apn = str(res['Network']['APN'])
 
-        while True:
-            main(port=_port, baud_rate=_baud, command='AT', myapn=_apn,camp_name=_camp_name)
-    except Exception as ex:
-        print('(Physical) ERROR: Failed='+str(ex))
+    while True:
+        main(port=_port, baud_rate=_baud, command='AT', myapn=_apn,camp_name=_camp_name)
