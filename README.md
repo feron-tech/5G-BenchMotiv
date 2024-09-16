@@ -112,16 +112,16 @@ nano gparams.py # (settings)
 <save and exit>
 ```
 ```python
-# Terminal 2: Enable PHY layer measurements
-cd /{GOLDEN_UNIT_ROOT}/golden_unit/
-{ROOT}/envs/golden_unit/bin/python physical.py # use python bin to run physical.py script
-```
-```python
-# Terminal 3: Initiate backend
+# Terminal 2: Initiate backend
 cd /{GOLDEN_UNIT_ROOT}/golden_unit/
 # check that conda env is activated
 python main_backend.py
 (note that existing Docker containers will be removed)
+```
+```python
+# Terminal 3: Enable PHY layer measurements
+cd /{GOLDEN_UNIT_ROOT}/golden_unit/
+{ROOT}/envs/golden_unit/bin/python physical.py # use python bin to run physical.py script
 ```
 ```python
 # Terminal 4: Initiate GUI
@@ -340,6 +340,12 @@ cd /{GOLDEN_UNIT_ROOT}/golden_unit/ #At client-side
 | sinr_rx2             | SINR                            |
 | sinr_rx3             | SINR                            |
 | sinr_sysmode             | SINR                            |
+| net_info             | Network param info                            |
+| serving_cell_info             | Serving cell param info                            |
+
+
+* File: phy_raw.json
+* Raw responses of the modem's AT cmds
 
 ### input user settings
 * File: in_user.json

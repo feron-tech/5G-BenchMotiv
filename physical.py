@@ -5,6 +5,7 @@ import time
 from helper import Helper
 import gparams
 import os
+import helper
 
 # Perform the regex search and extraction
 def extract_values(pattern, response):
@@ -52,7 +53,22 @@ class Modem:
         self.send_at_command("AT+QSIMDET?")
 
     def get_prefered_mode(self):
+
+        helper=Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW,mystr="AT+QNWPREFCFG=\"mode_pref\"")
+        except:
+            pass
+
         response = self.send_at_command("AT+QNWPREFCFG=\"mode_pref\"")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW,mystr=str(response))
+        except:
+            pass
+
         # Define the regular expression to match the mode preferences
         pattern = r'QNWPREFCFG: \"mode_pref\",(.*)'
         # Search for the pattern in the response
@@ -63,14 +79,28 @@ class Modem:
             return [mode.strip() for mode in modes]
         else:
             return []
-        return mode_pref
 
     def set_prefered_mode(self, mode):
         response = self.send_at_command("AT+QNWPREFCFG=\"mode_pref\"," + mode)
         return response
 
     def get_oper_and_mode(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+COPS?")
+        except:
+            pass
+
         response = self.send_at_command("AT+COPS?")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
         pattern = r'\+COPS: \d+,\d+,"([^"]+)",(\d+)'
 
         # Search for the pattern in the response
@@ -83,7 +113,22 @@ class Modem:
             return None, None
 
     def get_apn(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+CGDCONT?")
+        except:
+            pass
+
         response = self.send_at_command("AT+CGDCONT?")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
         # Define the regular expression to match the CGDCONT response
         pattern = r'\+CGDCONT: (\d+),"([^"]+)","([^"]+)"'
 
@@ -102,7 +147,22 @@ class Modem:
         return response
 
     def get_csq(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+CSQ")
+        except:
+            pass
+
         response = self.send_at_command("AT+CSQ")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
         # Define the regular expression to match the CSQ response
         pattern = r'\+CSQ: (\d+),(\d+)'
         # Search for the pattern in the response
@@ -146,55 +206,146 @@ class Modem:
             return None, None
 
     def get_qrsrp(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+QRSRP")
+        except:
+            pass
+
         response = self.send_at_command("AT+QRSRP")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
         # Define the regular expression to match the QRSRP response
         pattern = r'\+QRSRP: (-?\d+),(-?\d+),(-?\d+),(-?\d+),(\w+)'
+
         # Search for the pattern in the response
-        match = re.search(pattern, response)
-        if match:
-            rsrp_prx = match.group(1)
-            rsrp_drx = match.group(2)
-            rsrp_rx2 = match.group(3)
-            rsrp_rx3 = match.group(4)
-            rsrp_sysmode = match.group(5)
-            return rsrp_prx, rsrp_drx, rsrp_rx2, rsrp_rx3, rsrp_sysmode
-        else:
-            return None, None, None, None, None
+        rsrp_prx_list, rsrp_drx_list, rsrp_rx2_list, rsrp_rx3_list, rsrp_sysmode_list=[],[],[],[],[]
+
+        for line in response.splitlines():
+            match = re.search(pattern, line)
+
+            if match:
+                rsrp_prx = match.group(1)
+                rsrp_drx = match.group(2)
+                rsrp_rx2 = match.group(3)
+                rsrp_rx3 = match.group(4)
+                rsrp_sysmode = match.group(5)
+
+                rsrp_prx_list.append(rsrp_prx)
+                rsrp_drx_list.append(rsrp_drx)
+                rsrp_rx2_list.append(rsrp_rx2)
+                rsrp_rx3_list.append(rsrp_rx3)
+                rsrp_sysmode_list.append(rsrp_sysmode)
+        return rsrp_prx_list, rsrp_drx_list, rsrp_rx2_list, rsrp_rx3_list, rsrp_sysmode_list
 
     def get_qrsrq(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+QRSRQ")
+        except:
+            pass
+
         response = self.send_at_command("AT+QRSRQ")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
         # Define the regular expression to match the QRSRP response
         pattern = r'\+QRSRQ: (-?\d+),(-?\d+),(-?\d+),(-?\d+),(\w+)'
+
         # Search for the pattern in the response
-        match = re.search(pattern, response)
-        if match:
-            rsrq_prx = match.group(1)
-            rsrq_drx = match.group(2)
-            rsrq_rx2 = match.group(3)
-            rsrq_rx3 = match.group(4)
-            rsrq_sysmode = match.group(5)
-            return rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode
-        else:
-            return None, None, None, None, None
+        rsrq_prx_list, rsrq_drx_list, rsrq_rx2_list, rsrq_rx3_list, rsrq_sysmode_list = [], [], [], [], []
+
+        for line in response.splitlines():
+            match = re.search(pattern, line)
+
+            if match:
+                rsrq_prx = match.group(1)
+                rsrq_drx = match.group(2)
+                rsrq_rx2 = match.group(3)
+                rsrq_rx3 = match.group(4)
+                rsrq_sysmode = match.group(5)
+
+                rsrq_prx_list.append(rsrq_prx)
+                rsrq_drx_list.append(rsrq_drx)
+                rsrq_rx2_list.append(rsrq_rx2)
+                rsrq_rx3_list.append(rsrq_rx3)
+                rsrq_sysmode_list.append(rsrq_sysmode)
+
+        return rsrq_prx_list, rsrq_drx_list, rsrq_rx2_list, rsrq_rx3_list, rsrq_sysmode_list
 
     def get_qsinr(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+QSINR")
+        except:
+            pass
+
         response = self.send_at_command("AT+QSINR")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
+
         # Define the regular expression to match the QRSRP response
         pattern = r'\+QSINR: (-?\d+),(-?\d+),(-?\d+),(-?\d+),(\w+)'
+
         # Search for the pattern in the response
-        match = re.search(pattern, response)
-        if match:
-            sinr_prx = match.group(1)
-            sinr_drx = match.group(2)
-            sinr_rx2 = match.group(3)
-            sinr_rx3 = match.group(4)
-            sinr_sysmode = match.group(5)
-            return sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode
-        else:
-            return None, None, None, None, None
+        sinr_prx_list, sinr_drx_list, sinr_rx2_list, sinr_rx3_list, sinr_sysmode_list = [], [], [], [], []
+
+        for line in response.splitlines():
+            match = re.search(pattern, line)
+
+            if match:
+                sinr_prx = match.group(1)
+                sinr_drx = match.group(2)
+                sinr_rx2 = match.group(3)
+                sinr_rx3 = match.group(4)
+                sinr_sysmode = match.group(5)
+
+                sinr_prx_list.append(sinr_prx)
+                sinr_drx_list.append(sinr_drx)
+                sinr_rx2_list.append(sinr_rx2)
+                sinr_rx3_list.append(sinr_rx3)
+                sinr_sysmode_list.append(sinr_sysmode)
+
+        return sinr_prx_list, sinr_drx_list, sinr_rx2_list, sinr_rx3_list, sinr_sysmode_list
 
     def get_net_info(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+QNWINFO")
+        except:
+            pass
+
         response = self.send_at_command("AT+QNWINFO")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
+
         # Define the regular expression to match the QNWINFO response
         pattern = r'\+QNWINFO: "([^"]+)","([^"]+)","([^"]+)",(\d+)'
         # Find all matches in the response
@@ -216,7 +367,22 @@ class Modem:
         return qnwinfo_info
 
     def serving_cell(self):
+
+        helper = Helper()
+        ## log cmd in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr="AT+QENG=\"servingcell\"")
+        except:
+            pass
+
         response = self.send_at_command("AT+QENG=\"servingcell\"")
+
+        ## log res in log file
+        try:
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(response))
+        except:
+            pass
+
 
         # Define the regex pattern with named groups
         lte_pattern = (
@@ -289,65 +455,162 @@ class Modem:
 
 def main(port='/dev/ttyUSB3',baud_rate=115200,command='AT',myapn='internet.vodafone.gr',camp_name='test'):
     try:
+        # prepare logging phy.json, phy_raw.json
         helper=Helper()
+        myjson_line=gparams._RES_FILE_FIELDS_PHY
+        try:
+            myjson_line['camp_name'] = str(camp_name)
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(camp_name))
+        except:
+            pass
+        try:
+            stamp=helper.get_str_timestamp()
+            myjson_line['timestamp']=str(stamp)
+            helper.write_db(loc=gparams._RES_FILE_LOC_PHY_RAW, mystr=str(stamp))
+        except:
+            pass
+
+        # init modem
         my_modem = Modem()
         my_modem.initialize_port(port, baud_rate, 1)
-
         res = my_modem.is_alive()
 
+        ## 01 get mode
         mode_pref = my_modem.get_prefered_mode()
         my_modem.set_prefered_mode("LTE:NR5G")
+        # log
+        try:
+            myjson_line['mode_pref'] = str(mode_pref)
+        except:
+            pass
+        print('(Phy) DBG: 01 get_mode='+str(mode_pref))
 
+        ## 02 get oper and act
         oper, act = my_modem.get_oper_and_mode()
+        # log
+        try:
+            myjson_line['oper'] = str(oper)
+        except:
+            pass
+        try:
+            myjson_line['act'] = str(act)
+        except:
+            pass
+        print('(Phy) DBG: 02 get_oper_and_mode='+str(oper)+','+str(act))
 
         #apn = my_modem.get_apn()
         #resp1 = my_modem.set_apn(myapn)
-        rssi, ber = my_modem.get_csq()
-        qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
-        rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
-        sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
-        qnwinfo_info = my_modem.get_net_info()
-        my_modem.serving_cell()
-
-        print(mode_pref)
-        print(oper)
-        print(act)
         #print(apn)
         #print(resp1)
-        print(rssi)
-        print(ber)
-        print(qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode)
-        print(rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode)
-        print(sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode)
-        print(qnwinfo_info)
+
+        ## 03 get csq
+        rssi, ber = my_modem.get_csq()
+        # log
+        try:
+            myjson_line['rssi'] = str(rssi)
+        except:
+            pass
+        try:
+            myjson_line['ber'] = str(ber)
+        except:
+            pass
+        print('(Phy) DBG: 03 get_csq='+str(rssi)+','+str(ber))
+
+        ## 04 get get_qrsrp
+        qrsrp_prx, qrsrp_drx, qrsrp_rx2, qrsrp_rx3, qrsrp_sysmode = my_modem.get_qrsrp()
+        try:
+            myjson_line['qrsrp_prx'] = str(qrsrp_prx)
+        except:
+            pass
+        try:
+            myjson_line['qrsrp_drx'] = str(qrsrp_drx)
+        except:
+            pass
+        try:
+            myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
+        except:
+            pass
+        try:
+            myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
+        except:
+            pass
+        try:
+            myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
+        except:
+            pass
+        print('(Phy) DBG: 04 get_qrsrp=' + str(qrsrp_prx) + ',' +
+              str(qrsrp_drx)+','+str(qrsrp_rx2)+','+str(qrsrp_rx3)+','+str(qrsrp_sysmode))
+
+        ## 05 get get_qrsrq
+        rsrq_prx, rsrq_drx, rsrq_rx2, rsrq_rx3, rsrq_sysmode = my_modem.get_qrsrq()
+        try:
+            myjson_line['rsrq_prx'] = str(rsrq_prx)
+        except:
+            pass
+        try:
+            myjson_line['rsrq_drx'] = str(rsrq_drx)
+        except:
+            pass
+        try:
+            myjson_line['rsrq_rx2'] = str(rsrq_rx2)
+        except:
+            pass
+        try:
+            myjson_line['rsrq_rx3'] = str(rsrq_rx3)
+        except:
+            pass
+        try:
+            myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
+        except:
+            pass
+        print('(Phy) DBG: 05 get_qrsrq=' + str(rsrq_prx) + ',' +
+              str(rsrq_drx)+','+str(rsrq_rx2)+','+str(rsrq_rx3)+','+str(rsrq_sysmode))
+
+        ## 06 get get_qsinr
+        sinr_prx, sinr_drx, sinr_rx2, sinr_rx3, sinr_sysmode = my_modem.get_qsinr()
+        try:
+            myjson_line['sinr_prx'] = str(sinr_prx)
+        except:
+            pass
+        try:
+            myjson_line['sinr_drx'] = str(sinr_drx)
+        except:
+            pass
+        try:
+            myjson_line['sinr_rx2'] = str(sinr_rx2)
+        except:
+            pass
+        try:
+            myjson_line['sinr_rx3'] = str(sinr_rx3)
+        except:
+            pass
+        try:
+            myjson_line['sinr_sysmode'] = str(sinr_sysmode)
+        except:
+            pass
+        print('(Phy) DBG: 06 get_qsinr=' + str(sinr_prx) + ',' +
+              str(sinr_drx)+','+str(sinr_rx2)+','+str(sinr_rx3)+','+str(sinr_sysmode))
+
+        ## 07 get get_net_info
+        qnwinfo_info = my_modem.get_net_info()
+        try:
+            myjson_line['net_info'] = str(qnwinfo_info)
+        except:
+            pass
+        print('(Phy) DBG: 07 get_net_info=' + str(qnwinfo_info))
+
+        ## 08 get get_net_info
+        serving_cell_info=my_modem.serving_cell()
+        try:
+            myjson_line['serving_cell_info'] = str(serving_cell_info)
+        except:
+            pass
+        print('(Phy) DBG: 08 serving_cell=' + str(serving_cell_info))
+
+        helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
         print('(Physical) DBG: Completed serial physical measurements in parallel')
         print("+++++++++++++++++++++++")
 
-        myjson_line=gparams._RES_FILE_FIELDS_PHY
-        myjson_line['camp_name'] = str(camp_name)
-        myjson_line['timestamp']=helper.get_str_timestamp()
-        myjson_line['mode_pref'] = str(mode_pref)
-        myjson_line['oper'] = str(oper)
-        myjson_line['act'] = str(act)
-        myjson_line['rssi'] = str(rssi)
-        myjson_line['ber'] = str(ber)
-        myjson_line['qrsrp_prx'] = str(qrsrp_prx)
-        myjson_line['qrsrp_drx'] = str(qrsrp_drx)
-        myjson_line['qrsrp_rx2'] = str(qrsrp_rx2)
-        myjson_line['qrsrp_rx3'] = str(qrsrp_rx3)
-        myjson_line['qrsrp_sysmode'] = str(qrsrp_sysmode)
-        myjson_line['rsrq_prx'] = str(rsrq_prx)
-        myjson_line['rsrq_drx'] = str(rsrq_drx)
-        myjson_line['rsrq_rx2'] = str(rsrq_rx2)
-        myjson_line['rsrq_rx3'] = str(rsrq_rx3)
-        myjson_line['rsrq_sysmode'] = str(rsrq_sysmode)
-        myjson_line['sinr_prx'] = str(sinr_prx)
-        myjson_line['sinr_drx'] = str(sinr_drx)
-        myjson_line['sinr_rx2'] = str(sinr_rx2)
-        myjson_line['sinr_rx3'] = str(sinr_rx3)
-        myjson_line['sinr_sysmode'] = str(sinr_sysmode)
-
-        helper.write_dict2json(loc=gparams._RES_FILE_LOC_PHY,mydict=myjson_line,clean=False)
     except Exception as ex:
         print('(Physical) ERROR during serial=' + str(ex))
 

@@ -65,6 +65,8 @@ _SHARK_TEMP_OUT_FILE=os.path.join(_ROOT_DIR,'mypcap.pcap')
 _SHARK_VIDEO_TIME_SEC=1
 _SHARK_VIDEO_PACKS=2
 
+_RES_FILE_LOC_PHY_RAW=os.path.join(_DB_DIR,'phy_raw.json')
+
 _RES_FILE_LOC_PHY=os.path.join(_DB_DIR,'phy.json')
 _RES_FILE_FIELDS_PHY={
     'camp_name': None,
@@ -90,7 +92,9 @@ _RES_FILE_FIELDS_PHY={
     'sinr_drx':None,
     'sinr_rx2':None,
     'sinr_rx3':None,
-    'sinr_sysmode':None
+    'sinr_sysmode':None,
+    'net_info':None,
+    'serving_cell_info':None,
 }
 
 _RES_FILE_LOC_IPERF=os.path.join(_DB_DIR,'iperf.json')

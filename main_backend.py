@@ -52,6 +52,7 @@ class Backend:
 			gparams._RES_FILE_LOC_ICMP,
 			gparams._RES_FILE_LOC_IPERF,
 			gparams._RES_FILE_LOC_PHY,
+			gparams._RES_FILE_LOC_PHY_RAW,
 			gparams._RES_FILE_LOC_APP,
 			gparams._RES_FILE_LOC_GUI_APP,
 		]
